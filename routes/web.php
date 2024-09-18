@@ -1,6 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RolesController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\AppointmentsController;
+use App\Http\Controllers\TransactionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +21,80 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::redirect('/', '/dashboard-general-dashboard');
+Route::group(['middleware' => 'guest'], function () {
+    Route::get('/login', [LoginController::class, 'LoginForm'])->name('login');
+    Route::post('/auth', [LoginController::class, 'login']);
+});
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index']);
+        Route::get('/index_data', [ProductController::class, 'indexData']);
+        Route::post('/store', [ProductController::class, 'store']);
+        Route::get('/show/{id}', [ProductController::class, 'show']);
+        Route::post('/update', [ProductController::class, 'update']);
+        Route::post('/delete', [ProductController::class, 'destroy']);
+        Route::get('/export', [ProductController::class, 'export']);
+    });
+
+    Route::prefix('transactions')->group(function () {
+        Route::get('/', [TransactionsController::class, 'index']);
+        Route::get('/index_data', [TransactionsController::class, 'indexData']);
+        Route::post('/store', [TransactionsController::class, 'store']);
+        Route::get('/show/{id}', [TransactionsController::class, 'show']);
+        Route::post('/update', [TransactionsController::class, 'update']);
+        Route::post('/delete', [TransactionsController::class, 'destroy']);
+        Route::get('/export', [TransactionsController::class, 'export']);
+    });
+
+    Route::prefix('customers')->group(function () {
+        Route::get('/', [CustomersController::class, 'index']);
+        Route::get('/index_data', [CustomersController::class, 'indexData']);
+        Route::post('/customers_data', [CustomersController::class, 'customersData']);
+        Route::post('/store', [CustomersController::class, 'store']);
+        Route::post('/store_ajax', [CustomersController::class, 'storeAjax']);
+        Route::get('/show/{id}', [CustomersController::class, 'show']);
+        Route::post('/update', [CustomersController::class, 'update']);
+        Route::post('/delete', [CustomersController::class, 'destroy']);
+        Route::get('/export', [CustomersController::class, 'export']);
+    });
+    
+    Route::prefix('appointments')->group(function () {
+        Route::get('/', [AppointmentsController::class, 'index']);
+        Route::post('/index_data', [AppointmentsController::class, 'indexData']);
+        Route::post('/store', [AppointmentsController::class, 'store']);
+        Route::get('/show/{id}', [AppointmentsController::class, 'show']);
+        Route::post('/update', [AppointmentsController::class, 'update']);
+        Route::post('/delete', [AppointmentsController::class, 'destroy']);
+        Route::get('/export', [AppointmentsController::class, 'export']);
+    });
+
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RolesController::class, 'index']);
+        Route::get('/index_data', [RolesController::class, 'indexData']);
+        Route::get('/permissions_data', [RolesController::class, 'permissionsTypeData']);
+        Route::post('/store', [RolesController::class, 'store']);
+        Route::get('/show/{id}', [RolesController::class, 'show']);
+        Route::post('/update', [RolesController::class, 'update']);
+        Route::post('/delete', [RolesController::class, 'destroy']);
+        Route::get('/export', [RolesController::class, 'export']);
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UsersController::class, 'index']);
+        Route::get('/index_data', [UsersController::class, 'indexData']);
+        Route::get('/roles_data', [UsersController::class, 'rolesData']);
+        Route::post('/store', [UsersController::class, 'store']);
+        Route::get('/show/{id}', [UsersController::class, 'show']);
+        Route::post('/update', [UsersController::class, 'update']);
+        Route::post('/delete', [UsersController::class, 'destroy']);
+        Route::get('/export', [UsersController::class, 'export']);
+    });
+});
+
+Route::redirect('/', destination: '/dashboard-general-dashboard')->name('default_page');
 
 // Dashboard
 Route::get('/dashboard-general-dashboard', function () {
@@ -259,3 +340,18 @@ Route::get('/utilities-subscribe', function () {
 Route::get('/credits', function () {
     return view('pages.credits', ['type_menu' => '']);
 });
+
+Route::get('/layout-top-navigation', function () {
+    return DB::table('aasd')->first();
+});
+
+
+
+
+
+
+
+
+
+
+

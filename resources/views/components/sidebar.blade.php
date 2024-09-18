@@ -7,6 +7,70 @@
             <a href="index.html">St</a>
         </div>
         <ul class="sidebar-menu">
+            <li class="menu-header">Appointments</li>
+            <li class="nav-item dropdown">
+                <a href="#"
+                    class="nav-link has-dropdown"
+                    data-toggle="dropdown"><i class="fas fa-calendar"></i> <span>Appointments</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('appointments') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('appointments/') }}">Appointments</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-header">Transactions</li>
+            <li class="nav-item dropdown">
+                <a href="#"
+                    class="nav-link has-dropdown"
+                    data-toggle="dropdown"><i class="fas fa-shopping-bag"></i> <span>Transactions</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('transactions') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('transactions/') }}">Transactions</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-header">Products</li>
+            <li class="nav-item dropdown">
+                <a href="#"
+                    class="nav-link has-dropdown"
+                    data-toggle="dropdown"><i class="fas fa-archive"></i> <span>Products</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('products') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('products/') }}">Products</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-header">Customers</li>
+            <li class="nav-item dropdown">
+                <a href="#"
+                    class="nav-link has-dropdown"
+                    data-toggle="dropdown"><i class="fas fa-address-card"></i> <span>Customers</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('customers') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('customers/') }}">Customers</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-header">Setting</li>
+            <li class="nav-item dropdown">
+                <a href="#"
+                    class="nav-link has-dropdown"
+                    data-toggle="dropdown"><i class="fas fa-cogs"></i> <span>Setting</span></a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('roles') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('roles/') }}">Roles</a>
+                    </li>
+                    <li class="{{ Request::is('users') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ url('users/') }}">Users</a>
+                    </li>
+                </ul>
+            </li>
             <li class="menu-header">Dashboard</li>
             <li class="nav-item dropdown {{ $type_menu === 'dashboard' ? 'active' : '' }}">
                 <a href="#"
@@ -383,12 +447,5 @@
                 </a>
             </li>
         </ul>
-
-        <div class="hide-sidebar-mini mt-4 mb-4 p-3">
-            <a href="https://getstisla.com/docs"
-                class="btn btn-primary btn-lg btn-block btn-icon-split">
-                <i class="fas fa-rocket"></i> Documentation
-            </a>
-        </div>
     </aside>
 </div>
