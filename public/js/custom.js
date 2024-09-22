@@ -7,11 +7,6 @@
 
 "use strict";
 
-$(document).ready(function() {
-    // Trigger a click event on the <a> element to close the sidebar
-    $('a[data-toggle="sidebar"]').click();
-});
-
 $('.select2.customers').select2({
     ajax: {
         url: '/customers/customers_data',
@@ -71,3 +66,83 @@ $('.select2.customers').select2({
             .text;
     }
 });
+
+$('.select2.capsters').select2({
+    ajax: {
+        url: '/capsters/index_data',
+        type: 'GET',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                capster_name: params.term,
+                page: params.page || 1
+            };
+        },
+        processResults: function (data, params) {
+
+
+            params.page = params.page || 1;
+
+            var results = [];
+            $.each(data.data, function (index, item) {
+                results.push({
+                    id: item.id,
+                    text: item.full_name
+                });
+            });
+
+            return {
+                results: results,
+                pagination: {
+                    more: (params.page * 30) < data.recordsTotal
+                }
+            };
+        },
+        cache: true
+    },
+    minimumInputLength: 1,
+});
+
+function openAddCustomerModal() {
+    $('#customer_full_name').val(null);
+    $('#customer_email').val(null);
+    $('#customer_gender').val(null);
+    $('#customer_phone').val(null);
+
+    $('.select2.customers').select2('close');
+    $('#selectCustomerModal').modal('hide');
+    $('#addcustomer').modal('show');
+}
+
+function submitCustomer() {
+    $('#addcustomer').modal('hide');
+
+
+    event.preventDefault();
+
+    var formData = $('#customer_form').serialize();
+
+    $.ajax({
+        url: '/customers/store_ajax',
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+            if (response.success == true) {
+                swal('Success', response.message, 'success');
+                setTimeout(function() {
+                    swal.close();
+                }, 5000);
+                $('#selectCustomerModal').modal('show');
+            } else if (response.success == false) {
+                swal('Error', response.message, 'error');
+                setTimeout(function() {
+                    swal.close();
+                }, 5000);
+            }
+        },
+        error: function(e) {
+            alert(e);
+        }
+    });
+}

@@ -493,6 +493,7 @@
                             <li class="ion-eye"
                                 data-pack="default"
                                 data-tags="view, see, creeper"></li>
+                                kocak
                             <li class="ion-eye-disabled"
                                 data-pack="default"
                                 data-tags="view, see, creeper"></li>
@@ -1220,6 +1221,7 @@
                             <li class="ion-ios-eye"
                                 data-pack="ios"
                                 data-tags="view, see, exposed, look"></li>
+                                kocak
                             <li class="ion-ios-eye-outline"
                                 data-pack="ios"
                                 data-tags="view, see, exposed, look"></li>

@@ -35,6 +35,10 @@ class Products extends Model
             $query->where('unit_of_measurement', 'LIKE', '%' . $request->unit_of_measurement . '%');
         })
 
+        ->when($request->is_included_in_receipt !== null, function ($query) use ($request) {
+            $query->where('is_included_in_receipt', intval($request->is_included_in_receipt));
+        })
+
         ->when($request->quantity, function ($query) use ($request) {
             $query->where('quantity', 'LIKE', '%' . $request->quantity . '%');
         })

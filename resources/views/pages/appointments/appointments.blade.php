@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="{{ asset('library/fullcalendar/dist/fullcalendar.min.css') }}">
     <link rel="stylesheet" href="{{ asset('library/flatpickr/flatpickr.min.css') }}">
-    
+
 
     <style>
         .form-control.flatpickr {
@@ -31,13 +31,23 @@
                             <div class="card-body">
                                 <div class="d-flex flex-column">
                                     <div class="d-flex mb-3" style="flex-grow: 1; align-items: flex-end;">
-                                        <button style="max-height: 40px; display: flex; align-items: center;"
-                                            class="btn btn-primary" data-toggle="modal" data-target="#addappointment"
-                                            onclick="clearValue()">
-                                            <i class="ion-plus-circled" data-pack="default" data-tags="sort"
-                                                style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
-                                            Add New Appointment
-                                        </button>
+                                        @can('appointments_create')
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-primary" data-toggle="modal" data-target="#addappointment"
+                                                onclick="clearValue()">
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Appointment
+                                            </button>
+                                        @else
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-secondary" disabled>
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Appointment
+                                            </button>
+                                        @endcan
+
                                         <div style="margin-left: auto; display: flex; align-items: flex-end;">
                                             <button id="download_button" onclick="handleDownload()"
                                                 style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
@@ -189,8 +199,7 @@
     </div>
 
     {{-- Modal Edit --}}
-    <div class="modal fade" id="editappointment" role="dialog" aria-labelledby="editappointment"
-        aria-hidden="true">
+    <div class="modal fade" id="editappointment" role="dialog" aria-labelledby="editappointment" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -218,7 +227,8 @@
                         </div>
                         <div class="form-group">
                             <label for="eventStart">Start Date</label>
-                            <input type="text" class="form-control flatpickr" id="start_edit" name="start" required>
+                            <input type="text" class="form-control flatpickr" id="start_edit" name="start"
+                                required>
                         </div>
                         <div class="form-group">
                             <label for="eventEnd">End Date</label>

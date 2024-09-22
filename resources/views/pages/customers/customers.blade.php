@@ -19,12 +19,22 @@
                             <div class="card-body">
                                 <div class="d-flex flex-column">
                                     <div class="d-flex mb-3" style="flex-grow: 1; align-items: flex-end;">
-                                        <button style="max-height: 40px; display: flex; align-items: center;"
-                                            class="btn btn-primary" data-toggle="modal" data-target="#addcustomer">
-                                            <i class="ion-plus-circled" data-pack="default" data-tags="sort"
-                                                style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
-                                            Add New Customer
-                                        </button>
+                                        @can('customers_create')
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-primary" data-toggle="modal" data-target="#addcustomer">
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Customer
+                                            </button>
+                                        @else
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-secondary" disabled>
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Customer
+                                            </button>
+                                        @endcan
+
                                         <div style="margin-left: auto; display: flex; align-items: flex-end;">
                                             <button
                                                 style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
@@ -142,7 +152,7 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                                <input class="form-control" type="hidden" id="id" name="id" required>
+                            <input class="form-control" type="hidden" id="id" name="id" required>
                             <div class="col-6">
                                 <label for="full_name" class="form-label">Customer Name <span
                                         style="color: red">*</span></label>

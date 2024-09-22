@@ -5,7 +5,6 @@
 @push('style')
     {{-- <link rel="stylesheet" href="{{ asset('css/roles/roles.css') }}"> --}}
     <style>
-
         .bold-label {
             font-weight: bold;
         }
@@ -25,13 +24,23 @@
                             <div class="card-body">
                                 <div class="d-flex flex-column">
                                     <div class="d-flex mb-3" style="flex-grow: 1; align-items: flex-end;">
-                                        <button style="max-height: 40px; display: flex; align-items: center;"
-                                            class="btn btn-primary" data-toggle="modal" data-target="#addrole"
-                                            onclick="getPermissions('create')">
-                                            <i class="ion-plus-circled" data-pack="default" data-tags="sort"
-                                                style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
-                                            Add New Role
-                                        </button>
+                                        @can('roles_create')
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-primary" data-toggle="modal" data-target="#addrole"
+                                                onclick="getPermissions('create')">
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Role
+                                            </button>
+                                        @else
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-secondary" disabled>
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Role
+                                            </button>
+                                        @endcan
+
                                         <div style="margin-left: auto; display: flex; align-items: flex-end;">
                                             <button
                                                 style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"

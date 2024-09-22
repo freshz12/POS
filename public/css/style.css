@@ -729,7 +729,7 @@ select.form-control:not([size]):not([multiple]) {
   border-radius: 3px;
   border: none;
   position: relative;
-  margin-bottom: 30px;
+  /* margin-bottom: 10px; */
 }
 .card .card-header, .card .card-body, .card .card-footer {
   background-color: transparent;

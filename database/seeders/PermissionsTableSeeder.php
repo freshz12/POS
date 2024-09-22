@@ -1,0 +1,71 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+
+class PermissionsTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $permissions = [
+            'capsters_view' => 'capsters',
+            'capsters_create' => 'capsters',
+            'capsters_edit' => 'capsters',
+            'capsters_delete' => 'capsters',
+
+            'users_view' => 'users',
+            'users_create' => 'users',
+            'users_edit' => 'users',
+            'users_delete' => 'users',
+
+            'roles_view' => 'roles',
+            'roles_create' => 'roles',
+            'roles_edit' => 'roles',
+            'roles_delete' => 'roles',
+
+            'customers_view' => 'customers',
+            'customers_create' => 'customers',
+            'customers_edit' => 'customers',
+            'customers_delete' => 'customers',
+
+            'products_view' => 'products',
+            'products_create' => 'products',
+            'products_edit' => 'products',
+            'products_delete' => 'products',
+
+            'POS' => 'POS',
+
+            'transactions_view' => 'transactions',
+            'transactions_create' => 'transactions',
+            'transactions_edit' => 'transactions',
+            'transactions_delete' => 'transactions',
+
+            'appointments_view' => 'appointments',
+            'appointments_create' => 'appointments',
+            'appointments_edit' => 'appointments',
+            'appointments_delete' => 'appointments',
+
+            'main_dashboards_views' => 'dashboards',
+            'transactions_dashboards_views' => 'dashboards',
+            'capsters_dashboards_views' => 'dashboards',
+            'products_dashboards_views' => 'dashboards',
+            'customers_dashboards_views' => 'dashboards',
+        ];
+
+        foreach ($permissions as $permission => $type) {
+            Permission::create([
+                'name' => $permission,
+                'type' => $type, // Set the type corresponding to the permission
+                'created_by' => 0, // Set created_by to 0
+                'updated_by' => 0, // Set updated_by to 0
+            ]);
+        }
+    }
+}

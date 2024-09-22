@@ -5,10 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\CapstersController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Controllers\TransactionsController;
+use App\Http\Controllers\TransactionsTableController;
+use App\Http\Controllers\DashboardsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,71 +33,107 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::prefix('products')->group(function () {
-        Route::get('/', [ProductController::class, 'index']);
-        Route::get('/index_data', [ProductController::class, 'indexData']);
-        Route::post('/store', [ProductController::class, 'store']);
-        Route::get('/show/{id}', [ProductController::class, 'show']);
-        Route::post('/update', [ProductController::class, 'update']);
-        Route::post('/delete', [ProductController::class, 'destroy']);
-        Route::get('/export', [ProductController::class, 'export']);
+        Route::get('/', [ProductController::class, 'index'])->middleware('can:products_view');
+        Route::get('/index_data', [ProductController::class, 'indexData'])->middleware('can:products_view');
+        Route::post('/store', [ProductController::class, 'store'])->middleware('can:products_create');
+        Route::get('/show/{id}', [ProductController::class, 'show'])->middleware('can:products_edit');
+        Route::post('/update', [ProductController::class, 'update'])->middleware('can:products_edit');
+        Route::post('/delete', [ProductController::class, 'destroy'])->middleware('can:products_delete');
+        Route::get('/export', [ProductController::class, 'export'])->middleware('can:products_view');
+    });
+
+    Route::prefix('transactions_table')->group(function () {
+        Route::get('/', [TransactionsTableController::class, 'index'])->middleware('can:transactions_view');
+        Route::post('/index_data', [TransactionsTableController::class, 'indexData'])->middleware('can:transactions_view');
+        Route::post('/store', [TransactionsTableController::class, 'store'])->middleware('can:transactions_create');
+        Route::get('/show/{id}', [TransactionsTableController::class, 'show'])->middleware('can:transactions_edit');
+        Route::post('/update', [TransactionsTableController::class, 'update'])->middleware('can:transactions_edit');
+        Route::post('/delete', [TransactionsTableController::class, 'destroy'])->middleware('can:transactions_delete');
+        Route::get('/export', [TransactionsTableController::class, 'export'])->middleware('can:transactions_view');
     });
 
     Route::prefix('transactions')->group(function () {
-        Route::get('/', [TransactionsController::class, 'index']);
-        Route::get('/index_data', [TransactionsController::class, 'indexData']);
-        Route::post('/store', [TransactionsController::class, 'store']);
-        Route::get('/show/{id}', [TransactionsController::class, 'show']);
-        Route::post('/update', [TransactionsController::class, 'update']);
-        Route::post('/delete', [TransactionsController::class, 'destroy']);
-        Route::get('/export', [TransactionsController::class, 'export']);
+        Route::get('/', [TransactionsController::class, 'index'])->middleware('can:POS');
+        Route::post('/store', [TransactionsController::class, 'store'])->middleware('can:POS');
     });
 
     Route::prefix('customers')->group(function () {
-        Route::get('/', [CustomersController::class, 'index']);
-        Route::get('/index_data', [CustomersController::class, 'indexData']);
+        Route::get('/', [CustomersController::class, 'index'])->middleware('can:customers_view');
+        Route::get('/index_data', [CustomersController::class, 'indexData'])->middleware('can:customers_view');
         Route::post('/customers_data', [CustomersController::class, 'customersData']);
-        Route::post('/store', [CustomersController::class, 'store']);
-        Route::post('/store_ajax', [CustomersController::class, 'storeAjax']);
-        Route::get('/show/{id}', [CustomersController::class, 'show']);
-        Route::post('/update', [CustomersController::class, 'update']);
-        Route::post('/delete', [CustomersController::class, 'destroy']);
-        Route::get('/export', [CustomersController::class, 'export']);
+        Route::post('/store', [CustomersController::class, 'store'])->middleware('can:customers_create');
+        Route::post('/store_ajax', [CustomersController::class, 'storeAjax'])->middleware('can:customers_create');
+        Route::get('/show/{id}', [CustomersController::class, 'show'])->middleware('can:customers_edit');
+        Route::post('/update', [CustomersController::class, 'update'])->middleware('can:customers_edit');
+        Route::post('/delete', [CustomersController::class, 'destroy'])->middleware('can:customers_delete');
+        Route::get('/export', [CustomersController::class, 'export'])->middleware('can:customers_view');
     });
     
     Route::prefix('appointments')->group(function () {
-        Route::get('/', [AppointmentsController::class, 'index']);
-        Route::post('/index_data', [AppointmentsController::class, 'indexData']);
-        Route::post('/store', [AppointmentsController::class, 'store']);
-        Route::get('/show/{id}', [AppointmentsController::class, 'show']);
-        Route::post('/update', [AppointmentsController::class, 'update']);
-        Route::post('/delete', [AppointmentsController::class, 'destroy']);
-        Route::get('/export', [AppointmentsController::class, 'export']);
+        Route::get('/', [AppointmentsController::class, 'index'])->middleware('can:appointments_view');
+        Route::post('/index_data', [AppointmentsController::class, 'indexData'])->middleware('can:appointments_view');
+        Route::post('/store', [AppointmentsController::class, 'store'])->middleware('can:appointments_create');
+        Route::get('/show/{id}', [AppointmentsController::class, 'show'])->middleware('can:appointments_edit');
+        Route::post('/update', [AppointmentsController::class, 'update'])->middleware('can:appointments_edit');
+        Route::post('/delete', [AppointmentsController::class, 'destroy'])->middleware('can:appointments_delete');
+        Route::get('/export', [AppointmentsController::class, 'export'])->middleware('can:appointments_view');
     });
 
     Route::prefix('roles')->group(function () {
-        Route::get('/', [RolesController::class, 'index']);
-        Route::get('/index_data', [RolesController::class, 'indexData']);
+        Route::get('/', [RolesController::class, 'index'])->middleware('can:roles_view');
+        Route::get('/index_data', [RolesController::class, 'indexData'])->middleware('can:roles_view');
         Route::get('/permissions_data', [RolesController::class, 'permissionsTypeData']);
-        Route::post('/store', [RolesController::class, 'store']);
-        Route::get('/show/{id}', [RolesController::class, 'show']);
-        Route::post('/update', [RolesController::class, 'update']);
-        Route::post('/delete', [RolesController::class, 'destroy']);
-        Route::get('/export', [RolesController::class, 'export']);
+        Route::post('/store', [RolesController::class, 'store'])->middleware('can:roles_create');
+        Route::get('/show/{id}', [RolesController::class, 'show'])->middleware('can:roles_edit');
+        Route::post('/update', [RolesController::class, 'update'])->middleware('can:roles_edit');
+        Route::post('/delete', [RolesController::class, 'destroy'])->middleware('can:roles_delete');
+        Route::get('/export', [RolesController::class, 'export'])->middleware('can:roles_view');
     });
 
     Route::prefix('users')->group(function () {
-        Route::get('/', [UsersController::class, 'index']);
-        Route::get('/index_data', [UsersController::class, 'indexData']);
+        Route::get('/', [UsersController::class, 'index'])->middleware('can:users_view');
+        Route::get('/index_data', [UsersController::class, 'indexData'])->middleware('can:users_view');
         Route::get('/roles_data', [UsersController::class, 'rolesData']);
-        Route::post('/store', [UsersController::class, 'store']);
-        Route::get('/show/{id}', [UsersController::class, 'show']);
-        Route::post('/update', [UsersController::class, 'update']);
-        Route::post('/delete', [UsersController::class, 'destroy']);
-        Route::get('/export', [UsersController::class, 'export']);
+        Route::post('/store', [UsersController::class, 'store'])->middleware('can:users_create');
+        Route::get('/show/{id}', [UsersController::class, 'show'])->middleware('can:users_edit');
+        Route::post('/update', [UsersController::class, 'update'])->middleware('can:users_edit');
+        Route::post('/delete', [UsersController::class, 'destroy'])->middleware('can:users_delete');
+        Route::get('/export', [UsersController::class, 'export'])->middleware('can:users_view');
+    });
+
+    Route::prefix('capsters')->group(function () {
+        Route::get('/', [CapstersController::class, 'index'])->middleware('can:capsters_view');
+        Route::get('/index_data', [CapstersController::class, 'indexData'])->middleware('can:capsters_view');
+        Route::post('/store', [CapstersController::class, 'store'])->middleware('can:capsters_create');
+        Route::get('/show/{id}', [CapstersController::class, 'show'])->middleware('can:capsters_edit');
+        Route::post('/update', [CapstersController::class, 'update'])->middleware('can:capsters_edit');
+        Route::post('/delete', [CapstersController::class, 'destroy'])->middleware('can:capsters_delete');
+        Route::get('/export', [CapstersController::class, 'export'])->middleware('can:capsters_view');
+    });
+
+    Route::prefix('dashboards')->group(function () {
+        Route::get('/main', [DashboardsController::class, 'main'])->middleware('can:main_dashboards_views');
+        Route::get('/mainLine', [DashboardsController::class, 'mainLine'])->middleware('can:main_dashboards_views');
+        Route::get('/mainTotal', [DashboardsController::class, 'mainTotal'])->middleware('can:main_dashboards_views');
+        Route::get('/transactions', [DashboardsController::class, 'transactions'])->middleware('can:transactions_dashboards_views');
+        Route::get('/capsters', [DashboardsController::class, 'capsters'])->middleware('can:capsters_dashboards_views');
+        Route::get('/products', [DashboardsController::class, 'products'])->middleware('can:products_dashboards_views');
+        Route::get('/customers', [DashboardsController::class, 'customers'])->middleware('can:customers_dashboards_views');
+
+        Route::get('/main/index_data', [DashboardsController::class, 'mainIndexData'])->middleware('can:main_dashboards_views');
+        Route::get('/transactions/index_data', [DashboardsController::class, 'transactionsIndexData'])->middleware('can:transactions_dashboards_views');
+        Route::get('/capsters/index_data', [DashboardsController::class, 'capstersIndexData'])->middleware('can:capsters_dashboards_views');
+        Route::get('/products/index_data', [DashboardsController::class, 'productsIndexData'])->middleware('can:products_dashboards_views');
+        Route::get('/customers/index_data', [DashboardsController::class, 'customersIndexData'])->middleware('can:customers_dashboards_views');
+
+        Route::get('/capsters/export', [DashboardsController::class, 'capstersExport'])->middleware('can:capsters_dashboards_views');
+        Route::get('/products/export', [DashboardsController::class, 'productsExport'])->middleware('can:products_dashboards_views');
+        Route::get('/customers/export', [DashboardsController::class, 'customersExport'])->middleware('can:customers_dashboards_views');
     });
 });
 
-Route::redirect('/', destination: '/dashboard-general-dashboard')->name('default_page');
+
+Route::redirect('/', destination: '/dashboards/main')->name('default_page');
 
 // Dashboard
 Route::get('/dashboard-general-dashboard', function () {
@@ -291,7 +330,7 @@ Route::get('/auth-reset-password', function () {
 // error
 Route::get('/error-403', function () {
     return view('pages.error-403', ['type_menu' => 'error']);
-});
+})->name('error-403');
 Route::get('/error-404', function () {
     return view('pages.error-404', ['type_menu' => 'error']);
 });

@@ -3,6 +3,7 @@
 
 <script>
     $(document).ready(function() {
+        var canEdit = @json(auth()->user()->can('appointments_edit'));
         $("#appointments").fullCalendar({
             height: 'auto',
             header: {
@@ -10,7 +11,7 @@
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay,listWeek'
             },
-            editable: true,
+            editable: canEdit,
             events: function(start, end, timezone, callback) {
                 $.ajax({
                     url: 'appointments/index_data', // Replace with the path to your server-side script
@@ -76,6 +77,9 @@
                 }
             },
             eventClick: function(event) {
+                if (!canEdit) {
+                    return;
+                }
                 var $customerSelect = $('.select2.customers');
                 var option = new Option(event.title, event.customer_id, true, true);
                 $customerSelect.append(option).trigger('change');
@@ -150,7 +154,7 @@
     }
 
     function clearValue() {
-        $('#customer').val(null);
+        $('#customer').val(null).trigger('change');
         $('#status').val(null);
         $('#date_start').val(null);
         $('#date_end').val(null);

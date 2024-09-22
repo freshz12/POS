@@ -1,148 +1,285 @@
 <style>
     /* Adjust modal width and center alignment */
+    .out-of-stock {
+        opacity: 0.5;
+        /* Makes the product card a bit faded */
+    }
+
+    .out-of-stock-overlay {
+        color: #888;
+        /* Darkens the text and overlay */
+        background-color: rgba(0, 0, 0, 0.3);
+        /* Darkens the background slightly */
+    }
+
     .modal-dialog.modal-dialog-centered {
         display: flex;
         align-items: center;
         justify-content: center;
     }
+
+    .modal-dialog.modal-fullscreen {
+        max-width: 100vw;
+        max-height: 100vh;
+    }
+
     .modal-content {
         width: 100%;
-        max-width: 350px; /* Maintain previous width */
+        max-width: 100vw;
+        max-height: 100vh;
+        height: 100%;
+        overflow: hidden;
+        /* Prevent scrollbars */
     }
 
     /* Numpad styling */
     .numpad {
         display: flex;
         flex-direction: column;
+        height: 100%;
+        width: 100%;
     }
+
     .numpad .row {
         margin-bottom: 5px;
     }
+
     .numpad-button {
         width: 100%;
-        height: 60px; /* Adjust height */
-        font-size: 1.5rem; /* Larger font size */
+        height: 60px;
+        /* Adjust height */
+        font-size: 1.5rem;
+        /* Larger font size */
         border-radius: 5px;
         margin: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
+
     .numpad-button:focus {
-        box-shadow: none; /* Remove focus outline */
+        box-shadow: none;
+        /* Remove focus outline */
     }
+
+    .numpad-button-payment {
+        width: 100%;
+        height: 60px;
+        /* Adjust height */
+        font-size: 1.5rem;
+        /* Larger font size */
+        border-radius: 5px;
+        margin: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .numpad-button-payment:focus {
+        box-shadow: none;
+        /* Remove focus outline */
+    }
+
+    .numpad-button-payment-ok {
+        width: 100%;
+        height: 60px;
+        /* Adjust height */
+        font-size: 1.5rem;
+        /* Larger font size */
+        border-radius: 5px;
+        margin: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .numpad-button-payment-ok:focus {
+        box-shadow: none;
+        /* Remove focus outline */
+    }
+
+
+
     #subtractButton {
-        background-color: #f8d7da;
-        color: #721c24;
-        border: none;
-    }
-    #okButton {
-        background-color: #28a745;
-        border: none;
+        background-color: red;
+        /* Red background color */
         color: white;
-    }
-    .btn-success {
-        background-color: #28a745;
-        border-color: #28a745;
+        /* White text color */
         border: none;
-    }
-    .btn-success:focus {
-        box-shadow: none; /* Remove focus outline */
+        /* Remove border */
+        font-size: 1.5rem;
+        /* Increase font size */
+        display: flex;
+        /* Use flexbox for alignment */
+        align-items: center;
+        /* Center align text and icon vertically */
+        justify-content: center;
+        /* Center align text and icon horizontally */
+        cursor: pointer;
+        /* Change cursor to pointer on hover */
     }
 
-    /* Adjust form-group for proper alignment */
-    .form-group {
+    #subtractButton:hover {
+        background-color: darkred;
+        /* Darker red background color on hover */
+    }
+
+    #okButton {
+        background-color: green;
+        /* Green background color */
+        color: white;
+        /* White text color */
+        border: none;
+        /* Remove border */
+        font-size: 1.5rem;
+        /* Increase font size */
+        display: flex;
+        /* Use flexbox for alignment */
+        align-items: center;
+        /* Center align text and icon vertically */
+        justify-content: center;
+        /* Center align text and icon horizontally */
+        cursor: pointer;
+        /* Change cursor to pointer on hover */
+    }
+
+    #okButton:hover {
+        background-color: darkgreen;
+        /* Darker green background color on hover */
+    }
+
+    /* Style for the input field */
+    #quantity {
+        text-align: center;
+        /* Center text horizontally */
+        font-size: 2rem;
+        /* Increase font size */
+        height: 60px;
+        /* Match height with numpad button height */
+        line-height: 60px;
+        /* Align text vertically in the middle */
         margin-bottom: 15px;
-    }
-    .form-control {
-        height: 60px; /* Match height with numpad buttons */
-        font-size: 1.5rem; /* Adjust font size */
-        text-align: right; /* Align text to right */
+        /* Space below the input */
     }
 
-    /* Style for the subtract button */
-#subtractButton {
-    background-color: red; /* Red background color for the subtract button */
-    color: white; /* White text color for the subtract button */
-    border: none; /* Remove default border */
-    font-size: 1.5rem; /* Increase font size */
-    display: flex; /* Use flexbox for alignment */
-    align-items: center; /* Center align text and icon vertically */
-    justify-content: center; /* Center align text and icon horizontally */
-    cursor: pointer; /* Change cursor to pointer on hover */
-}
+    #amount {
+        text-align: center;
+        /* Center text horizontally */
+        font-size: 2rem;
+        /* Increase font size */
+        height: 60px;
+        /* Match height with numpad button height */
+        line-height: 60px;
+        /* Align text vertically in the middle */
+        margin-bottom: 15px;
+        /* Space below the input */
+    }
 
-#subtractButton:hover {
-    content: 'No'; /* Show "No" on hover */
-    background-color: darkred; /* Darker red background color on hover */
-}
+    /* Style for the numpad */
+    .numpad {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        width: 100%;
+        /* Full width to match modal content width */
+    }
 
-/* Style for the OK button */
-#okButton {
-    background-color: green; /* Green background color for the OK button */
-    color: white; /* White text color for the OK button */
-    border: none; /* Remove default border */
-    font-size: 1.5rem; /* Increase font size */
-    display: flex; /* Use flexbox for alignment */
-    align-items: center; /* Center align text and icon vertically */
-    justify-content: center; /* Center align text and icon horizontally */
-    cursor: pointer; /* Change cursor to pointer on hover */
-}
+    /* Style for the numpad buttons */
 
-#okButton:hover {
-    background-color: darkgreen; /* Darker green background color on hover */
-}
-/* Style for the input field */
-#quantity {
-    text-align: center; /* Center text horizontally */
-    font-size: 2rem; /* Increase font size for better visibility */
-    height: 60px; /* Adjust height to match numpad button height */
-    line-height: 60px; /* Align text vertically in the middle */
-    margin-bottom: 15px; /* Space below the input */
-}
 
-/* Style for the numpad */
-.numpad {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    width: 100%; /* Full width to match modal content width */
-}
+    /* Optional: Adjust the width of the main content area */
+    .main-content {
+        overflow: hidden;
+        /* Prevent scrollbars on main content */
+        height: 100vh;
+        /* Full viewport height */
+    }
 
-/* Style for the numpad buttons */
-.numpad-button {
-    width: 100%; /* Full width for each button */
-    height: 60px; /* Same height for consistency */
-    font-size: 1.5rem; /* Larger font size for better readability */
-}
+    /* Container for the product list */
+    #productList {
+        max-height: 600px;
+        /* Adjust height as needed */
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+    }
 
-/* Style for the subtract button */
-#subtractButton {
-    background-color: red; /* Red background color */
-    color: white; /* White text color */
-    border: none; /* Remove border */
-    display: flex; /* Flexbox for alignment */
-    align-items: center; /* Center icon vertically */
-    justify-content: center; /* Center icon horizontally */
-}
+    /* Ensure the product items are displayed properly */
+    .product-item {
+        margin-bottom: 15px;
+        /* Space between product items */
+    }
 
-#subtractButton:hover {
-    background-color: darkred; /* Darker red on hover */
-    content: 'No'; /* Display "No" on hover */
-}
 
-/* Style for the OK button */
-#okButton {
-    background-color: green; /* Green background color */
-    color: white; /* White text color */
-    border: none; /* Remove border */
-    display: flex; /* Flexbox for alignment */
-    align-items: center; /* Center icon vertically */
-    justify-content: center; /* Center icon horizontally */
-}
+    .product-item img {
+        width: 100%;
+        height: 200px;
+        /* Set height to ensure square aspect ratio */
+        object-fit: cover;
+        /* Maintain aspect ratio while covering the container */
+    }
 
-#okButton:hover {
-    background-color: darkgreen; /* Darker green on hover */
-}
+    .product-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 33%;
+        /* Overlay height, adjust as needed */
+        background: rgba(255, 255, 255, 0.8);
+        /* White with 80% opacity */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
 
+    .product-name {
+        font-size: 1.2rem;
+        color: black;
+        /* Adjust text color as needed */
+    }
+
+    /* Adjust button styling and hide the button */
+    .add-to-cart-btn {
+        display: none;
+        /* Hide the button */
+    }
+
+    .quantity-button {
+        width: 50px;
+        height: 45px;
+        font-size: 1.5rem;
+    }
+
+    /* .trash-button {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .quantity-input {
+        width: 100px;
+        height: 50px;
+        font-size: 1.2rem;
+    } */
+
+    .table-responsive {
+        max-height: 625px;
+        /* Set a maximum height; adjust as needed */
+        overflow-y: auto;
+        /* Enable vertical scrolling */
+    }
+
+    .thead-fixed {
+        position: sticky;
+        /* Make the header sticky */
+        top: 0;
+        /* Stick to the top */
+        background-color: #f8f9fa;
+        /* Background color to differentiate */
+        z-index: 1;
+        /* Ensure it stays on top */
+        /* Optional: Add box-shadow for better visibility */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 </style>

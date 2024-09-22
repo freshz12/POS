@@ -35,7 +35,7 @@ class ProductController extends Controller
             //     ]);
             // }
 
-            $filteredData = $request->except(['_token', 'file']);
+            $filteredData = $request->except(['_token', 'file', 'is_included_in_receipt']);
 
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
@@ -48,6 +48,7 @@ class ProductController extends Controller
             }
 
             $additionalData = [
+                'is_included_in_receipt' => $request->is_included_in_receipt == 'on' ? 1 : 0,
                 'picture_path' => $filePath ?? null,
                 'created_by' => auth()->user()->id,
                 'updated_by' => auth()->user()->id,
@@ -99,9 +100,10 @@ class ProductController extends Controller
                 $filePath = 'files/products/' . $filename;
             }
 
-            $filteredData = $request->except(['_token', 'file']);
+            $filteredData = $request->except(['_token', 'file', 'is_included_in_receipt']);
 
             $additionalData = [
+                'is_included_in_receipt' => $request->is_included_in_receipt == 'on' ? 1 : 0,
                 'updated_by' => auth()->user()->id,
             ];
 

@@ -4,7 +4,7 @@
 
 @push('style')
     <link rel="stylesheet" href="{{ asset('library/ionicons201/css/ionicons.min.css') }}">
-
+    <link rel="stylesheet" href="{{ asset('library/bootstrap/dist/css/bootstrap4-toggle.min.css') }}">
     <style>
         .table td,
         .table th {
@@ -33,12 +33,22 @@
                             <div class="card-body">
                                 <div class="d-flex flex-column">
                                     <div class="d-flex mb-3" style="flex-grow: 1; align-items: flex-end;">
-                                        <button style="max-height: 40px; display: flex; align-items: center;"
-                                            class="btn btn-primary" data-toggle="modal" data-target="#addproduct">
-                                            <i class="ion-plus-circled" data-pack="default" data-tags="sort"
-                                                style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
-                                            Add New Product
-                                        </button>
+                                        @can('products_create')
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-primary" data-toggle="modal" data-target="#addproduct">
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Product
+                                            </button>
+                                        @else
+                                            <button style="max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-secondary" disabled>
+                                                <i class="ion-plus-circled" data-pack="default" data-tags="sort"
+                                                    style="font-size: 17px; margin-left: -5px; margin-right: 7px;"></i>
+                                                Add New Product
+                                            </button>
+                                        @endcan
+
                                         <div style="margin-left: auto; display: flex; align-items: flex-end;">
                                             <button
                                                 style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
@@ -143,6 +153,10 @@
                                 <label for="file" class="form-label">Picture of Product</label>
                                 <input class="form-control" type="file" name="file">
                             </div>
+                            <div class="col-6">
+                                <label for="product_picture" class="form-label">Is Included in Receipt</label><br>
+                                <input type="checkbox" name="is_included_in_receipt" data-toggle="toggle">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -219,6 +233,11 @@
                                 <img src="" id="product_picture" style="width:170px; height:170px;">
                                 <input class="form-control" id="file" type="file" name="file">
                             </div>
+                            <div class="col-6">
+                                <label for="product_picture" class="form-label">Is Included in Receipt</label><br>
+                                <input type="checkbox" id="is_included_in_receipt" name="is_included_in_receipt"
+                                    data-toggle="toggle">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -264,10 +283,19 @@
                             <input class="form-control" type="number" id="quantity_filter">
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row align-items-end">
                         <div class="col-6">
                             <label for="quantity" class="form-label">Last Updated Date</label>
                             <input class="form-control" type="date" id="updated_at_filter">
+                        </div>
+                        <div class="col-6">
+                            <label for="is_included_in_receipt_filter" class="form-label">Is Included in
+                                Receipt</label><br>
+                            <select class="form-control" name="is_included_in_receipt" id="is_included_in_receipt_filter"
+                                required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
                         </div>
                     </div>
                 </div>

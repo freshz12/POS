@@ -1,5 +1,9 @@
 <script>
     $(document).ready(function() {
+        const userPermissions = {
+            canEdit: @json(auth()->user()->can('roles_edit')),
+            canDelete: @json(auth()->user()->can('roles_delete')),
+        };
 
         $('#datatable').DataTable({
             "dom": '<"row"<"col-12 d-flex justify-content-end"f>>' +
@@ -26,19 +30,46 @@
                 {
                     "targets": 1,
                     "render": function(data, type, row, meta) {
+                        let editButton = '';
+                        let deleteButton = '';
+
+                        if (userPermissions.canEdit) {
+                            editButton = `
+                                <button onclick="ajaxEdit(${row.id})" class="btn btn-primary mr-2" data-toggle="modal" data-target="#editrole">
+                                    <i class="ion-edit" data-pack="default" data-tags="change, update, write, type, pencil"></i>
+                                </button>
+                            `;
+                        } else {
+                            editButton = `
+                                <button class="btn btn-secondary mr-2" disabled>
+                                    <i class="ion-edit" data-pack="default" data-tags="change, update, write, type, pencil"></i>
+                                </button>
+                            `;
+                        }
+
+                        if (userPermissions.canDelete) {
+                            deleteButton = `
+                                <form action="/roles/delete" method="POST" style="display:inline;" id="deleterole">
+                                    @csrf
+                                    <input type="hidden" name="id" value="${row.id}">
+                                    <button onclick="confirmDelete(event)" class="btn btn-danger" id="buttondelete">
+                                        <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
+                                    </button>
+                                </form>
+                            `;
+                        } else {
+                            deleteButton = `
+                                <button class="btn btn-danger" disabled>
+                                    <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
+                                </button>
+                            `;
+                        }
+
                         return `
-                    <div class="btn-group" role="group" aria-label="Action buttons">
-                        <button onclick="ajaxEdit(${row.id})"class="btn btn-primary mr-2">
-                            <i class="ion-edit" data-pack="default" data-tags="change, update, write, type, pencil"></i>
-                        </button>
-                        <form action="/roles/delete" method="POST" style="display:inline;" id="deleterole">
-                            @csrf
-                            <input class="form-control" type="hidden" name="id" value="${row.id}">
-                            <button onclick="confirmDelete(event)" class="btn btn-danger" id="buttondelete">
-                                <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
-                            </button>
-                        </form>
-                    </div>
+                            <div class="btn-group" role="group" aria-label="Action buttons">
+                                ${editButton}
+                                ${deleteButton}
+                            </div>
                         `;
                     },
                     "orderable": false,

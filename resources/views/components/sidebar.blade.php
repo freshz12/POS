@@ -7,71 +7,135 @@
             <a href="index.html">St</a>
         </div>
         <ul class="sidebar-menu">
-            <li class="menu-header">Appointments</li>
-            <li class="nav-item dropdown">
-                <a href="#"
-                    class="nav-link has-dropdown"
-                    data-toggle="dropdown"><i class="fas fa-calendar"></i> <span>Appointments</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('appointments') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('appointments/') }}">Appointments</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-header">Transactions</li>
-            <li class="nav-item dropdown">
-                <a href="#"
-                    class="nav-link has-dropdown"
-                    data-toggle="dropdown"><i class="fas fa-shopping-bag"></i> <span>Transactions</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('transactions') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('transactions/') }}">Transactions</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-header">Products</li>
-            <li class="nav-item dropdown">
-                <a href="#"
-                    class="nav-link has-dropdown"
-                    data-toggle="dropdown"><i class="fas fa-archive"></i> <span>Products</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('products') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('products/') }}">Products</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-header">Customers</li>
-            <li class="nav-item dropdown">
-                <a href="#"
-                    class="nav-link has-dropdown"
-                    data-toggle="dropdown"><i class="fas fa-address-card"></i> <span>Customers</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('customers') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('customers/') }}">Customers</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-header">Setting</li>
-            <li class="nav-item dropdown">
-                <a href="#"
-                    class="nav-link has-dropdown"
-                    data-toggle="dropdown"><i class="fas fa-cogs"></i> <span>Setting</span></a>
-                <ul class="dropdown-menu">
-                    <li class="{{ Request::is('roles') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('roles/') }}">Roles</a>
-                    </li>
-                    <li class="{{ Request::is('users') ? 'active' : '' }}">
-                        <a class="nav-link"
-                            href="{{ url('users/') }}">Users</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="menu-header">Dashboard</li>
+            @if (auth()->user()->canAny([
+                        'main_dashboards_views',
+                        'transactions_dashboards_views',
+                        'capsters_dashboards_views',
+                        'products_dashboards_views',
+                        'customers_dashboards_views',
+                    ]))
+                <li class="menu-header">Dashboards</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i
+                            class="fas fa-pie-chart"></i> <span>Dashboards</span></a>
+                    <ul class="dropdown-menu">
+                        @can('main_dashboards_views')
+                            <li class="{{ Request::is('main_dashboard') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('dashboards/main/') }}">Main Dashboard</a>
+                            </li>
+                        @endcan
+                        @can('transactions_dashboards_views')
+                            <li class="{{ Request::is('transactions_dashboard') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('dashboards/transactions/') }}">Transactions Dashboard</a>
+                            </li>
+                        @endcan
+                        @can('capsters_dashboards_views')
+                            <li class="{{ Request::is('capsters_dashboard') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('dashboards/capsters/') }}">Capsters Dashboard</a>
+                            </li>
+                        @endcan
+                        @can('products_dashboards_views')
+                            <li class="{{ Request::is('products_dashboard') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('dashboards/products/') }}">Products Dashboard</a>
+                            </li>
+                        @endcan
+                        @can('customers_dashboards_views')
+                            <li class="{{ Request::is('customers_dashboard') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('dashboards/customers/') }}">Customers Dashboard</a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endif
+
+            @if (auth()->user()->can('appointments_view'))
+                <li class="menu-header">Appointments</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i
+                            class="fas fa-calendar"></i> <span>Appointments</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('appointments') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('appointments/') }}">Appointments</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            @if (auth()->user()->canAny(['transactions_view', 'transactions_table_view']))
+                <li class="menu-header">Transactions</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i
+                            class="fas fa-shopping-bag"></i> <span>Transactions</span></a>
+                    <ul class="dropdown-menu">
+                        @can('transactions_view')
+                            <li class="{{ Request::is('transactions') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('transactions/') }}">POS</a>
+                            </li>
+                        @endcan
+                        @can('transactions_view')
+                            <li class="{{ Request::is('transactions_table') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('transactions_table/') }}">Transactions</a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endif
+
+            @if (auth()->user()->can('products_view'))
+                <li class="menu-header">Products</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i
+                            class="fas fa-archive"></i> <span>Products</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('products') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('products/') }}">Products</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            @if (auth()->user()->can('customers_view'))
+                <li class="menu-header">Customers</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i
+                            class="fas fa-address-card"></i> <span>Customers</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('customers') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('customers/') }}">Customers</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            @if (auth()->user()->canAny(['roles_view', 'users_view', 'capsters_view']))
+                <li class="menu-header">Setting</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i class="fas fa-cogs"></i>
+                        <span>Setting</span></a>
+                    <ul class="dropdown-menu">
+                        @can('roles_view')
+                            <li class="{{ Request::is('roles') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('roles/') }}">Roles</a>
+                            </li>
+                        @endcan
+                        @can('users_view')
+                            <li class="{{ Request::is('users') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('users/') }}">Users</a>
+                            </li>
+                        @endcan
+                        @can('capsters_view')
+                            <li class="{{ Request::is('capsters') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('capsters/') }}">Capsters</a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
+            @endif
+
+
+
+
+            {{-- <li class="menu-header">Dashboard</li>
             <li class="nav-item dropdown {{ $type_menu === 'dashboard' ? 'active' : '' }}">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-fire"></i><span>Dashboard</span></a>
@@ -274,21 +338,6 @@
                     </li>
                 </ul>
             </li>
-            {{-- <li class="nav-item dropdown">
-                <a href="#"
-                    class="nav-link has-dropdown"><i class="fas fa-map-marker-alt"></i> <span>Google
-                        Maps</span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="gmaps-advanced-route.html">Advanced Route</a></li>
-                    <li><a href="gmaps-draggable-marker.html">Draggable Marker</a></li>
-                    <li><a href="gmaps-geocoding.html">Geocoding</a></li>
-                    <li><a href="gmaps-geolocation.html">Geolocation</a></li>
-                    <li><a href="gmaps-marker.html">Marker</a></li>
-                    <li><a href="gmaps-multiple-marker.html">Multiple Marker</a></li>
-                    <li><a href="gmaps-route.html">Route</a></li>
-                    <li><a href="gmaps-simple.html">Simple</a></li>
-                </ul>
-            </li> --}}
             <li class="nav-item dropdown {{ $type_menu === 'modules' ? 'active' : '' }}">
                 <a href="#"
                     class="nav-link has-dropdown"><i class="fas fa-plug"></i> <span>Modules</span></a>
@@ -445,7 +494,7 @@
                     href="{{ url('credits') }}"><i class="fas fa-pencil-ruler">
                     </i> <span>Credits</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </aside>
 </div>

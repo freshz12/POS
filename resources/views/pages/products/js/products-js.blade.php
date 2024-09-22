@@ -1,5 +1,10 @@
+<script src="{{ asset('library/bootstrap/dist/js/bootstrap4-toggle.min.js') }}"></script>
 <script>
     $(document).ready(function() {
+        const userPermissions = {
+            canEdit: @json(auth()->user()->can('products_edit')),
+            canDelete: @json(auth()->user()->can('products_delete')),
+        };
         $('#datatable').DataTable({
             "dom": '<"row"<"col-12 d-flex justify-content-end"f>>' +
                 '<"row"<"col-12"t>>' +
@@ -14,6 +19,7 @@
                     d.selling_price = $('#selling_price_filter').val();
                     d.unit_of_measurement = $('#unit_of_measurement_filter').val();
                     d.quantity = $('#quantity_filter').val();
+                    d.is_included_in_receipt = $('#is_included_in_receipt_filter').val();
                     d.updated_at = $('#updated_at_filter').val();
                 },
             },
@@ -28,11 +34,25 @@
                 {
                     "targets": 1,
                     "render": function(data, type, row, meta) {
-                        return `
-                        <div class="btn-group" role="group" aria-label="Action buttons">
-                            <button onclick="ajaxEdit(${row.id})"class="btn btn-primary mr-2" data-toggle="modal" data-target="#editproduct">
-                                <i class="ion-edit" data-pack="default" data-tags="change, update, write, type, pencil"></i>
-                            </button>
+                        let editButton = '';
+                        let deleteButton = '';
+
+                        if (userPermissions.canEdit) {
+                            editButton = `
+                                <button onclick="ajaxEdit(${row.id})" class="btn btn-primary mr-2" data-toggle="modal" data-target="#editproduct">
+                                    <i class="ion-edit" data-pack="default" data-tags="change, update, write, type, pencil"></i>
+                                </button>
+                            `;
+                        } else {
+                            editButton = `
+                                <button class="btn btn-secondary mr-2" disabled>
+                                    <i class="ion-edit" data-pack="default" data-tags="change, update, write, type, pencil"></i>
+                                </button>
+                            `;
+                        }
+
+                        if (userPermissions.canDelete) {
+                            deleteButton = `
                             <form action="/products/delete" method="POST" style="display:inline;" id="deleteProduct">
                                 @csrf
                                 <input class="form-control" type="hidden" name="id" value="${row.id}">
@@ -40,8 +60,21 @@
                                     <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
                                 </button>
                             </form>
-                        </div>
                             `;
+                        } else {
+                            deleteButton = `
+                                <button class="btn btn-danger" disabled>
+                                    <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
+                                </button>
+                            `;
+                        }
+
+                        return `
+                            <div class="btn-group" role="group" aria-label="Action buttons">
+                                ${editButton}
+                                ${deleteButton}
+                            </div>
+                        `;
                     },
                     "orderable": false,
                     "searchable": false
@@ -175,6 +208,7 @@
         $('#selling_price_filter').val('');
         $('#unit_of_measurement_filter').val('');
         $('#quantity_filter').val('');
+        $('#is_included_in_receipt_filter').val('');
         $('#updated_at_filter').val('');
 
         $('#datatable').DataTable().ajax.reload();
@@ -189,6 +223,7 @@
             selling_price: $('#selling_price_filter').val(),
             unit_of_measurement: $('#unit_of_measurement_filter').val(),
             quantity: $('#quantity_filter').val(),
+            is_included_in_receipt: $('#is_included_in_receipt_filter').val(),
             updated_at: $('#updated_at_filter').val()
         };
         var queryString = $.param(params);
@@ -220,6 +255,14 @@
                 $('#quantity').val(response[0]['quantity']);
                 $('#unit_of_measurement').val(response[0]['unit_of_measurement']);
                 $('#description').val(response[0]['description']);
+
+                let isIncludedInReceipt = response[0]['is_included_in_receipt'];
+                if (parseInt(isIncludedInReceipt) == 1) {
+                    $('#is_included_in_receipt').bootstrapToggle('on');
+                } else {
+                    $('#is_included_in_receipt').bootstrapToggle('off');
+                }
+
                 $('#id').val(response[0]['id']);
                 if (response[0]['picture_path']) {
                     $('#product_picture').attr('src', '/storage/' + response[0]['picture_path']).show();

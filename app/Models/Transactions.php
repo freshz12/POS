@@ -19,37 +19,38 @@ class Transactions extends Model
 
     protected $casts = [
         'updated_at' => 'datetime:Y-m-d H:i:s',
+        'created_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function scopeFilterIndex($query, $request)
     {
-        return $query->when($request->full_name, function ($query) use ($request) {
-            $query->where('full_name', 'LIKE', '%' . $request->full_name . '%');
+        return $query->when($request->customer_name, function ($query) use ($request) {
+            $query->whereHas('customers', function ($query) use ($request) {
+                $query->where('full_name', 'like', '%' . $request->customer_name . '%');
+            });
         })
 
-            ->when($request->gender, function ($query) use ($request) {
-                if ($request->gender == 'B') {
-                    $query->whereIn('gender', ['F', 'M']);
-                } else {
-                    $query->where('gender', 'LIKE', '%' . $request->gender . '%');
-                }
-            })
-
-            ->when($request->email, function ($query) use ($request) {
-                $query->where('email', 'LIKE', '%' . $request->email . '%');
-            })
-
-            ->when($request->phone_number, function ($query) use ($request) {
-                $query->where('phone_number', 'LIKE', '%' . $request->phone_number . '%');
-            })
-
-            ->when($request->updated_at, function ($query) use ($request) {
-                $date = Carbon::parse($request->updated_at)->format('Y-m-d');
-                $startOfDay = Carbon::parse($date)->startOfDay()->toDateTimeString();
-                $endOfDay = Carbon::parse($date)->endOfDay()->toDateTimeString();
-
-                $query->whereBetween('updated_at', [$startOfDay, $endOfDay]);
+        ->when($request->capster_name, function ($query) use ($request) {
+            $query->whereHas('capster', function ($query) use ($request) {
+                $query->where('full_name', 'like', '%' . $request->capster_name . '%');
             });
+        })
+
+        ->when($request->transaction_id, function ($query) use ($request) {
+            $query->where('transaction_id', 'LIKE', '%' . $request->transaction_id . '%');
+        })
+
+        ->when($request->total_amount, function ($query) use ($request) {
+            $query->where('amount', 'LIKE', '%' . $request->total_amount . '%');
+        })
+
+        ->when($request->created_at, function ($query) use ($request) {
+            $date = Carbon::parse($request->created_at)->format('Y-m-d');
+            $startOfDay = Carbon::parse($date)->startOfDay()->toDateTimeString();
+            $endOfDay = Carbon::parse($date)->endOfDay()->toDateTimeString();
+
+            $query->whereBetween('created_at', [$startOfDay, $endOfDay]);
+        });
     }
 
     public function updatedBy()
@@ -65,5 +66,15 @@ class Transactions extends Model
     public function customers()
     {
         return $this->belongsTo(Customers::class, 'customer_id');
+    }
+
+    public function transaction_products()
+    {
+        return $this->hasMany(TransactionProducts::class, 'transaction_id');
+    }
+
+    public function capster()
+    {
+        return $this->belongsTo(Capsters::class, 'capster_id');
     }
 }
