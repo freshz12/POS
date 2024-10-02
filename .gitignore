@@ -1,8 +1,9 @@
 /node_modules
-/public/build
-/public/hot
 /storage/*.key
-/vendor
+/vendor/*
+!.gitignore
+!vendor/charlieuki
+!vendor/spatie
 .env
 .env.backup
 .phpunit.result.cache
