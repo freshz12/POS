@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Carbon\Carbon;
 use App\Models\Products;
+use Mike42\Escpos\Printer;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +22,7 @@ class DashboardsController extends Controller
     {
         return view('pages.dashboards.main.main', ['type_menu' => 'main_dashboard']);
     }
+    
 
     public function mainIndexData(Request $request)
     {
@@ -47,14 +50,14 @@ class DashboardsController extends Controller
             ->join('capsters', 'transactions.capster_id', '=', 'capsters.id')
             ->whereNull('transactions.deleted_at')
             ->groupBy('capsters.full_name')
-            ->orderBy('total_amount', 'desc')
+            ->orderBy('total_transactions', 'desc') // Order by total transactions
             ->limit(5)
             ->get();
 
-
-        $pieChartData2 = $capsters->pluck('total_amount')->toArray();
+        $pieChartData2 = $capsters->pluck('total_transactions')->toArray();
         $pieChartLabels2 = $capsters->pluck('capster_name')->toArray();
-        $pieChartAdditionals2 = $customers->pluck('total_transactions')->toArray();
+        $pieChartAdditionals2 = $capsters->pluck('total_amount')->toArray();
+
 
         $products = TransactionProducts::select(
             'products.product_name as product_name',
@@ -95,18 +98,29 @@ class DashboardsController extends Controller
             case 'today':
                 $transactions = Transactions::select(
                     DB::raw('SUM(transactions.amount) as total_spent'),
-                    DB::raw('DATEPART(HOUR, transactions.created_at) as transaction_hour')
+                    DB::raw('FLOOR(DATEPART(HOUR, transactions.created_at) / 2) * 2 as transaction_interval') // Grouping by 2-hour intervals
                 )
                     ->whereDate('transactions.created_at', Carbon::now('Asia/Jakarta')->toDateString())
                     ->whereNull('transactions.deleted_at')
-                    ->groupBy(DB::raw('DATEPART(HOUR, transactions.created_at)'))
-                    ->orderBy('transaction_hour')
+                    ->groupBy(DB::raw('FLOOR(DATEPART(HOUR, transactions.created_at) / 2) * 2'))
+                    ->orderBy('transaction_interval')
                     ->get();
 
-                $dataArray = $transactions->pluck('total_spent')->toArray();
-                $labelArray = $transactions->pluck('transaction_hour')->map(function ($hour) {
-                    return Carbon::createFromTime($hour, 0, 0, 'Asia/Jakarta')->format('H:i');
-                })->toArray();
+                // Create labels for 2-hour intervals
+                $labelArray = [];
+                for ($i = 0; $i < 24; $i += 2) {
+                    $labelArray[] = Carbon::createFromTime($i, 0, 0, 'Asia/Jakarta')->format('H:i');
+                }
+
+                // Initialize data array with zeros for each interval
+                $dataArray = array_fill(0, 12, 0); // 12 intervals for a 24-hour day
+
+                // Fill data array with actual transaction totals
+                foreach ($transactions as $transaction) {
+                    $index = $transaction->transaction_interval / 2; // 0 for 00:00, 1 for 02:00, etc.
+                    $dataArray[$index] = $transaction->total_spent; // Set total spent for the corresponding interval
+                }
+
                 break;
 
             case 'week':
@@ -340,16 +354,6 @@ class DashboardsController extends Controller
         ]);
     }
 
-
-
-
-
-
-
-
-
-
-
     public function transactions()
     {
         return view('pages.dashboards.transactions.transactions', ['type_menu' => 'transactions_dashboard']);
@@ -381,7 +385,7 @@ class DashboardsController extends Controller
             ->when($request->total_transactions, function ($query) use ($request) {
                 $query->havingRaw('COUNT(*) LIKE ?', ['%' . $request->total_transactions . '%']);
             })
-            ->orderBy('transactions.capster_id')
+            ->orderBy('total_transactions', 'desc')
             ->get();
 
         return response()->json(['data' => $capsters]);
@@ -418,7 +422,7 @@ class DashboardsController extends Controller
             ->when($request->quantity_left, function ($query) use ($request) {
                 $query->where('products.quantity', 'like', '%' . $request->quantity_left . '%');
             })
-            ->orderBy('transaction_products.product_id')
+            ->orderBy('total_sold_quantity', 'desc')
             ->get();
 
         return response()->json(['data' => $products]);
@@ -456,7 +460,7 @@ class DashboardsController extends Controller
             ->when($request->total_transactions, function ($query) use ($request) {
                 $query->havingRaw('COUNT(transactions.id) LIKE ?', ['%' . $request->total_transactions . '%']);
             })
-            ->orderBy('customers.full_name')
+            ->orderBy('total_spent', 'desc')
             ->get();
 
         return response()->json(['data' => $customers]);

@@ -148,7 +148,11 @@
                 fetchTotalAmountAndTransactions('custom', startRange, endRange);
                 $('#customRangeModal').modal('hide');
             } else {
-                alert("Please select both start and end dates.");
+                swal('Error', 'Please select both start and end dates.', 'error');
+                setTimeout(function() {
+                    swal.close();
+                }, 5000);
+                // alert("Please select both start and end dates.");
             }
         });
     });

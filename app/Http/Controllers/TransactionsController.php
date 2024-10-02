@@ -10,6 +10,7 @@ use App\Models\Products;
 use App\Models\TransactionProducts;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 
 class TransactionsController extends Controller
 {
@@ -23,7 +24,7 @@ class TransactionsController extends Controller
     {
         try {
             $request->validate([
-                'total_amount' => 'required|numeric',
+                'total_amount' => 'required',
                 'cart_items' => 'required|string',
                 'amount' => 'required',
             ]);
@@ -48,6 +49,7 @@ class TransactionsController extends Controller
             $runningNumber = $this->generateInvoiceNumber();
 
             $total_amount = str_replace('.', '', $request->input('total_amount'));
+            $cash_paid = str_replace('.', '', $request->input('amount'));
 
             $tr = Transactions::create([
                 'transaction_id' => $runningNumber,
@@ -78,9 +80,13 @@ class TransactionsController extends Controller
                 ]);
             }
 
+            $change = $cash_paid - $total_amount;
+
             DB::commit();
 
-            session()->flash('success_message', 'Transaction has been placed successfully!');
+            session()->flash('change_message', 'Your change is ' . $this->formatNumberWithCommas($change));
+
+            $this->invoice($cartItems, $total_amount, $runningNumber, $tr);
 
             return redirect()->to('/transactions')->with('type_menu', 'transactions');
         } catch (\Exception $e) {
@@ -90,6 +96,81 @@ class TransactionsController extends Controller
                 'error_message' => 'Something went wrong, please contact administrator',
             ]);
         }
+    }
+
+    public function invoice($cartItems, $total_amount, $runningNumber, $tr)
+    {
+        $mid = '123123456';
+        $store_name = 'DENSETSU';
+        $store_address = 'De Entrance Arkadia. 
+        Jl. TB Simatupang No.Kav. 88
+        Kebagusan, Ps. Minggu
+        Daerah Khusus Ibukota 
+        Jakarta 12520';
+        $store_phone = '1234567890';
+        $store_email = 'yourmart@email.com';
+        $store_website = 'densetsu.co.id';
+        // $tax_percentage = 10;
+        $transaction_id = $runningNumber;
+        $currency = 'Rp.';
+        $image_path = public_path('files/logo.png');
+
+
+
+        $printer = new ReceiptPrinter;
+        $printer->init(
+            config('receiptprinter.connector_type'),
+            config('receiptprinter.connector_descriptor')
+        );
+
+        $operator = auth()->user()->name;
+        $created_date = $tr->created_at;
+
+        $printer->setStore(null, $store_name, $store_address, $store_phone, $store_email, $store_website, $operator);
+
+        $printer->setCurrency($currency);
+        $printer->setCreatedat($created_date);
+
+        $items = [];
+        foreach ($cartItems as $item) {
+            $product = Products::find($item['id']);
+
+            if ($product) {
+                if($product->is_included_in_receipt){
+                    $items[] = [
+                        'name' => $product->product_name,
+                        'qty' => $item['qty'],
+                        'price' => $product->selling_price,
+                    ];
+                }
+            }
+        }
+
+        foreach ($items as $item) {
+            $printer->addItem(
+                $item['name'],
+                $item['qty'],
+                $item['price']
+            );
+        }
+
+        // $printer->setTax($tax_percentage);
+
+        $printer->calculateSubTotal();
+        $printer->calculateGrandTotal();
+
+        $printer->setTransactionID($transaction_id);
+
+        $printer->setLogo($image_path);
+
+        // Set QR code
+        // $printer->setQRcode([
+        //     'tid' => $transaction_id,
+        // ]);
+
+        $printer->printReceipt();
+
+        // return response()->json(['status' => 'Printing']);
     }
 
     public function generateInvoiceNumber()
@@ -104,5 +185,10 @@ class TransactionsController extends Controller
         }
 
         return 'TR' . str_pad($nextNumber, 7, '0', STR_PAD_LEFT);
+    }
+
+    protected function formatNumberWithCommas($number)
+    {
+        return number_format($number, 0, ',', '.');
     }
 }

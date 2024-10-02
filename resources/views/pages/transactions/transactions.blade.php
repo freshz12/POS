@@ -15,7 +15,8 @@
     @include('pages.transactions.css.transactions-css')
 
     <!-- Include Font Awesome for the icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
+    <link rel="stylesheet" href="{{ asset('library/font-awesome/css/all.min.css') }}">
 </head>
 
 <body>
@@ -27,6 +28,14 @@
                 setTimeout(function() {
                     swal.close();
                 }, 5000);
+            });
+        </script>
+    @endif
+
+    @if (session('change_message'))
+        <script>
+            $(document).ready(function() {
+                swal('Success', '{{ session('change_message') }}', 'success');
             });
         </script>
     @endif

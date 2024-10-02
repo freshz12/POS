@@ -26,7 +26,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        try {
+        // try {
             DB::beginTransaction();
             // $duplicateSKU = Products::where('sku', $request->sku)->value('sku');
             // if ($duplicateSKU == $request->sku) {
@@ -64,13 +64,13 @@ class ProductController extends Controller
 
             return redirect()->to('/products')->with('type_menu', 'products');
 
-        } catch (\Exception $e) {
-            DB::rollBack();
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
 
-            return back()->withErrors([
-                'error_message' => 'Something went wrong, please contact administrator',
-            ]);
-        }
+        //     return back()->withErrors([
+        //         'error_message' => 'Something went wrong, please contact administrator',
+        //     ]);
+        // }
     }
 
     public function show($id)

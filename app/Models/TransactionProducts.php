@@ -24,6 +24,11 @@ class TransactionProducts extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
+    }
+
     public function scopeFilterIndex($query, $request)
     {
         return $query->whereHas('transaction', function ($query) use ($request) {
@@ -42,6 +47,15 @@ class TransactionProducts extends Model
             })
             ->when($request->total_amount, function ($query) use ($request) {
                 $query->where('amount', 'LIKE', '%' . $request->total_amount . '%');
+            })
+            ->when($request->created_at_from && $request->created_at_to, function ($query) use ($request) {
+                $date1 = Carbon::parse($request->created_at_from)->format('Y-m-d');
+                $startOfDay1 = Carbon::parse($date1)->startOfDay()->toDateTimeString();
+    
+                $date2 = Carbon::parse($request->created_at_to)->format('Y-m-d');
+                $endOfDay2 = Carbon::parse($date2)->endOfDay()->toDateTimeString();
+    
+                $query->whereBetween('created_at', [$startOfDay1, $endOfDay2]);
             })
             ->when($request->created_at, function ($query) use ($request) {
                 $date = Carbon::parse($request->created_at)->format('Y-m-d');

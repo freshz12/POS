@@ -129,7 +129,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/capsters/export', [DashboardsController::class, 'capstersExport'])->middleware('can:capsters_dashboards_views');
         Route::get('/products/export', [DashboardsController::class, 'productsExport'])->middleware('can:products_dashboards_views');
         Route::get('/customers/export', [DashboardsController::class, 'customersExport'])->middleware('can:customers_dashboards_views');
+
     });
+    Route::get('/invoice', [DashboardsController::class, 'invoice']);
 });
 
 

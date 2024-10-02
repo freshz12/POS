@@ -21,6 +21,11 @@ class Customers extends Model
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s');
+    }
+
     public function scopeFilterIndex($query, $request)
     {
         return $query->when($request->full_name, function ($query) use ($request) {

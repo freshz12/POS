@@ -17,7 +17,8 @@
                     d.capster_name = $('#capster_name_filter').val();
                     d.transaction_id = $('#transaction_id_filter').val();
                     d.total_amount = $('#total_amount_filter').val();
-                    d.created_at = $('#created_at_filter').val();
+                    d.created_at_from = $('#created_at_filter_from').val();
+                    d.created_at_to = $('#created_at_filter_to').val();
                 },
             },
             "columnDefs": [{
@@ -142,7 +143,8 @@
         $('#capster_name_filter').val('');
         $('#transaction_id_filter').val('');
         $('#total_amount_filter').val('');
-        $('#created_at_filter').val('');
+        $('#created_at_filter_from').val('');
+        $('#created_at_filter_to').val('');
 
         $('#datatable').DataTable().ajax.reload();
 
@@ -156,7 +158,8 @@
             capster_name: $('#capster_name_filter').val(),
             transaction_id: $('#transaction_id_filter').val(),
             total_amount: $('#total_amount_filter').val(),
-            created_at: $('#created_at_filter').val()
+            created_at_from: $('#created_at_filter_from').val(),
+            created_at_to: $('#created_at_filter_to').val()
         };
         var queryString = $.param(params);
         var downloadUrl = baseUrl + '?' + queryString;
