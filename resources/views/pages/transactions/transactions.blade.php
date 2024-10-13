@@ -217,7 +217,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="paymentForm" method="POST" action="/transactions/store">
+                    <form id="paymentForm" method="POST" action="{{ url('/transactions/store') }}">
                         @csrf
                         <input type="hidden" id="totalAmountInput" name="total_amount">
                         <input type="hidden" id="cartItemsInput" name="cart_items">
@@ -328,7 +328,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/customers/store_ajax" id="customer_form">
+                <form method="post" action="{{ url('/customers/store_ajax') }}" id="customer_form">
                     <div class="modal-body">
                         @csrf
                         <div class="row">

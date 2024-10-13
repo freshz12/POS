@@ -36,7 +36,7 @@
                         let deleteButton = '';
                         if (userPermissions.canDelete) {
                             deleteButton = `
-                            <form action="/transactions_table/delete" method="POST" style="display:inline;" id="deletetransaction">
+                            <form action="{{ url('/transactions_table/delete') }}" method="POST" style="display:inline;" id="deletetransaction">
                                 @csrf
                                 <input class="form-control" type="hidden" name="id" value="${row.id}">
                                 <button onclick="confirmDelete(event)" class="btn btn-danger" id="buttondelete">

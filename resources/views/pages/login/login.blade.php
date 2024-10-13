@@ -44,7 +44,7 @@
                             <p class="text-muted">Before you get started, you must login or register if you don't
                                 already
                                 have an account.</p>
-                            <form method="POST" action="/auth" class="needs-validation">
+                            <form method="POST" action="{{ url('/auth') }}" class="needs-validation">
                                 @csrf
                                 <div class="form-group">
                                     <label for="username">Email</label>

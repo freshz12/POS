@@ -71,4 +71,9 @@ class Appointments extends Model
     {
         return $this->belongsTo(Customers::class, 'customer_id');
     }
+
+    public function capster()
+    {
+        return $this->belongsTo(Capsters::class, 'capster_id');
+    }
 }

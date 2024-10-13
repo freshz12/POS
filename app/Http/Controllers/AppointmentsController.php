@@ -21,9 +21,9 @@ class AppointmentsController extends Controller
     public function indexData(Request $request)
     {
         $appointments = Appointments::
-        with(['customers'])
+        with(['customers', 'capster'])
         ->orderBy('id', 'desc')
-        ->get(['id', 'start_date', 'end_date', 'status', 'remarks', 'customer_id']);
+        ->get(['id', 'start_date', 'end_date', 'status', 'remarks', 'customer_id', 'capster_id']);
 
         return response()->json(['data' => $appointments]);
     }

@@ -35,6 +35,21 @@ class PermissionsTableSeeder extends Seeder
             'customers_edit' => 'customers',
             'customers_delete' => 'customers',
 
+            'attendances_view' => 'attendances',
+            'attendances_create' => 'attendances',
+            'attendances_edit' => 'attendances',
+            'attendances_delete' => 'attendances',
+            
+            'check_in' => 'attendances',
+
+            'attendances_approval_view' => 'attendances',
+            'attendances_approve_or_reject' => 'attendances',
+
+            'promos_view' => 'promos',
+            'promos_create' => 'promos',
+            'promos_edit' => 'promos',
+            'promos_delete' => 'promos',
+            
             'products_view' => 'products',
             'products_create' => 'products',
             'products_edit' => 'products',
@@ -60,12 +75,14 @@ class PermissionsTableSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission => $type) {
-            Permission::create([
-                'name' => $permission,
-                'type' => $type, // Set the type corresponding to the permission
-                'created_by' => 0, // Set created_by to 0
-                'updated_by' => 0, // Set updated_by to 0
-            ]);
+            Permission::firstOrCreate(
+                ['name' => $permission],
+                [
+                    'type' => $type,
+                    'created_by' => 0,
+                    'updated_by' => 0,
+                ]
+            );
         }
     }
 }

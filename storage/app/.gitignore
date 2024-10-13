@@ -1,3 +1,11 @@
 *
 !public/
 !.gitignore
+
+public/attendance/*
+public/products/*
+
+!public/attendance/
+!public/products/
+
+!public/default/

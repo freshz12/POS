@@ -1,4 +1,3 @@
-<script src="{{ asset('library/flatpickr/flatpickr.js') }}"></script>
 <script src="{{ asset('library/fullcalendar/dist/fullcalendar.min.js') }}"></script>
 
 <script>
@@ -55,8 +54,8 @@
                 var tooltipContent =
                     'Customer Name: ' + event.title + '<br>' +
                     'Start: ' + moment(event.start).format('YYYY-MM-DD HH:mm') + '<br>' +
-                    'End: ' + (event.end ? moment(event.end).format('YYYY-MM-DD HH:mm') + '<br>' :
-                        '') +
+                    'End: ' + (event.end ? moment(event.end).format('YYYY-MM-DD HH:mm') + '<br>' : '') +
+                    'Capster: ' + event.capster.full_name + '<br>' +
                     'Remarks: ' + event.remarks;
 
 
@@ -80,10 +79,16 @@
                 if (!canEdit) {
                     return;
                 }
+
                 var $customerSelect = $('.select2.customers');
                 var option = new Option(event.title, event.customer_id, true, true);
                 $customerSelect.append(option).trigger('change');
                 $customerSelect.val(event.customer_id).trigger('change');
+
+                var $capsterSelect = $('.select2#capster_edit');
+                var optionCapster = new Option(event.capster.full_name, event.capster_id, true, true);
+                $capsterSelect.append(optionCapster).trigger('change');
+                $capsterSelect.val(event.capster_id).trigger('change');
 
                 $('#status_edit').val(event.status);
                 $('#start_edit').val(moment(event.start).format('YYYY-MM-DD HH:mm'));
@@ -96,18 +101,24 @@
             timeFormat: 'H(:mm)'
         });
 
-        flatpickr(".flatpickr", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            time_24hr: true,
-            // minDate: new Date(),
-            allowInput: true
-        });
-
         $("#date_start").val(null);
         $("#date_end").val(null);
 
-        
+        $('#submit_appointment_button').on('click', function(e) {
+            e.preventDefault();
+
+            let dateStart = $('#date_start').val();
+            let dateEnd = $('#date_end').val();
+
+            let startDate = new Date(dateStart);
+            let endDate = new Date(dateEnd);
+
+            if (endDate <= startDate) {
+                swal('Error', 'End date must be greater than start date', 'error');
+            } else {
+                $('#create_appointment_form').submit();
+            }
+        });
     });
 
     function openAddCustomerModal() {

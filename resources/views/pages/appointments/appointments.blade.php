@@ -6,8 +6,6 @@
     {{-- <link rel="stylesheet" href="{{ asset('css/appointments/appointments.css') }}"> --}}
 
     <link rel="stylesheet" href="{{ asset('library/fullcalendar/dist/fullcalendar.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('library/flatpickr/flatpickr.min.css') }}">
-
 
     <style>
         .form-control.flatpickr {
@@ -89,7 +87,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/appointments/store" enctype="multipart/form-data">
+                <form method="post" id="create_appointment_form" action="{{ url('/appointments/store') }}"
+                    enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -128,6 +127,11 @@
                         <br>
                         <div class="row">
                             <div class="col-6">
+                                <label for="amount">Capster Name</label>
+                                <select class="form-control select2 capsters" id="capster" name="capster_id"
+                                    required></select>
+                            </div>
+                            <div class="col-6">
                                 <label for="remarks" class="form-label">Remarks</label>
                                 <textarea class="form-control" name="remarks" id="remarks" rows="3"></textarea>
                             </div>
@@ -135,7 +139,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" id="submit_appointment_button" class="btn btn-primary">Create</button>
                     </div>
                 </form>
             </div>
@@ -155,7 +159,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/customers/store_ajax" id="customer_form">
+                <form method="post" action="{{ url('/customers/store_ajax') }}" id="customer_form">
                     <div class="modal-body">
                         @csrf
                         <div class="row">
@@ -208,7 +212,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/appointments/update">
+                <form method="post" action="{{ url('/appointments/update') }}">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -233,6 +237,11 @@
                         <div class="form-group">
                             <label for="eventEnd">End Date</label>
                             <input type="text" class="form-control flatpickr" id="end_edit" name="end" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Capster Name</label>
+                            <select class="form-control select2 capsters" id="capster_edit" name="capster_id"
+                                required></select>
                         </div>
                         <div class="form-group">
                             <label for="eventRemarks">Remarks</label>

@@ -104,6 +104,63 @@ $('.select2.capsters').select2({
     minimumInputLength: 1,
 });
 
+$('.select2.products').select2({
+    ajax: {
+        url: '/products/index_data',
+        type: 'GET',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                product_name: params.term,
+                page: params.page || 1
+            };
+        },
+        processResults: function (data, params) {
+            params.page = params.page || 1;
+
+            var results = [];
+            $.each(data.data, function (index, item) {
+                results.push({
+                    id: item.id,
+                    text: `Product Name : <strong>${item.product_name}</strong> <br>
+                            SKU : ${item.sku}`
+                });
+            });
+
+            return {
+                results: results,
+                pagination: {
+                    more: (params.page * 30) < data.recordsTotal
+                }
+            };
+        },
+        cache: true
+    },
+    minimumInputLength: 3,
+    escapeMarkup: function (markup) {
+        return markup;
+    },
+    templateResult: function (data) {
+        if (data.loading) {
+            return data.text;
+        }
+        return $(`<div>${data.text}</div>`);
+    },
+    templateSelection: function (data) {
+        return data.product_name || data.text;
+    }
+});
+
+
+flatpickr(".flatpickr", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+    time_24hr: true,
+    // minDate: new Date(),
+    allowInput: true
+});
+
 function openAddCustomerModal() {
     $('#customer_full_name').val(null);
     $('#customer_email').val(null);

@@ -22,6 +22,11 @@ class DashboardsController extends Controller
     {
         return view('pages.dashboards.main.main', ['type_menu' => 'main_dashboard']);
     }
+
+    public function invoice()
+    {
+        return view('pages.invoice.invoice.invoice', ['type_menu' => 'invoice']);
+    }
     
 
     public function mainIndexData(Request $request)

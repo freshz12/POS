@@ -5,13 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
-use App\Http\Controllers\CapstersController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CapstersController;
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\DashboardsController;
+use App\Http\Controllers\AttendancesController;
 use App\Http\Controllers\AppointmentsController;
+use App\Http\Controllers\PromosController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\TransactionsTableController;
-use App\Http\Controllers\DashboardsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +47,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('transactions_table')->group(function () {
         Route::get('/', [TransactionsTableController::class, 'index'])->middleware('can:transactions_view');
         Route::post('/index_data', [TransactionsTableController::class, 'indexData'])->middleware('can:transactions_view');
-        Route::post('/store', [TransactionsTableController::class, 'store'])->middleware('can:transactions_create');
         Route::get('/show/{id}', [TransactionsTableController::class, 'show'])->middleware('can:transactions_edit');
         Route::post('/update', [TransactionsTableController::class, 'update'])->middleware('can:transactions_edit');
         Route::post('/delete', [TransactionsTableController::class, 'destroy'])->middleware('can:transactions_delete');
@@ -68,14 +69,39 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/delete', [CustomersController::class, 'destroy'])->middleware('can:customers_delete');
         Route::get('/export', [CustomersController::class, 'export'])->middleware('can:customers_view');
     });
+
+    Route::prefix('promos')->group(function () {
+        Route::get('/', [PromosController::class, 'index'])->middleware('can:promos_view');
+        Route::get('/index_data', [PromosController::class, 'indexData'])->middleware('can:promos_view');
+        Route::post('/store', [PromosController::class, 'store'])->middleware('can:promos_create');
+        Route::get('/show/{id}', [PromosController::class, 'show'])->middleware('can:promos_edit');
+        Route::post('/update', [PromosController::class, 'update'])->middleware('can:promos_edit');
+        Route::post('/delete', [PromosController::class, 'destroy'])->middleware('can:promos_delete');
+        Route::get('/export', [PromosController::class, 'export'])->middleware('can:promos_view');
+    });
+
+    Route::prefix('attendances')->group(function () {
+        Route::get('/', [AttendancesController::class, 'index'])->middleware('can:check_in');
+        Route::post('/check_in', [AttendancesController::class, 'checkIn'])->middleware('can:check_in');
+        
+        Route::get('/approval', [AttendancesController::class, 'approval'])->middleware('can:attendances_approval_view');
+        Route::get('/approval_index_data', [AttendancesController::class, 'approval_index_data'])->middleware('can:attendances_approval_view');
+        Route::post('/approve_or_reject', [AttendancesController::class, 'approve_or_reject'])->middleware('can:attendances_approve_or_reject');
+
+        Route::get('/index_history', [AttendancesController::class, 'index_history'])->middleware('can:attendances_view');
+        Route::get('/index_data', [AttendancesController::class, 'indexData'])->middleware('can:attendances_view');
+        Route::post('/store', [AttendancesController::class, 'store'])->middleware('can:attendances_create');
+        Route::get('/show/{id}', [AttendancesController::class, 'show'])->middleware('can:attendances_edit');
+        Route::post('/update', [AttendancesController::class, 'update'])->middleware('can:attendances_edit');
+        Route::post('/delete', [AttendancesController::class, 'destroy'])->middleware('can:attendances_delete');
+        Route::get('/export', [AttendancesController::class, 'export'])->middleware('can:attendances_view');
+    });
     
     Route::prefix('appointments')->group(function () {
         Route::get('/', [AppointmentsController::class, 'index'])->middleware('can:appointments_view');
         Route::post('/index_data', [AppointmentsController::class, 'indexData'])->middleware('can:appointments_view');
         Route::post('/store', [AppointmentsController::class, 'store'])->middleware('can:appointments_create');
-        Route::get('/show/{id}', [AppointmentsController::class, 'show'])->middleware('can:appointments_edit');
         Route::post('/update', [AppointmentsController::class, 'update'])->middleware('can:appointments_edit');
-        Route::post('/delete', [AppointmentsController::class, 'destroy'])->middleware('can:appointments_delete');
         Route::get('/export', [AppointmentsController::class, 'export'])->middleware('can:appointments_view');
     });
 

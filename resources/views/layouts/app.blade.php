@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{ asset('library/ionicons201/css/ionicons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/main/main.css') }}">
     <link rel="stylesheet" href="{{ asset('library/select2/dist/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('library/flatpickr/flatpickr.min.css') }}">
 </head>
 
 <body>
@@ -32,6 +33,14 @@
                 setTimeout(function() {
                     swal.close();
                 }, 5000);
+            });
+        </script>
+    @endif
+
+    @if (session('success_message_endless'))
+        <script>
+            $(document).ready(function() {
+                swal('Success', '{{ session('success_message_endless') }}', 'success');
             });
         </script>
     @endif
@@ -80,6 +89,7 @@
     <script src="{{ asset('library/datatables/media/js/dataTables.buttons.min.js') }}"></script>
     <script src="{{ asset('js/page/bootstrap-modal.js') }}"></script>
     <script src="{{ asset('library/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('library/flatpickr/flatpickr.js') }}"></script>
 
     <!-- SweetAlert -->
     <script src="{{ asset('library/sweetalert/dist/sweetalert.min.js') }}"></script>

@@ -23,19 +23,8 @@
             margin-bottom: 10px;
         }
 
-        .invoice {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
         .invoice th, .invoice td {
             padding: 2px;
-            text-align: left;
-            font-size: 12px;
-        }
-
-        .invoice th {
-            border-bottom: 1px solid black;
             font-size: 12px;
         }
 
@@ -43,13 +32,8 @@
             text-align: right;
         }
 
-        .text-center {
-            text-align: center;
-        }
-
         .total-row {
             border-top: 1px dashed black;
-            margin-top: 5px;
             font-weight: bold;
         }
     </style>
@@ -57,7 +41,6 @@
 <body>
 
 <h2>Invoice</h2>
-<button onclick="printInvoice()">Print Invoice</button>
 
 <div id="invoice-container">
     <table class="invoice">
@@ -70,66 +53,33 @@
             <th class="text-right">Total</th>
         </tr>
         </thead>
-        <tbody id="invoice-body">
+        <tbody>
+        <tr>
+            <td>1</td>
+            <td>Health Scalp & Grooming</td>
+            <td class="text-right">1</td>
+            <td class="text-right">210.000</td>
+            <td class="text-right">210.000</td>
+        </tr>
         </tbody>
         <tfoot>
         <tr class="total-row">
             <td colspan="4" class="text-right">Grand Total:</td>
-            <td id="grand-total" class="text-right"></td>
+            <td class="text-right">210.000</td>
         </tr>
         </tfoot>
     </table>
 </div>
 
-<script>
-    const invoiceData = [
-        { item: "Item 1", quantity: 2, unitPrice: 10.00 },
-        { item: "Item 2", quantity: 3, unitPrice: 5.00 },
-        { item: "Item 3", quantity: 1, unitPrice: 20.00 },
-        { item: "Item 4", quantity: 5, unitPrice: 2.50 },
-        { item: "Item 5", quantity: 4, unitPrice: 7.00 },
-        { item: "Item 6", quantity: 2, unitPrice: 12.00 },
-        { item: "Item 7", quantity: 6, unitPrice: 3.50 },
-        { item: "Item 8", quantity: 1, unitPrice: 15.00 },
-        { item: "Item 9", quantity: 7, unitPrice: 1.75 },
-        { item: "Item 10", quantity: 3, unitPrice: 8.00 },
-    ];
-
-    function renderInvoice() {
-        const invoiceBody = document.getElementById('invoice-body');
-        let grandTotal = 0;
-
-        invoiceData.forEach((itemData, index) => {
-            const total = itemData.quantity * itemData.unitPrice;
-            grandTotal += total;
-
-            const row = `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${itemData.item}</td>
-                    <td class="text-right">${itemData.quantity}</td>
-                    <td class="text-right">${itemData.unitPrice.toFixed(2)}</td>
-                    <td class="text-right">${total.toFixed(2)}</td>
-                </tr>
-            `;
-            invoiceBody.insertAdjacentHTML('beforeend', row);
-        });
-
-        document.getElementById('grand-total').textContent = grandTotal.toFixed(2);
-    }
-
-    function printInvoice() {
-        const printContents = document.getElementById('invoice-container').innerHTML;
-        const originalContents = document.body.innerHTML;
-
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-        location.reload();
-    }
-
-    window.onload = renderInvoice;
-</script>
+<form action="transactions/store" method="POST">
+    <input type="hidden" name="_token" value="wqTbyQJ8FEW9O0wLaAYT4SX54EsSiGXg6eGQNAy6">
+    <input type="hidden" name="total_amount" value="210.000">
+    <input type="hidden" name="cart_items" value='[{"id":36,"name":"Health Scalp & Grooming","qty":"1","price":"210.000"}]'>
+    <input type="hidden" name="customer_id" value="14">
+    <input type="hidden" name="capster_id" value="6">
+    <input type="hidden" name="amount" value="2.000.000">
+    <button type="submit">Submit</button>
+</form>
 
 </body>
 </html>

@@ -97,7 +97,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/roles/store" enctype="multipart/form-data">
+                <form method="post" action="{{ url('/roles/store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -150,7 +150,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/roles/update" enctype="multipart/form-data" id="editForm">
+                <form method="post" action="{{ url('/roles/update') }}" enctype="multipart/form-data" id="editForm">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

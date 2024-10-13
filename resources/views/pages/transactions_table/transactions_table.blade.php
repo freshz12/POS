@@ -79,7 +79,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/transactions/update" enctype="multipart/form-data" id="editForm">
+                <form method="post" action="{{ url('/transactions/update') }}" enctype="multipart/form-data" id="editForm">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

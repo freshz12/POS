@@ -51,7 +51,7 @@
 
                         if (userPermissions.canDelete) {
                             deleteButton = `
-                                <form action="/customers/delete" method="POST" style="display:inline;" id="deletecustomer">
+                                <form action="{{ url('/customers/delete') }}" method="POST" style="display:inline;" id="deletecustomer">
                                     @csrf
                                     <input type="hidden" name="id" value="${row.id}">
                                     <button onclick="confirmDelete(event)" class="btn btn-danger" id="buttondelete">

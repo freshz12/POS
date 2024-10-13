@@ -102,7 +102,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/capsters/store" enctype="multipart/form-data">
+                <form method="post" action="{{ url('/capsters/store') }}" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
                         <div class="row">
@@ -135,7 +135,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="/capsters/update" enctype="multipart/form-data" id="editForm">
+                <form method="post" action="{{ url('/capsters/update') }}" enctype="multipart/form-data" id="editForm">
                     @csrf
                     <div class="modal-body">
                         <div class="row">

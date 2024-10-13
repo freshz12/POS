@@ -120,7 +120,7 @@ class CustomersController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => $e
@@ -139,6 +139,22 @@ class CustomersController extends Controller
     {
         try {
             DB::beginTransaction();
+            $duplicateEmail = Customers::whereNotNull('email')->where('email', '<>', '')->where('id', '<>', $request->id)->where('email', $request->email)->value('email');
+            if ($duplicateEmail == $request->email && !empty($duplicateEmail)) {
+
+                return back()->withErrors([
+                'error_message' => "The email \"$request->email\" has already been taken",
+            ]);
+            }
+
+            $duplicatePhone = Customers::whereNotNull('phone_number')->where('phone_number', '<>', '')->where('id', '<>', $request->id)->where('phone_number', $request->phone_number)->value('phone_number');
+            if ($duplicatePhone == $request->phone_number && !empty($duplicatePhone)) {
+
+                return back()->withErrors([
+                'error_message' => "The phone number \"$request->phone_number\" has already been taken",
+            ]);
+            }
+
             $customer = Customers::find($request->id);
 
             $filteredData = $request->except(['_token']);

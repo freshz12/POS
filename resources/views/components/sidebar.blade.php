@@ -107,6 +107,42 @@
                 </li>
             @endif
 
+            @if (auth()->user()->can('promos_view'))
+                <li class="menu-header">Promos</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i
+                            class="fa-solid fa-tags"></i> <span>Promos</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('promos') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('promos/') }}">Promos</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
+            @if (auth()->user()->can('attendances_view'))
+                <li class="menu-header">User Attendance</li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown"><i
+                            class="fa-solid fa-clipboard-user"></i> <span>User Attendance</span></a>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('attendances') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('attendances/') }}">User Attendance</a>
+                        </li>
+                    </ul>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('attendances/index_history') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('attendances/index_history/') }}">User Attendance History</a>
+                        </li>
+                    </ul>
+                    <ul class="dropdown-menu">
+                        <li class="{{ Request::is('attendances/index_approval') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ url('attendances/approval') }}">User Attendance Approval</a>
+                        </li>
+                    </ul>
+                </li>
+            @endif
+
             @if (auth()->user()->canAny(['roles_view', 'users_view', 'capsters_view']))
                 <li class="menu-header">Setting</li>
                 <li class="nav-item dropdown">
