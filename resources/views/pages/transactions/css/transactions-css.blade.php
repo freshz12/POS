@@ -264,7 +264,7 @@
     } */
 
     .table-responsive {
-        max-height: 625px;
+        max-height: 523px;
         /* Set a maximum height; adjust as needed */
         overflow-y: auto;
         /* Enable vertical scrolling */

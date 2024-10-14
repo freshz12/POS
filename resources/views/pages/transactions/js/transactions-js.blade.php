@@ -1,5 +1,4 @@
 <script>
-
     let allProducts = [];
 
     $.ajaxSetup({
@@ -7,45 +6,6 @@
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
-
-    function fetchProducts() {
-        $.ajax({
-            url: '/products/index_data',
-            method: 'GET',
-            success: function(response) {
-                allProducts = response.data;
-                displayProducts(allProducts);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching products:', error);
-            }
-        });
-    }
-
-    function displayProducts(products) {
-        $('#productList').empty();
-
-        // Sort products so that those with quantity 0 or below are at the bottom
-        products.sort(function(a, b) {
-            return (a.quantity > 0 ? -1 : 1) - (b.quantity > 0 ? -1 : 1);
-        });
-
-        products.forEach(function(product) {
-            // Apply darker styling if quantity is 0 or less
-            const isOutOfStock = product.quantity <= 0;
-            const cardClass = isOutOfStock ? 'out-of-stock' : '';
-            const overlayClass = isOutOfStock ? 'out-of-stock-overlay' : '';
-
-            $('#productList').append(`
-            <div class="col-6 col-md-4 col-lg-3 mb-3">
-                <div class="card product-item ${cardClass}" data-id="${product.id}" data-quantity="${product.quantity}" data-name="${product.product_name}" data-price="${product.selling_price}">
-                    <img src="/storage/${product.picture_path || 'files/default/product.png'}" class="card-img-top ${overlayClass}" alt="${product.product_name}">
-                    <div class="product-overlay ${overlayClass}">${product.product_name} (${product.quantity})</div>
-                </div>
-            </div>
-        `);
-        });
-    }
 
     $(document).ready(function() {
         fetchProducts();
@@ -190,26 +150,24 @@
         });
 
 
-        function updateTotalAmount() {
-            var totalAmount = 0;
-            $('table.table tbody tr').each(function() {
-                var priceText = $(this).find('.price-cell').text();
-                var quantityText = $(this).find('.quantity-input').val();
+        // function updateTotalAmount() {
+        //     var totalAmount = 0;
+        //     $('table.table tbody tr').each(function() {
+        //         var priceText = $(this).find('.price-cell').text();
+        //         var quantityText = $(this).find('.quantity-input').val();
 
-                var price = parseFloat(priceText.replace(/\./g, '').replace(/,/g, '.'));
-                var quantity = parseInt(quantityText, 10);
+        //         var price = parseFloat(priceText.replace(/\./g, '').replace(/,/g, '.'));
+        //         var quantity = parseInt(quantityText, 10);
 
-                if (!isNaN(price) && !isNaN(quantity)) {
-                    totalAmount += price * quantity;
-                }
-            });
+        //         if (!isNaN(price) && !isNaN(quantity)) {
+        //             totalAmount += price * quantity;
+        //         }
+        //     });
 
-            let formattedAmount = formatNumberWithCommas(totalAmount);
+        //     let formattedAmount = formatNumberWithCommas(totalAmount);
 
-            $('#totalAmount').text(formattedAmount);
-        }
-
-
+        //     $('#totalAmount').text(formattedAmount);
+        // }
 
         $(document).on('click', '.quantity-button-plus', function() {
             var quantityInput = $(this).siblings('.quantity-input');
@@ -234,6 +192,8 @@
         });
 
         $('#resetCartButton').on('click', function() {
+            $('.select2.coupon').val(null).trigger('change');
+            $('.select2.coupon').removeData('unique-number').removeData('value').removeData('type');
             $('table.table tbody').empty();
             updateTotalAmount();
         });
@@ -260,35 +220,16 @@
             }
         });
 
-        function getCartItems() {
-            let cartItems = [];
-
-            $('tbody tr').each(function(index) {
-
-                let product = {
-                    id: $(this).data('id'),
-                    name: $(this).find('td.text-center').first().text()
-                        .trim(),
-                    qty: $(this).find('.quantity-input').val().trim(),
-                    price: $(this).find('.price-cell').text().trim()
-                };
-
-                if (product.id && product.name && product.qty && product.price) {
-                    cartItems.push(product);
-                }
-            });
-
-
-            return JSON.stringify(cartItems);
-        }
 
         $('#payButtonModal').on('click', function() {
-            let totalAmountText = $('#totalAmount').text().trim();
-            let totalAmount = parseFloat(totalAmountText.replace(/\./g, '').replace(/,/g, '.'));
+            let finalTotalAmount = $('#finalTotalAmount').text().trim();
+            let totalAmountInput = $('#totalAmount').text().trim();
+            let totalAmount = parseFloat(finalTotalAmount.replace(/\./g, '').replace(/,/g, '.'));
 
             let cashPaidText = $('#amount').val().trim();
             let customerId = $('#customer').val();
             let capsterId = $('#capster').val();
+            let promoIdInput = $('.select2.coupon').val();
             let cashPaid = parseFloat(cashPaidText.replace(/\./g, '').replace(/,/g, '.'));
 
             if (cashPaid < totalAmount) {
@@ -299,19 +240,182 @@
 
             let cartItems = getCartItems();
 
-            $('#totalAmountInput').val(
-                totalAmountText);
+            $('#totalAmountInput').val(finalTotalAmount);
+            $('#totalAmountBeforeDiscount').val(totalAmountInput);
             $('#cashPaidInput').val(cashPaidText);
             $('#cartItemsInput').val(cartItems);
             $('#customerIdInput').val(customerId);
             $('#capsterIdInput').val(capsterId);
+            $('#promoIdInput').val(promoIdInput);
 
             $('#paymentForm').submit();
         });
-
-
-        function formatNumberWithCommas(number) {
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
     });
+
+    function getCartItems() {
+        let cartItems = [];
+
+        $('tbody tr').each(function(index) {
+
+            let product = {
+                id: $(this).data('id'),
+                name: $(this).find('td.text-center').first().text()
+                    .trim(),
+                qty: $(this).find('.quantity-input').val().trim(),
+                price: $(this).find('.price-cell').text().trim()
+            };
+
+            if (product.id && product.name && product.qty && product.price && product.price !== "0" ) {
+                cartItems.push(product);
+            }
+        });
+
+
+        return JSON.stringify(cartItems);
+    }
+
+    function fetchProducts() {
+        $.ajax({
+            url: '/products/index_data',
+            method: 'GET',
+            success: function(response) {
+                allProducts = response.data;
+                displayProducts(allProducts);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching products:', error);
+            }
+        });
+    }
+
+    function displayProducts(products) {
+        $('#productList').empty();
+
+        products.sort(function(a, b) {
+            return (a.quantity > 0 ? -1 : 1) - (b.quantity > 0 ? -1 : 1);
+        });
+
+        products.forEach(function(product) {
+            const isOutOfStock = product.quantity <= 0;
+            const cardClass = isOutOfStock ? 'out-of-stock' : '';
+            const overlayClass = isOutOfStock ? 'out-of-stock-overlay' : '';
+
+            $('#productList').append(`
+            <div class="col-6 col-md-4 col-lg-3 mb-3">
+                <div class="card product-item ${cardClass}" data-id="${product.id}" data-quantity="${product.quantity}" data-name="${product.product_name}" data-price="${product.selling_price}">
+                    <img src="/storage/${product.picture_path || 'files/default/product.png'}" class="card-img-top ${overlayClass}" alt="${product.product_name}">
+                    <div class="product-overlay ${overlayClass}">${product.product_name} (${product.quantity})</div>
+                </div>
+            </div>
+        `);
+        });
+    }
+
+    function formatNumberWithCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+
+    function updateTotalAmount() {
+        var originalTotalAmount = 0;
+
+        $('table.table tbody tr').each(function() {
+            var priceText = $(this).find('.price-cell').text();
+            var quantityText = $(this).find('.quantity-input').val();
+
+            var price = parseFloat(priceText.replace(/\./g, '').replace(/,/g, '.'));
+            var quantity = parseInt(quantityText, 10);
+
+            if (!isNaN(price) && !isNaN(quantity)) {
+                originalTotalAmount += price * quantity;
+            }
+        });
+
+        var totalAmount = originalTotalAmount; // Set initial total amount
+
+        var couponType = $('.select2.coupon').data('type');
+        var couponValue = $('.select2.coupon').data('value');
+
+        var discountValue = 0;
+
+        if (couponType === 'Nominal' && couponValue) {
+            discountValue = parseFloat(couponValue);
+            totalAmount = Math.max(originalTotalAmount - discountValue, 0);
+            $('#Totaldiscount').text('Rp.' + formatNumberWithCommas(discountValue));
+        } else if (couponType === 'Percentage' && couponValue) {
+            discountValue = originalTotalAmount * (couponValue / 100);
+            totalAmount = Math.max(originalTotalAmount - discountValue, 0);
+            $('#Totaldiscount').text(couponValue + '%');
+        } else if (couponType === 'Package') {
+            let totalDiscountText = $('#Totaldiscount').text();
+            let numericValue = parseInt(totalDiscountText.replace(/[^0-9]/g, ''), 10);
+            originalTotalAmount += numericValue;
+        } else {
+            $('#Totaldiscount').text('No discount');
+        }
+
+        let formattedOriginalAmount = formatNumberWithCommas(originalTotalAmount);
+        let formattedAmount = formatNumberWithCommas(totalAmount);
+
+        $('#totalAmount').text(formattedOriginalAmount);
+
+        $('#finalTotalAmount').text(formattedAmount);
+    }
+
+    function addCoupon() {
+        $('#coupon').val();
+        var selectedCoupon = $('.select2.coupon').select2('data')[0];
+        $('.select2.coupon').data('unique-code', selectedCoupon.unique_code);
+        $('.select2.coupon').data('value', selectedCoupon.value);
+        $('.select2.coupon').data('type', selectedCoupon.type);
+
+        if (selectedCoupon.type === 'Package') {
+            prods = $.ajax({
+                url: '/products/get-products',
+                method: 'POST',
+                data: {
+                    product_id: selectedCoupon.product_id
+                },
+                success: function(response) {
+                    let products = response.data;
+                    response.data.forEach(function(productId) {
+                        const productName = `${productId.product_name}`;
+                        const quantity = 1;
+                        const formattedPrice = '0';
+
+                        // Create the new row with the specified details
+                        var newRow = `<tr data-id="${productId.id}">
+                        <td class="text-center">${productName}</td>
+                        <td>
+                            <div class="quantity-container d-flex align-items-center">
+                                <button class="btn btn-primary btn-lg quantity-button quantity-button-minus" type="button" disabled>-</button>
+                                <input type="text" class="form-control text-center quantity-input" style="width: 60px; height: 45px;" value="${quantity}" readonly>
+                                <button class="btn btn-primary btn-lg quantity-button quantity-button-plus" type="button" disabled>+</button>
+                            </div>
+                        </td>
+                        <td class="text-right price-cell">${formattedPrice}</td>
+                        <td class="text-right trash-container">
+                            <button class="btn btn-danger btn-lg trash-button" disabled><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+
+                        // Append the new row to the table body
+                        $('table.table tbody').append(newRow);
+                    });
+
+                    let totalSellingPrice = 0;
+                    products.forEach(function(product) {
+                        totalSellingPrice += parseInt(product.selling_price);
+                    });
+                    $('#Totaldiscount').text('Rp.' + formatNumberWithCommas(totalSellingPrice));
+                    updateTotalAmount();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching products:', error);
+                }
+            });
+        }
+
+        $('#addCouponModal').modal('hide');
+    }
 </script>

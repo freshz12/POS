@@ -24,9 +24,23 @@ class ProductController extends Controller
         return response()->json(['data' => $products]);
     }
 
+    public function getProducts(Request $request)
+    {
+
+        $productIds = json_decode($request->product_id, true);
+
+
+        $product = Products::whereIn('id', $productIds)->get();
+
+        return response()->json(['data' => $product]);
+    }
+
     public function store(Request $request)
     {
         try {
+            if (!Storage::disk('public')->exists('files/products')) {
+                Storage::disk('public')->makeDirectory('files/products');
+            }
             DB::beginTransaction();
             // $duplicateSKU = Products::where('sku', $request->sku)->value('sku');
             // if ($duplicateSKU == $request->sku) {

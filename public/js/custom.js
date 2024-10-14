@@ -152,6 +152,58 @@ $('.select2.products').select2({
     }
 });
 
+$('.select2.coupon').select2({
+    ajax: {
+        url: '/promos/index_data',
+        type: 'GET',
+        dataType: 'json',
+        delay: 250,
+        data: function (params) {
+            return {
+                unique_code: params.term,
+                page: params.page || 1
+            };
+        },
+        processResults: function (data, params) {
+            params.page = params.page || 1;
+
+            var results = [];
+            $.each(data.data, function (index, item) {
+                results.push({
+                    id: item.id,
+                    text: `Promo Name : <strong>${item.name}</strong> <br>
+                            Type : ${item.type} <br> Unique Code : ${item.unique_code}`,
+                    unique_code: item.unique_code,
+                    value: item.value,
+                    type: item.type,
+                    product_id: item.product_id
+                });
+            });
+
+            return {
+                results: results,
+                pagination: {
+                    more: (params.page * 30) < data.recordsTotal
+                }
+            };
+        },
+        cache: true
+    },
+    minimumInputLength: 3,
+    escapeMarkup: function (markup) {
+        return markup;
+    },
+    templateResult: function (data) {
+        if (data.loading) {
+            return data.text;
+        }
+        return $(`<div>${data.text}</div>`);
+    },
+    templateSelection: function (data) {
+        return data.name || data.text.split('<br>')[0].replace('Promo Name : ', '');
+    }
+});
+
 
 flatpickr(".flatpickr", {
     enableTime: true,

@@ -37,6 +37,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->middleware('can:products_view');
         Route::get('/index_data', [ProductController::class, 'indexData'])->middleware('can:products_view');
+        Route::post('/get-products', [ProductController::class, 'getProducts'])->middleware('can:products_view');
         Route::post('/store', [ProductController::class, 'store'])->middleware('can:products_create');
         Route::get('/show/{id}', [ProductController::class, 'show'])->middleware('can:products_edit');
         Route::post('/update', [ProductController::class, 'update'])->middleware('can:products_edit');

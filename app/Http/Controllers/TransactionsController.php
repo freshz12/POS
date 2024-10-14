@@ -22,6 +22,7 @@ class TransactionsController extends Controller
 
     public function store(Request $request)
     {
+        // return $request;
         try {
             $request->validate([
                 'total_amount' => 'required',
@@ -50,8 +51,11 @@ class TransactionsController extends Controller
 
             $total_amount = str_replace('.', '', $request->input('total_amount'));
             $cash_paid = str_replace('.', '', $request->input('amount'));
+            $amount_before_discount = str_replace('.', '', $request->input('amount_before_discount'));
 
             $tr = Transactions::create([
+                'promo_id' => $request->promo_id,
+                'amount_before_discount' => $amount_before_discount,
                 'transaction_id' => $runningNumber,
                 'customer_id' => $request->customer_id,
                 'amount' => $total_amount,

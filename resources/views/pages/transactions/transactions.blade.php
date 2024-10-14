@@ -76,14 +76,26 @@
                             </table>
                         </div>
                         <div class="card-footer mt-auto">
-                            <div class="row">
-                                <div class="col">Total:</div>
+                            <div class="row" style="font-size: 1.5em;">
+                                <div class="col">Total Before Discount:</div>
                                 <div class="col text-right">Rp.<span id="totalAmount">0</span></div>
+                            </div>
+                            <div class="row" style="font-size: 1.5em;">
+                                <div class="col">Discount:</div>
+                                <div class="col text-right" id="Totaldiscount"></div>
+                            </div>
+                            <div class="row" style="font-size: 1.5em;">
+                                <div class="col">Sub Total:</div>
+                                <div class="col text-right">Rp.<span id="finalTotalAmount">0</span></div>
                             </div>
                             <div class="row mt-3">
                                 <div class="col">
                                     <button class="btn btn-danger btn-block" style="height: 50px"
                                         id="resetCartButton">Reset</button>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-info btn-block" style="height: 50px" id="addCoupon"
+                                        data-toggle="modal" data-target="#addCouponModal">Coupon</button>
                                 </div>
                                 <div class="col">
                                     <button class="btn btn-success btn-block" style="height: 50px"
@@ -205,6 +217,32 @@
         </div>
     </div>
 
+    <div class="modal fade" id="addCouponModal" role="dialog" aria-labelledby="addCouponModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCouponModalLabel">Enter Coupon Unique Code</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col">
+                            {{-- <label for="full_name" class="form-label">Enter Promo Unique Code</label> --}}
+                            <select class="form-control select2 coupon" id="coupon" name="coupon"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="button" onclick="addCoupon()">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Payment Modal -->
     <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel"
         aria-hidden="true">
@@ -219,10 +257,12 @@
                 <div class="modal-body">
                     <form id="paymentForm" method="POST" action="{{ url('/transactions/store') }}">
                         @csrf
+                        <input type="hidden" id="totalAmountBeforeDiscount" name="amount_before_discount">
                         <input type="hidden" id="totalAmountInput" name="total_amount">
                         <input type="hidden" id="cartItemsInput" name="cart_items">
                         <input type="hidden" id="customerIdInput" name="customer_id">
                         <input type="hidden" id="capsterIdInput" name="capster_id">
+                        <input type="hidden" id="promoIdInput" name="promo_id">
                         <div class="form-group">
                             <label for="amount">Amount</label>
                             <input type="text" class="form-control" id="amount" name="amount" readonly>
