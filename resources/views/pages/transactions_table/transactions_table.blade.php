@@ -52,7 +52,10 @@
                                                 <th style="width: 1%"></th>
                                                 <th scope="col">Transaction ID</th>
                                                 <th scope="col">Customer Name</th>
-                                                <th scope="col">Total Amount</th>
+                                                <th scope="col">Discount Type</th>
+                                                <th scope="col">Total Amount Before Discount</th>
+                                                <th scope="col">Discount Value</th>
+                                                <th scope="col">Final Total Amount</th>
                                                 <th scope="col">Capster Name</th>
                                                 <th scope="col">Transaction Date</th>
                                             </tr>
@@ -107,6 +110,23 @@
                             </thead>
                             <tbody id="productTableBody">
                                 <!-- Product rows will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+
+                        <br>
+                        <br>
+                        <h5>Promo Products</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Unit Price</th>
+                                    {{-- <th>Quantity</th>
+                                    <th>Total</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody id="promoProductTableBody">
+                                
                             </tbody>
                         </table>
 

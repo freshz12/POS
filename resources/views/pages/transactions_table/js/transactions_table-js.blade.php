@@ -64,7 +64,34 @@
 
                     "orderable": false,
                     "searchable": false
-                }
+                }, {
+                    "targets": 4,
+                    "render": function(data, type, row, meta) {
+                        if (!row.promo) {
+                            return '-';
+                        }
+
+                        return row.promo.type;
+                    },
+                    "orderable": false,
+                    "searchable": false
+                }, {
+                    "targets": 6,
+                    "render": function(data, type, row, meta) {
+                        if (!row.promo) {
+                            return '-';
+                        }
+                        type = row.promo.type;
+                        if (type == 'Package' || type == 'Nominal') {
+                            value = `${row.promo.value}`;
+                        } else if (type == 'Percentage') {
+                            value = `${row.promo.value}%`;
+                        }
+                        return value;
+                    },
+                    "orderable": false,
+                    "searchable": false
+                },
             ],
             "columns": [{
                     "data": null
@@ -77,6 +104,15 @@
                 },
                 {
                     "data": "customers.full_name"
+                },
+                {
+                    "data": "promo.type"
+                },
+                {
+                    "data": "amount_before_discount"
+                },
+                {
+                    "data": "promo.value"
                 },
                 {
                     "data": "amount"
@@ -219,7 +255,9 @@
         document.getElementById('total_amount').value = 'Rp.' + formatNumberWithCommas(data.amount);
 
         const productTableBody = document.getElementById('productTableBody');
+        const promoProductTableBody = document.getElementById('promoProductTableBody');
         productTableBody.innerHTML = '';
+        promoProductTableBody.innerHTML = '';
 
         data.transaction_products.forEach(product => {
             const total = product.product_details.selling_price * product.quantity;
@@ -233,6 +271,20 @@
         `;
             productTableBody.insertAdjacentHTML('beforeend', row);
         });
+
+        if(data.promo){
+            if(data.promo.type == 'Package'){
+                data.promo_products.forEach(promo_product => {
+                    const row = `
+                    <tr>
+                        <td>${promo_product.product_name}</td>
+                        <td>Rp.${formatNumberWithCommas(promo_product.selling_price)}</td>
+                    </tr>
+                `;
+                promoProductTableBody.insertAdjacentHTML('beforeend', row);
+                });
+            }
+        }
     }
 
     function confirmDelete(event) {

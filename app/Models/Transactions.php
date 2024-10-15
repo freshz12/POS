@@ -89,4 +89,9 @@ class Transactions extends Model
     {
         return $this->belongsTo(Capsters::class, 'capster_id');
     }
+
+    public function promo()
+    {
+        return $this->belongsTo(Promos::class, 'promo_id');
+    }
 }

@@ -22,7 +22,7 @@ class TransactionsTableController extends Controller
     public function indexData(Request $request)
     {
 
-        $query = Transactions::with(['customers', 'capster'])
+        $query = Transactions::with(['customers', 'capster', 'promo'])
             ->filterIndex($request);
 
         $totalRecords = $query->count();
@@ -32,6 +32,22 @@ class TransactionsTableController extends Controller
         $length = $request->input('length');
         $start = $request->input('start');
         $transactions = $query->skip($start)->take($length)->get();
+
+        foreach ($transactions as $transaction) {
+            if ($transaction->promo_id && $transaction->promo->type === 'Package') {
+                $products_id = json_decode($transaction->promo->product_id);
+                $totalSellingPrice = 0;
+
+                foreach ($products_id as $product_id) {
+                    $product = Products::find($product_id);
+
+                    if ($product) {
+                        $totalSellingPrice += $product->selling_price;
+                    }
+                }
+                $transaction->promo->value = $totalSellingPrice;
+            }
+        }
 
         return response()->json([
             'draw' => intval($request->input('draw')),
@@ -44,12 +60,28 @@ class TransactionsTableController extends Controller
 
     public function show($id)
     {
-        $transaction = Transactions::with('transaction_products', 'customers', 'capster')->find($id);
+        $transaction = Transactions::with('transaction_products', 'customers', 'capster', 'promo')->find($id);
 
         $transaction->transaction_products->map(function ($transactionProduct) {
             $product = Products::find($transactionProduct->product_id);
             $transactionProduct->product_details = $product;
         });
+        $productList = [];
+
+        if ($transaction->promo_id) {
+            if($transaction->promo->type == 'Package'){
+                $products_id = json_decode($transaction->promo->product_id);
+    
+                foreach ($products_id as $product_id) {
+                    $product = Products::find($product_id);
+                    if ($product) {
+                        $productList[] = $product;
+                    }
+                }
+                $transaction->promo_products = $productList;
+            }
+        }
+
 
         return response()->json([$transaction]);
     }
