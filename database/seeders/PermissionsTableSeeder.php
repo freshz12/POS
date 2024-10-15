@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use App\Models\User; // Ensure you include the User model
 
 class PermissionsTableSeeder extends Seeder
 {
@@ -39,7 +41,7 @@ class PermissionsTableSeeder extends Seeder
             'attendances_create' => 'attendances',
             'attendances_edit' => 'attendances',
             'attendances_delete' => 'attendances',
-            
+
             'check_in' => 'attendances',
 
             'attendances_approval_view' => 'attendances',
@@ -49,7 +51,7 @@ class PermissionsTableSeeder extends Seeder
             'promos_create' => 'promos',
             'promos_edit' => 'promos',
             'promos_delete' => 'promos',
-            
+
             'products_view' => 'products',
             'products_create' => 'products',
             'products_edit' => 'products',
@@ -74,6 +76,7 @@ class PermissionsTableSeeder extends Seeder
             'customers_dashboards_views' => 'dashboards',
         ];
 
+        // Create permissions
         foreach ($permissions as $permission => $type) {
             Permission::firstOrCreate(
                 ['name' => $permission],
@@ -83,6 +86,19 @@ class PermissionsTableSeeder extends Seeder
                     'updated_by' => 0,
                 ]
             );
+        }
+
+        // Create Admin role and assign all permissions
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+
+        // Assign all permissions to the Admin role
+        $permissions = Permission::all(); // Get all permissions
+        $adminRole->givePermissionTo($permissions);
+
+        // Assign the Admin role to the user with ID 1
+        $user = User::find(1); // Find the user by ID
+        if ($user) {
+            $user->assignRole('Admin'); // Assign the Admin role to the user
         }
     }
 }

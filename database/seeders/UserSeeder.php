@@ -22,5 +22,7 @@ class UserSeeder extends Seeder
             'created_by' => 0,
             'updated_by' => 0,
         ]);
+
+        
     }
 }
