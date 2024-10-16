@@ -19,6 +19,7 @@
                     data: {
                         start: start.toISOString(),
                         end: end.toISOString(),
+
                         timezone: timezone
                     },
                     success: function(data) {
@@ -54,7 +55,8 @@
                 var tooltipContent =
                     'Customer Name: ' + event.title + '<br>' +
                     'Start: ' + moment(event.start).format('YYYY-MM-DD HH:mm') + '<br>' +
-                    'End: ' + (event.end ? moment(event.end).format('YYYY-MM-DD HH:mm') + '<br>' : '') +
+                    'End: ' + (event.end ? moment(event.end).format('YYYY-MM-DD HH:mm') + '<br>' :
+                        '') +
                     'Capster: ' + event.capster.full_name + '<br>' +
                     'Remarks: ' + event.remarks;
 
@@ -86,7 +88,8 @@
                 $customerSelect.val(event.customer_id).trigger('change');
 
                 var $capsterSelect = $('.select2#capster_edit');
-                var optionCapster = new Option(event.capster.full_name, event.capster_id, true, true);
+                var optionCapster = new Option(event.capster.full_name, event.capster_id, true,
+                    true);
                 $capsterSelect.append(optionCapster).trigger('change');
                 $capsterSelect.val(event.capster_id).trigger('change');
 
@@ -109,11 +112,16 @@
 
             let dateStart = $('#date_start').val();
             let dateEnd = $('#date_end').val();
+            let capster = $('#capster').val();
 
             let startDate = new Date(dateStart);
             let endDate = new Date(dateEnd);
 
+
+
             if (endDate <= startDate) {
+                swal('Error', 'End date must be greater than start date', 'error');
+            } else if (capster == null) {
                 swal('Error', 'End date must be greater than start date', 'error');
             } else {
                 $('#create_appointment_form').submit();

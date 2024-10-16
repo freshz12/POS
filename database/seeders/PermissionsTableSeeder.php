@@ -88,8 +88,13 @@ class PermissionsTableSeeder extends Seeder
             );
         }
 
-        // Create Admin role and assign all permissions
-        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $adminRole = Role::firstOrCreate(
+            ['name' => 'Admin'],
+            [
+                'created_by' => 0, // Set created_by to 0
+                'updated_by' => 0, // Set updated_by to 0
+            ]
+        );
 
         // Assign all permissions to the Admin role
         $permissions = Permission::all(); // Get all permissions

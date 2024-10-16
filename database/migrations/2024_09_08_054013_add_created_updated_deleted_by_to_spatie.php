@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('roles', function (Blueprint $table) {
-            $table->integer('created_by');
-            $table->integer('updated_by');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->softDeletes();
         });
@@ -29,8 +29,8 @@ return new class extends Migration
         });
 
         Schema::table('role_has_permissions', function (Blueprint $table) {
-            $table->integer('created_by');
-            $table->integer('updated_by');
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->timestamps();
             $table->softDeletes();

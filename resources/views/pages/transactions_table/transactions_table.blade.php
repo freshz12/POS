@@ -190,8 +190,12 @@
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <label for="created_at_filter" class="form-label">Transaction Date</label>
-                            <input class="form-control" type="date" id="created_at_filter">
+                            <label for="created_at_filter_from" class="form-label">Transaction Date From</label>
+                            <input class="form-control" type="date" id="created_at_filter_from">
+                        </div>
+                        <div class="col-6">
+                            <label for="created_at_filter_to" class="form-label">Transaction Date To</label>
+                            <input class="form-control" type="date" id="created_at_filter_to">
                         </div>
                     </div>
                 </div>

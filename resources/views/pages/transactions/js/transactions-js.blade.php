@@ -316,7 +316,7 @@
     }
 
 
-    function updateTotalAmount() {
+    function updateTotalAmount(packageNominal = null) {
         var originalTotalAmount = 0;
 
         $('table.table tbody tr').each(function() {
@@ -408,12 +408,14 @@
                         totalSellingPrice += parseInt(product.selling_price);
                     });
                     $('#Totaldiscount').text('Rp.' + formatNumberWithCommas(totalSellingPrice));
-                    updateTotalAmount();
+                    updateTotalAmount(totalSellingPrice);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching products:', error);
                 }
             });
+        }else{
+            updateTotalAmount();
         }
 
         $('#addCouponModal').modal('hide');
