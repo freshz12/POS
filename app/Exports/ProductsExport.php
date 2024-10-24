@@ -31,6 +31,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping, Shoul
         'products.purchase_price',
         'products.selling_price',
         'products.quantity',
+        'products.type',
         'products.unit_of_measurement',
         'products.created_at',
         'products.created_by',
@@ -50,6 +51,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping, Shoul
             $product->purchase_price,
             $product->selling_price,
             $product->quantity,
+            $product->type,
             $product->unit_of_measurement,
             $product->createdBy->name ?? 'N/A',
             $product->created_at,
@@ -68,6 +70,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping, Shoul
             'Purchase Price',
             'Selling Price',
             'Quantity',
+            'Product Type',
             'Unit of Measurement',
             'Created By',
             'Created At',
@@ -79,8 +82,8 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping, Shoul
     public function columnFormats(): array
     {
         return [
-            'J' => NumberFormat::FORMAT_DATE_YYYYMMDD,
-            'L' => NumberFormat::FORMAT_DATE_YYYYMMDD
+            'K' => NumberFormat::FORMAT_DATE_YYYYMMDD,
+            'M' => NumberFormat::FORMAT_DATE_YYYYMMDD
         ];
     }
 }
