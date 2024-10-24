@@ -60,6 +60,15 @@ class Promos extends Model
                 $query->whereBetween('end_date', [$startOfDay, $endOfDay]);
             })
 
+            ->when($request->is_active, function ($query) {
+                $today = Carbon::today()->toDateString();
+    
+                $query->where(function ($query) use ($today) {
+                          $query->whereDate('start_date', '<=', $today)
+                                ->whereDate('end_date', '>=', $today);
+                      });
+            })
+
             ->when($request->updated_at, function ($query) use ($request) {
                 $date = Carbon::parse($request->updated_at)->format('Y-m-d');
                 $startOfDay = Carbon::parse($date)->startOfDay()->toDateTimeString();

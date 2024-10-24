@@ -155,6 +155,9 @@ $('.select2.products').select2({
 $.ajax({
     url: '/promos/index_data',
     type: 'GET',
+    data: {
+        is_active: true
+    },
     dataType: 'json',
     success: function(data) {
         var results = [];
