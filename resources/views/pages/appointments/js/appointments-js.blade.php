@@ -98,6 +98,8 @@
                 $('#end_edit').val(moment(event.end).format('YYYY-MM-DD HH:mm'));
                 $('#remarks_edit').val(event.remarks || '');
                 $('#eventId').val(event.id);
+                $('#customer_name').val(event.title);
+                $('#capster_name').val(event.capster.full_name);
 
                 $('#editappointment').modal('show');
             },
@@ -127,6 +129,12 @@
                 $('#create_appointment_form').submit();
             }
         });
+    });
+
+    $('#create_transaction').on('click', function() {
+        $('#appointmentForm').attr('action', '/transactions/');
+        $('#appointmentForm').attr('method', 'GET');
+        $('#appointmentForm').submit();
     });
 
     function openAddCustomerModal() {

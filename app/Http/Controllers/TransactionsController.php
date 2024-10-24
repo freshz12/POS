@@ -15,9 +15,16 @@ use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 class TransactionsController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('pages.transactions.transactions', ['type_menu' => 'transactions']);
+        // return $request;
+        $capster_id = $request->capster_id;
+        $customer_id = $request->customer_id;
+        $capster_name = $request->capster_name;
+        $customer_name = $request->customer_name;
+        $type_menu = 'transactions';
+
+        return view('pages.transactions.transactions', compact('capster_id', 'customer_id', 'type_menu', 'capster_name', 'customer_name'));
     }
 
     public function store(Request $request)
@@ -26,8 +33,8 @@ class TransactionsController extends Controller
         try {
             $request->validate([
                 'total_amount' => 'required',
-                'cart_items' => 'required|string',
-                'amount' => 'required',
+                'cart_items' => 'required',
+                'payment_method' => 'required',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
@@ -54,6 +61,7 @@ class TransactionsController extends Controller
             $amount_before_discount = str_replace('.', '', $request->input('amount_before_discount'));
 
             $tr = Transactions::create([
+                'payment_method' => $request->payment_method,
                 'promo_id' => $request->promo_id,
                 'amount_before_discount' => $amount_before_discount,
                 'transaction_id' => $runningNumber,
@@ -84,11 +92,17 @@ class TransactionsController extends Controller
                 ]);
             }
 
-            $change = $cash_paid - $total_amount;
+            $change = intval($cash_paid) - intval($total_amount);
 
             DB::commit();
 
-            session()->flash('change_message', 'Your change is ' . $this->formatNumberWithCommas($change));
+            if ($change == 0 && $request->payment_method !== 'Cash') {
+                $successMessage = 'Transaction create successfully';
+            } else {
+                $successMessage = 'Your change is ' . $this->formatNumberWithCommas($change);
+            }
+
+            session()->flash('change_message', $successMessage);
 
             $this->invoice($cartItems, $total_amount, $runningNumber, $tr);
 
@@ -140,7 +154,7 @@ class TransactionsController extends Controller
             $product = Products::find($item['id']);
 
             if ($product) {
-                if($product->is_included_in_receipt){
+                if ($product->is_included_in_receipt) {
                     $items[] = [
                         'name' => $product->product_name,
                         'qty' => $item['qty'],

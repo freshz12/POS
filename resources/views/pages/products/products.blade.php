@@ -76,6 +76,7 @@
                                             <th scope="col">Product Name</th>
                                             <th scope="col">Selling Price</th>
                                             <th scope="col">Unit Of Measurement</th>
+                                            <th scope="col">Type</th>
                                             <th scope="col">Quantity</th>
                                             <th scope="col">Last Updated Date</th>
                                         </tr>
@@ -153,6 +154,16 @@
                                 <label for="file" class="form-label">Picture of Product</label>
                                 <input class="form-control" type="file" name="file">
                             </div>
+                            <div class="col-6">
+                                <label for="type" class="form-label">Product Type</label><br>
+                                <select class="form-control" name="type" required>
+                                    <option value="Retail">Retail</option>
+                                    <option value="Technical">Technical</option>
+                                    <option value="Service">Service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-6">
                                 <label for="product_picture" class="form-label">Is Included in Receipt</label><br>
                                 <input type="checkbox" name="is_included_in_receipt" data-toggle="toggle">
@@ -234,6 +245,16 @@
                                 <input class="form-control" id="file" type="file" name="file">
                             </div>
                             <div class="col-6">
+                                <label for="type" class="form-label">Product Type</label><br>
+                                <select class="form-control" name="type" id="type" required>
+                                    <option value="Retail">Retail</option>
+                                    <option value="Technical">Technical</option>
+                                    <option value="Service">Service</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
                                 <label for="product_picture" class="form-label">Is Included in Receipt</label><br>
                                 <input type="checkbox" id="is_included_in_receipt" name="is_included_in_receipt"
                                     data-toggle="toggle">
@@ -283,11 +304,21 @@
                             <input class="form-control" type="number" id="quantity_filter">
                         </div>
                     </div>
-                    <div class="row align-items-end">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="type_filter" class="form-label">Product Type</label>
+                            <select class="form-control" name="type_filter" id="type_filter" required>
+                                <option value="Retail">Retail</option>
+                                <option value="Technical">Technical</option>
+                                <option value="Service">Service</option>
+                            </select>
+                        </div>
                         <div class="col-6">
                             <label for="quantity" class="form-label">Last Updated Date</label>
                             <input class="form-control" type="date" id="updated_at_filter">
                         </div>
+                    </div>
+                    <div class="row align-items-end">
                         <div class="col-6">
                             <label for="is_included_in_receipt_filter" class="form-label">Is Included in
                                 Receipt</label><br>

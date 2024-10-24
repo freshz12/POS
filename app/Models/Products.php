@@ -36,6 +36,10 @@ class Products extends Model
             $query->where('selling_price', 'LIKE', '%' . $request->selling_price . '%');
         })
 
+        ->when($request->type, function ($query) use ($request) {
+            $query->where('type', 'LIKE', '%' . $request->type . '%');
+        })
+
         ->when($request->unit_of_measurement, function ($query) use ($request) {
             $query->where('unit_of_measurement', 'LIKE', '%' . $request->unit_of_measurement . '%');
         })

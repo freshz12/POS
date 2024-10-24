@@ -251,23 +251,9 @@
         font-size: 1.5rem;
     }
 
-    /* .trash-button {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-    }
-
-    .quantity-input {
-        width: 100px;
-        height: 50px;
-        font-size: 1.2rem;
-    } */
-
     .table-responsive {
         max-height: 523px;
-        /* Set a maximum height; adjust as needed */
         overflow-y: auto;
-        /* Enable vertical scrolling */
     }
 
     .thead-fixed {
@@ -282,4 +268,23 @@
         /* Optional: Add box-shadow for better visibility */
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
+
+    .payment-buttons .btn {
+        border-radius: 10px;
+        padding: 15px 30px;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .payment-buttons .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .payment-buttons .btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+    }
+
 </style>

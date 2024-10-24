@@ -152,66 +152,55 @@ $('.select2.products').select2({
     }
 });
 
-$('.select2.coupon').select2({
-    ajax: {
-        url: '/promos/index_data',
-        type: 'GET',
-        dataType: 'json',
-        delay: 250,
-        data: function (params) {
-            return {
-                unique_code: params.term,
-                page: params.page || 1
-            };
-        },
-        processResults: function (data, params) {
-            params.page = params.page || 1;
-
-            var results = [];
-            $.each(data.data, function (index, item) {
-                results.push({
-                    id: item.id,
-                    text: `Promo Name : <strong>${item.name}</strong> <br>
-                            Type : ${item.type} <br> Unique Code : ${item.unique_code}`,
-                    unique_code: item.unique_code,
-                    value: item.value,
-                    type: item.type,
-                    product_id: item.product_id
-                });
+$.ajax({
+    url: '/promos/index_data',
+    type: 'GET',
+    dataType: 'json',
+    success: function(data) {
+        var results = [];
+        $.each(data.data, function(index, item) {
+            results.push({
+                id: item.id,
+                text: `Promo Name : <strong>${item.name}</strong> <br>
+                       Type : ${item.type} <br> Unique Code : ${item.unique_code}`,
+                unique_code: item.unique_code,
+                value: item.value,
+                type: item.type,
+                product_id: item.product_id
             });
+        });
 
-            return {
-                results: results,
-                pagination: {
-                    more: (params.page * 30) < data.recordsTotal
+        $(".select2.coupon").select2({
+            data: results,
+            escapeMarkup: function (markup) {
+                return markup; // Let Select2 escape markup
+            },
+            templateResult: function(data) {
+                if (data.loading) {
+                    return data.text;
                 }
-            };
-        },
-        cache: true
+                return $(`<div>${data.text}</div>`);
+            },
+            templateSelection: function(data) {
+                return data.text.split('<br>')[0].replace('Promo Name : ', '');
+            }
+        });
+
+        $(".select2.coupon").val(null).trigger('change');
     },
-    minimumInputLength: 3,
-    escapeMarkup: function (markup) {
-        return markup;
-    },
-    templateResult: function (data) {
-        if (data.loading) {
-            return data.text;
-        }
-        return $(`<div>${data.text}</div>`);
-    },
-    templateSelection: function (data) {
-        return data.name || data.text.split('<br>')[0].replace('Promo Name : ', '');
+    error: function(xhr, status, error) {
+        console.error('Error fetching data:', error);
     }
 });
 
-
-flatpickr(".flatpickr", {
-    enableTime: true,
-    dateFormat: "Y-m-d H:i",
-    time_24hr: true,
-    // minDate: new Date(),
-    allowInput: true
-});
+if ($('.flatpickr').length) {
+    flatpickr(".flatpickr", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        time_24hr: true,
+        allowInput: true
+    });
+}
 
 function openAddCustomerModal() {
     $('#customer_full_name').val(null);
@@ -255,3 +244,55 @@ function submitCustomer() {
         }
     });
 }
+
+// $('.select2.coupon').select2({
+//     ajax: {
+//         url: '/promos/index_data',
+//         type: 'GET',
+//         dataType: 'json',
+//         delay: 250,
+//         data: function (params) {
+//             return {
+//                 unique_code: params.term,
+//                 page: params.page || 1
+//             };
+//         },
+//         processResults: function (data, params) {
+//             params.page = params.page || 1;
+
+//             var results = [];
+//             $.each(data.data, function (index, item) {
+//                 results.push({
+//                     id: item.id,
+//                     text: `Promo Name : <strong>${item.name}</strong> <br>
+//                             Type : ${item.type} <br> Unique Code : ${item.unique_code}`,
+//                     unique_code: item.unique_code,
+//                     value: item.value,
+//                     type: item.type,
+//                     product_id: item.product_id
+//                 });
+//             });
+
+//             return {
+//                 results: results,
+//                 pagination: {
+//                     more: (params.page * 30) < data.recordsTotal
+//                 }
+//             };
+//         },
+//         cache: true
+//     },
+//     minimumInputLength: 3,
+//     escapeMarkup: function (markup) {
+//         return markup;
+//     },
+//     templateResult: function (data) {
+//         if (data.loading) {
+//             return data.text;
+//         }
+//         return $(`<div>${data.text}</div>`);
+//     },
+//     templateSelection: function (data) {
+//         return data.name || data.text.split('<br>')[0].replace('Promo Name : ', '');
+//     }
+// });

@@ -13,9 +13,6 @@
     <link rel="stylesheet" href="{{ asset('css/components.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     @include('pages.transactions.css.transactions-css')
-
-    <!-- Include Font Awesome for the icons -->
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
     <link rel="stylesheet" href="{{ asset('library/font-awesome/css/all.min.css') }}">
 </head>
 
@@ -257,12 +254,15 @@
                 <div class="modal-body">
                     <form id="paymentForm" method="POST" action="{{ url('/transactions/store') }}">
                         @csrf
+                        <input type="hidden" id="customerIdInput" name="customer_id" value="{{ $customer_id }}">
+                        <input type="hidden" id="capsterIdInput" name="capster_id" value="{{ $capster_id }}">
+                        <input type="hidden" id="customerNameInput" name="customer_name" value="{{ $customer_name }}">
+                        <input type="hidden" id="capsterNameInput" name="capster_name" value="{{ $capster_name }}">
                         <input type="hidden" id="totalAmountBeforeDiscount" name="amount_before_discount">
                         <input type="hidden" id="totalAmountInput" name="total_amount">
                         <input type="hidden" id="cartItemsInput" name="cart_items">
-                        <input type="hidden" id="customerIdInput" name="customer_id">
-                        <input type="hidden" id="capsterIdInput" name="capster_id">
                         <input type="hidden" id="promoIdInput" name="promo_id">
+                        <input type="hidden" id="paymentType" name="payment_method">
                         <div class="form-group">
                             <label for="amount">Amount</label>
                             <input type="text" class="form-control" id="amount" name="amount" readonly>
@@ -327,6 +327,7 @@
         </div>
     </div>
 
+    {{-- Customer Capster Modal --}}
     <div class="modal fade" id="selectCustomerModal" role="dialog" aria-labelledby="selectCustomerModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -351,6 +352,35 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="okCustomer">Confirm</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="paymentMethodModal" role="dialog" aria-labelledby="paymentMethodModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentMethodModalLabel">Select Payment Method</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="payment-buttons text-center">
+                            <button type="button" class="btn btn-primary btn-lg m-2 payment-btn" data-payment="Cash">
+                                Cash
+                            </button>
+                            <button type="button" class="btn btn-success btn-lg m-2 payment-btn" data-payment="EDC">
+                                EDC
+                            </button>
+                            <button type="button" class="btn btn-info btn-lg m-2 payment-btn" data-payment="QRIS">
+                                QRIS
+                            </button>
+                        </div>
+                    </div>
+                </div>                                              
             </div>
         </div>
     </div>

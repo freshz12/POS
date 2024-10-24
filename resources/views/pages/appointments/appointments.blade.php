@@ -204,7 +204,7 @@
 
     {{-- Modal Edit --}}
     <div class="modal fade" id="editappointment" role="dialog" aria-labelledby="editappointment" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editappointments">Edit Event</h5>
@@ -212,46 +212,70 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="{{ url('/appointments/update') }}">
+                <form method="post" id="appointmentForm" action="{{ url('/appointments/update') }}">
                     @csrf
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="customer_full_name_edit">Customer Name <span style="color: red">*</span></label>
-                            <select class="form-control select2 customers" id="customer_full_name_edit"
-                                name="customer_id" required></select>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="customer_full_name_edit">Customer Name <span
+                                            style="color: red">*</span></label>
+                                    <select class="form-control select2 customers" id="customer_full_name_edit"
+                                        name="customer_id" required></select>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="status" class="form-label">Status <span
+                                            style="color: red">*</span></label>
+                                    <select class="form-control" name="status" id="status_edit" required>
+                                        <option value="Pending">Pending</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="status" class="form-label">Status <span style="color: red">*</span></label>
-                            <select class="form-control" name="status" id="status_edit" required>
-                                <option value="Pending">Pending</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="eventStart">Start Date</label>
+                                    <input type="text" class="form-control flatpickr" id="start_edit" name="start"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="eventEnd">End Date</label>
+                                    <input type="text" class="form-control flatpickr" id="end_edit" name="end"
+                                        required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="eventStart">Start Date</label>
-                            <input type="text" class="form-control flatpickr" id="start_edit" name="start"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventEnd">End Date</label>
-                            <input type="text" class="form-control flatpickr" id="end_edit" name="end" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="amount">Capster Name</label>
-                            <select class="form-control select2 capsters" id="capster_edit" name="capster_id"
-                                required></select>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventRemarks">Remarks</label>
-                            <textarea class="form-control" id="remarks_edit" name="remarks"></textarea>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="amount">Capster Name</label>
+                                    <select class="form-control select2 capsters" id="capster_edit" name="capster_id"
+                                        required></select>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label for="eventRemarks">Remarks</label>
+                                    <textarea class="form-control" id="remarks_edit" name="remarks"></textarea>
+                                </div>
+                            </div>
                         </div>
                         <input type="hidden" id="eventId" name="id">
+                        <input type="hidden" id="customer_name" name="customer_name">
+                        <input type="hidden" id="capster_name" name="capster_name">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button class="btn btn-primary" type="submit">Update</button>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-danger mx-2" data-dismiss="modal">Close</button>
+                        <button class="btn btn-success mx-2" id="create_transaction" type="button">Create Transaction</button>
+                        <button class="btn btn-primary mx-2" type="submit">Update</button>
                     </div>
                 </form>
             </div>

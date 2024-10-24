@@ -8,6 +8,28 @@
     });
 
     $(document).ready(function() {
+        $('#customer').val(null).trigger('change');
+        $('#capster').val(null).trigger('change');
+
+        var selectedCustomerId = $('#customerIdInput').val();
+        var selectedCustomerName = $('#customerNameInput').val();
+        if (selectedCustomerId) {
+            var CustomerSelect = $('.select2#customer');
+            var optionCustomer = new Option(selectedCustomerName, selectedCustomerId, true, true);
+            CustomerSelect.append(optionCustomer).trigger('change');
+            CustomerSelect.val(selectedCustomerId).trigger('change');
+        }
+
+        var selectedCapsterId = $('#capsterIdInput').val();
+        var selectedCapsterName = $('#capsterNameInput').val();
+
+        if (selectedCapsterId) {
+            var capsterSelect = $('.select2#capster');
+            var optionCapster = new Option(selectedCapsterName, selectedCapsterId, true, true);
+            capsterSelect.append(optionCapster).trigger('change');
+            capsterSelect.val(selectedCapsterId).trigger('change');
+        }
+
         fetchProducts();
         $('#searchProduct').on('input', function() {
             const query = $(this).val().toLowerCase();
@@ -95,10 +117,6 @@
             let formattedAmount = formatNumberWithCommas(parseInt(currentValue,
                 10));
             $('#amount').val(formattedAmount);
-        });
-
-        $('#paymentModal').on('show.bs.modal', function() {
-            $('#amount').val('');
         });
 
 
@@ -203,8 +221,6 @@
                 swal('Your cart is empty', 'Please add products to the cart before proceeding!',
                     'error');
             } else {
-                $('#customer').val(null).trigger('change');
-                $('#capster').val(null).trigger('change');
                 $('#selectCustomerModal').modal('show');
             }
         });
@@ -214,19 +230,35 @@
                 swal('Error',
                     'Please select both customer and capster!', 'error');
                 return;
-            } {
-                $('#selectCustomerModal').modal('hide');
+            }
+
+            $('#selectCustomerModal').modal('hide');
+            $('#paymentMethodModal').modal('show');
+        });
+
+        $('.payment-btn').on('click', function() {
+            let paymentType = $(this).data('payment');
+            $('#paymentType').val(paymentType);
+
+            if (paymentType !== 'Cash') {
+                submitTransaction(false);
+            } else {
+                $('#paymentMethodModal').modal('hide');
+                $('#amount').val('');
+                $('#amount').val($('#finalTotalAmount').text());
+
                 $('#paymentModal').modal('show');
             }
         });
 
-
-        $('#payButtonModal').on('click', function() {
+        function submitTransaction(isCash = false) {
             let finalTotalAmount = $('#finalTotalAmount').text().trim();
             let totalAmountInput = $('#totalAmount').text().trim();
             let totalAmount = parseFloat(finalTotalAmount.replace(/\./g, '').replace(/,/g, '.'));
 
-            let cashPaidText = $('#amount').val().trim();
+            cashPaidisCash = isCash ? $('#amount').val() : $('#finalTotalAmount').text();
+
+            let cashPaidText = cashPaidisCash.trim();
             let customerId = $('#customer').val();
             let capsterId = $('#capster').val();
             let promoIdInput = $('.select2.coupon').val();
@@ -242,14 +274,20 @@
 
             $('#totalAmountInput').val(finalTotalAmount);
             $('#totalAmountBeforeDiscount').val(totalAmountInput);
-            $('#cashPaidInput').val(cashPaidText);
+            $('#amount').val(cashPaidText);
             $('#cartItemsInput').val(cartItems);
             $('#customerIdInput').val(customerId);
             $('#capsterIdInput').val(capsterId);
             $('#promoIdInput').val(promoIdInput);
 
             $('#paymentForm').submit();
+        }
+
+
+        $('#payButtonModal').on('click', function() {
+            submitTransaction(true);
         });
+
     });
 
     function getCartItems() {
@@ -265,7 +303,7 @@
                 price: $(this).find('.price-cell').text().trim()
             };
 
-            if (product.id && product.name && product.qty && product.price && product.price !== "0" ) {
+            if (product.id && product.name && product.qty && product.price && product.price !== "0") {
                 cartItems.push(product);
             }
         });
@@ -414,7 +452,7 @@
                     console.error('Error fetching products:', error);
                 }
             });
-        }else{
+        } else {
             updateTotalAmount();
         }
 

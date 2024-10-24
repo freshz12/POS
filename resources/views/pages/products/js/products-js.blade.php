@@ -21,6 +21,7 @@
                     d.quantity = $('#quantity_filter').val();
                     d.is_included_in_receipt = $('#is_included_in_receipt_filter').val();
                     d.updated_at = $('#updated_at_filter').val();
+                    d.type = $('#type_filter').val();
                 },
             },
             "columnDefs": [{
@@ -103,7 +104,7 @@
                     }
                 },
                 {
-                    "targets": 7,
+                    "targets": 8,
                     "searchable": false
                 }
             ],
@@ -124,6 +125,9 @@
                 },
                 {
                     "data": "unit_of_measurement"
+                },
+                {
+                    "data": "type"
                 },
                 {
                     "data": "quantity"
@@ -210,6 +214,7 @@
         $('#quantity_filter').val('');
         $('#is_included_in_receipt_filter').val('');
         $('#updated_at_filter').val('');
+        $('#type_filter').val('');
 
         $('#datatable').DataTable().ajax.reload();
 
@@ -224,7 +229,8 @@
             unit_of_measurement: $('#unit_of_measurement_filter').val(),
             quantity: $('#quantity_filter').val(),
             is_included_in_receipt: $('#is_included_in_receipt_filter').val(),
-            updated_at: $('#updated_at_filter').val()
+            updated_at: $('#updated_at_filter').val(),
+            type: $('#type_filter').val()
         };
         var queryString = $.param(params);
         var downloadUrl = baseUrl + '?' + queryString;
@@ -255,6 +261,7 @@
                 $('#quantity').val(response[0]['quantity']);
                 $('#unit_of_measurement').val(response[0]['unit_of_measurement']);
                 $('#description').val(response[0]['description']);
+                $('#type').val(response[0]['type']);
 
                 let isIncludedInReceipt = response[0]['is_included_in_receipt'];
                 if (parseInt(isIncludedInReceipt) == 1) {
