@@ -104,6 +104,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/store', [AppointmentsController::class, 'store'])->middleware('can:appointments_create');
         Route::post('/update', [AppointmentsController::class, 'update'])->middleware('can:appointments_edit');
         Route::get('/export', [AppointmentsController::class, 'export'])->middleware('can:appointments_view');
+        Route::post('/delete', [AppointmentsController::class, 'destroy'])->middleware('can:appointments_delete');
     });
 
     Route::prefix('roles')->group(function () {

@@ -103,23 +103,21 @@
                                     <label for="status" class="form-label">Status <span
                                             style="color: red">*</span></label>
                                     <select class="form-control" name="status" id="status" required>
-                                        <option value="Pending">Pending</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="New">New</option>
+                                        <option value="Reguler">Reguler</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-6">
-                                <label for="date_start" class="form-label">Date Start <span
+                                <label for="date_start" class="form-label">Date Time <span
                                         style="color: red">*</span></label>
                                 <input class="form-control flatpickr" type="text" name="date_start" id="date_start"
                                     required>
                             </div>
                             <div class="col-6">
-                                <label for="date_end" class="form-label">Date End <span style="color: red">*</span></label>
+                                <label for="date_end" class="form-label">Date Time <span style="color: red">*</span></label>
                                 <input class="form-control flatpickr" type="text" name="date_end" id="date_end"
                                     required>
                             </div>
@@ -229,10 +227,8 @@
                                     <label for="status" class="form-label">Status <span
                                             style="color: red">*</span></label>
                                     <select class="form-control" name="status" id="status_edit" required>
-                                        <option value="Pending">Pending</option>
-                                        <option value="In Progress">In Progress</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Cancelled">Cancelled</option>
+                                        <option value="New">New</option>
+                                        <option value="Reguler">Reguler</option>
                                     </select>
                                 </div>
                             </div>
@@ -240,14 +236,14 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label for="eventStart">Start Date</label>
+                                    <label for="eventStart">Start Time</label>
                                     <input type="text" class="form-control flatpickr" id="start_edit" name="start"
                                         required>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label for="eventEnd">End Date</label>
+                                    <label for="eventEnd">End Time</label>
                                     <input type="text" class="form-control flatpickr" id="end_edit" name="end"
                                         required>
                                 </div>
@@ -273,7 +269,8 @@
                         <input type="hidden" id="capster_name" name="capster_name">
                     </div>
                     <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-danger mx-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary mx-2" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger mx-2" id="delete_appointment">Delete</button>
                         <button class="btn btn-success mx-2" id="create_transaction" type="button">Create Transaction</button>
                         <button class="btn btn-primary mx-2" type="submit">Update</button>
                     </div>

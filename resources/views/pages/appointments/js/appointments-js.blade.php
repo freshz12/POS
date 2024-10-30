@@ -25,12 +25,10 @@
                     success: function(data) {
                         var formattedData = data.data.map(function(event) {
                             var backgroundColor = 'blue';
-                            if (event.status === 'Completed') {
+                            if (event.status === 'New') {
                                 backgroundColor = 'green';
-                            } else if (event.status === 'Pending') {
+                            } else if (event.status === 'Reguler') {
                                 backgroundColor = 'orange';
-                            } else if (event.status === 'Cancelled') {
-                                backgroundColor = 'red';
                             }
 
                             return {
@@ -135,6 +133,24 @@
         $('#appointmentForm').attr('action', '/transactions/');
         $('#appointmentForm').attr('method', 'GET');
         $('#appointmentForm').submit();
+    });
+
+    $('#delete_appointment').on('click', function() {
+        event.preventDefault();
+        swal({
+                title: 'Are you sure?',
+                // text: 'Once deleted, you will not be able to recover this imaginary file!',
+                icon: 'warning',
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $('#appointmentForm').attr('action', '/appointments/delete');
+                    $('#appointmentForm').attr('method', 'POST');
+                    $('#appointmentForm').submit();
+                }
+            });
     });
 
     function openAddCustomerModal() {

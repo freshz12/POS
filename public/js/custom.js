@@ -15,6 +15,7 @@ $('.select2.customers').select2({
         delay: 250,
         data: function (params) {
             return {
+                is_dropdown: true,
                 search: params.term,
                 page: params.page || 1
             };

@@ -113,33 +113,33 @@ class AppointmentsController extends Controller
         }
     }
 
-    // public function destroy(Request $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
+    public function destroy(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-    //         $appointment = Appointments::find($request->id);
+            $appointment = Appointments::find($request->id);
 
-    //         $appointment->deleted_by = auth()->user()->id;
+            $appointment->deleted_by = auth()->user()->id;
 
-    //         $appointment->save();
+            $appointment->save();
 
-    //         $appointment->delete();
+            $appointment->delete();
 
-    //         DB::commit();
+            DB::commit();
 
-    //         session()->flash('success_message', 'Appointment has been deleted successfully!');
+            session()->flash('success_message', 'Appointment has been deleted successfully!');
 
-    //         return redirect()->to('/appointments')->with('type_menu', 'appointments');
+            return redirect()->to('/appointments')->with('type_menu', 'appointments');
 
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-    //         return back()->withErrors([
-    //             'error_message' => 'Something went wrong, please contact administrator',
-    //         ]);
-    //     }
-    // }
+            return back()->withErrors([
+                'error_message' => 'Something went wrong, please contact administrator',
+            ]);
+        }
+    }
 
     public function export(Request $request)
     {
