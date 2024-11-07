@@ -252,6 +252,7 @@
         });
 
         function submitTransaction(isCash = false) {
+            showLoading();
             let finalTotalAmount = $('#finalTotalAmount').text().trim();
             let totalAmountInput = $('#totalAmount').text().trim();
             let totalAmount = parseFloat(finalTotalAmount.replace(/\./g, '').replace(/,/g, '.'));
@@ -457,5 +458,13 @@
         }
 
         $('#addCouponModal').modal('hide');
+    }
+
+    function showLoading() {
+        $("#loadingOverlay").fadeIn();
+    }
+
+    function hideLoading() {
+        $("#loadingOverlay").fadeOut();
     }
 </script>

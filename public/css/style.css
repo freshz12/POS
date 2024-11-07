@@ -3650,3 +3650,35 @@ body.layout-3 .main-wrapper {
     opacity: 0;
   }
 }
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+  display: none; /* Hidden by default */
+  z-index: 9999;
+}
+
+/* Loading spinner */
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60px;
+  height: 60px;
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db; /* Spinner color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  transform: translate(-50%, -50%); /* Center the spinner */
+  box-sizing: border-box;
+}
+
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

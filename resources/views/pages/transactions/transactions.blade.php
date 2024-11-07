@@ -17,6 +17,9 @@
 </head>
 
 <body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
     @if (session('success_message'))
         <script>
             $(document).ready(function() {

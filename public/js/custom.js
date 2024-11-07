@@ -249,6 +249,14 @@ function submitCustomer() {
     });
 }
 
+function showLoading() {
+    $("#loadingOverlay").fadeIn();
+}
+
+function hideLoading() {
+    $("#loadingOverlay").fadeOut();
+}
+
 // $('.select2.coupon').select2({
 //     ajax: {
 //         url: '/promos/index_data',
