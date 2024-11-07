@@ -49,6 +49,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [TransactionsTableController::class, 'index'])->middleware('can:transactions_view');
         Route::post('/index_data', [TransactionsTableController::class, 'indexData'])->middleware('can:transactions_view');
         Route::get('/show/{id}', [TransactionsTableController::class, 'show'])->middleware('can:transactions_edit');
+        Route::get('/all_transaction_from_customer/{id}', [TransactionsTableController::class, 'showAllTransactionFromCustomer']);
         Route::post('/update', [TransactionsTableController::class, 'update'])->middleware('can:transactions_edit');
         Route::post('/delete', [TransactionsTableController::class, 'destroy'])->middleware('can:transactions_delete');
         Route::get('/export', [TransactionsTableController::class, 'export'])->middleware('can:transactions_view');

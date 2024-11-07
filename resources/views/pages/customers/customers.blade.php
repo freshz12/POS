@@ -76,9 +76,41 @@
                     </div>
                 </div>
             </div>
-
-
         </section>
+    </div>
+
+    {{-- Customer Transaction History --}}
+    <div class="modal fade" tabindex="-1" role="dialog" id="transactionhistory">
+        <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Transaction History
+                    </h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table-hover table" id="transactionhistorytable" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th style="width: 1%">#</th>
+                                    <th scope="col">Capster Name</th>
+                                    <th scope="col">Transaction Date</th>
+                                    <th scope="col">Products Name</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Promo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- Modal Create --}}
@@ -125,6 +157,12 @@
                                 <input class="form-control" type="number" name="phone_number" required>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control" type="number" name="notes"></textarea>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -148,7 +186,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post" action="{{ url('/customers/update') }}" enctype="multipart/form-data" id="editForm">
+                <form method="post" action="{{ url('/customers/update') }}" enctype="multipart/form-data"
+                    id="editForm">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -179,6 +218,12 @@
                                         style="color: red">*</span></label>
                                 <input class="form-control" type="number" name="phone_number" id="phone_number"
                                     required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="notes" class="form-label">Notes</label>
+                                <textarea class="form-control" type="number" name="notes" id="notes"></textarea>
                             </div>
                         </div>
                     </div>

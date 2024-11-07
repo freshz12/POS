@@ -67,10 +67,18 @@
                             `;
                         }
 
+                        transactionHistoryButton = `
+                                <button onclick="customerTransactions(${row.id})" class="btn btn-success ml-2" data-toggle="modal" data-target="#transactionhistory">
+                                    <i
+                            class="fas fa-shopping-bag"></i>
+                                </button>
+                            `;
+
                         return `
                             <div class="btn-group" role="group" aria-label="Action buttons">
                                 ${editButton}
                                 ${deleteButton}
+                                ${transactionHistoryButton}
                             </div>
                         `;
                     },
@@ -188,6 +196,129 @@
         $('#filtercustomer').modal('hide');
     }
 
+    function customerTransactions(id) {
+        if ($.fn.dataTable.isDataTable('#transactionhistorytable')) {
+            $('#transactionhistorytable').DataTable().destroy();
+        }
+
+        $('#transactionhistorytable').DataTable({
+            "dom": '<"row"<"col-12 d-flex justify-content-end"f>>' +
+                '<"row"<"col-12"t>>' +
+                '<"row"<"col-12"<"d-flex justify-content-start"l>>>' +
+                '<"row"<"col-12"<i><"d-flex justify-content-end"p>>>',
+            "pagingType": "full_numbers",
+            "ajax": {
+                "url": "{{ url('/transactions_table/all_transaction_from_customer') }}/" + id,
+                "dataSrc": "data",
+            },
+            "columnDefs": [{
+                    "targets": 0,
+                    "render": function(data, type, row, meta) {
+                        return meta.row + 1;
+                    },
+                    "orderable": false,
+                    "searchable": false
+                },
+                {
+                    "targets": 5,
+                    "render": function(data, type, row) {
+                        if(!row.promo){
+                            return null;
+                        }
+                        var promo;
+                        if(row.promo.type === 'Percentage'){
+                            promo = row.promo.value + '%';
+                        }else if(row.promo.type === 'Nominal'){
+                            promo = 'Rp.' + row.promo.value;
+                        }else if(row.promo.type === 'Package'){
+                            promo = row.promo.type;
+                        }
+                        return promo;
+                    }
+                }
+            ],
+            "columns": [{
+                    "data": null
+                },
+                {
+                    "data": "capster.full_name"
+                },
+                {
+                    "data": "created_at"
+                },
+                {
+                    "data": "product"
+                },
+                {
+                    "data": "amount"
+                },
+                {
+                    "data": "promo.value"
+                }
+            ],
+            "language": {
+                "paginate": {
+                    "first": "First",
+                    "last": "Last",
+                    "next": "Next",
+                    "previous": "Previous"
+                },
+                "lengthMenu": "Show _MENU_ entries"
+            },
+            "drawCallback": function(settings) {
+                var api = this.api();
+                var pagination = $(this).closest('.dataTables_wrapper').find(
+                    '.dataTables_paginate');
+                var pageInfo = api.page.info();
+                var pageList = '';
+
+                if (pageInfo.page === 0) {
+                    pageList +=
+                        '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>';
+                } else {
+                    pageList += '<li class="page-item"><a class="page-link" href="#" data-page="' +
+                        (pageInfo.page - 1) + '">Previous</a></li>';
+                }
+
+                for (var i = 0; i < pageInfo.pages; i++) {
+                    if (i === pageInfo.page) {
+                        pageList +=
+                            '<li class="page-item active"><a class="page-link" href="#" data-page="' +
+                            i + '">' + (i + 1) + ' <span class="sr-only">(current)</span></a></li>';
+                    } else {
+                        pageList +=
+                            '<li class="page-item"><a class="page-link" href="#" data-page="' + i +
+                            '">' + (i + 1) + '</a></li>';
+                    }
+                }
+
+                if (pageInfo.page === pageInfo.pages - 1) {
+                    pageList +=
+                        '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
+                } else {
+                    pageList += '<li class="page-item"><a class="page-link" href="#" data-page="' +
+                        (pageInfo.page + 1) + '">Next</a></li>';
+                }
+
+                pagination.html(
+                    '<div class=""><nav aria-label="..."><ul class="pagination">' +
+                    pageList + '</ul></nav></div>');
+
+                pagination.find('a.page-link').on('click', function(e) {
+                    e.preventDefault();
+                    var newPage = $(this).data('page');
+                    if (newPage !== undefined) {
+                        api.page(newPage).draw('page');
+                    }
+                });
+            },
+            "initComplete": function() {
+                $('.dataTables_filter input').addClass('form-control');
+                $('.dataTables_length select').addClass('form-select');
+            }
+        });
+    }
+
     function resetfilter() {
         $('#full_name_filter').val('');
         $('#email_filter').val('');
@@ -236,6 +367,7 @@
                 $('#gender').val(response[0]['gender']);
                 $('#phone_number').val(response[0]['phone_number']);
                 $('#id').val(response[0]['id']);
+                $('#notes').val(response[0]['notes']);
             },
             error: function(xhr) {
                 alert('Error:', xhr.responseText);

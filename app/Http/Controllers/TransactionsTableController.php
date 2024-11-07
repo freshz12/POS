@@ -116,6 +116,23 @@ class TransactionsTableController extends Controller
         }
     }
 
+    public function showAllTransactionFromCustomer($id)
+    {
+        $transactions = Transactions::with('capster', 'promo')
+        ->where('customer_id', $id)
+        ->select('transactions.id','transactions.capster_id', 'transactions.promo_id', 'transactions.created_at', 'transactions.amount')
+        ->get();
+
+        foreach ($transactions as $transaction) {
+            $transaction->product = TransactionProducts::join('products', 'transaction_products.product_id', '=', 'products.id')
+                ->where('transaction_products.transaction_id', $transaction->id)
+                ->pluck('products.product_name')
+                ->implode(', ');
+        }
+
+        return response()->json(['data' => $transactions]);
+    }
+
     public function destroy(Request $request)
     {
         try {
