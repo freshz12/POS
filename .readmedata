@@ -323,3 +323,20 @@ INSERT INTO transactions VALUES ('TR0000139', (SELECT id FROM customers WHERE ph
 INSERT INTO transactions VALUES ('TR0000139', (SELECT id FROM customers WHERE phone_number = '82111226107'), '66000', 1, 1, NULL, '2024-09-09 17:47:00.000', '2024-09-09 17:47:00.000', NULL, 5, NULL, '66000',  'Cash',  '#17-2395');
 INSERT INTO transactions VALUES ('TR0000139', (SELECT id FROM customers WHERE phone_number = '81282377906'), '76000', 1, 1, NULL, '2024-09-09 18:13:00.000', '2024-09-09 18:13:00.000', NULL, 5, NULL, '76000',  'Cash',  '#17-2396');
 INSERT INTO transactions VALUES ('TR0000139', (SELECT id FROM customers WHERE phone_number = '81381002244'), '66000', 1, 1, NULL, '2024-09-09 18:54:00.000', '2024-09-09 18:54:00.000', NULL, 6, NULL, '66000',  'Cash',  '#17-2397');
+
+
+
+INSERT INTO products (product_name,sku,description,picture_path,purchase_price,selling_price,quantity,unit_of_measurement,created_by,updated_by,deleted_by,created_at,updated_at,deleted_at,is_included_in_receipt,[type]) VALUES
+	 (N'Fast Cut',NULL,NULL,NULL,NULL,66000,99995,NULL,1,1,NULL,'2024-09-22 16:30:52.02','2024-09-29 20:44:32.567',NULL,1,NULL),
+	 (N'Hair Cut and Wash',NULL,NULL,NULL,NULL,76000,999997,NULL,1,1,NULL,'2024-09-22 16:31:31.503','2024-10-02 00:25:16.223',NULL,1,NULL),
+	 (N'Face Mask',NULL,NULL,NULL,NULL,60000,9999993,NULL,1,1,NULL,'2024-09-22 16:31:55.887','2024-10-02 00:23:20.07',NULL,1,NULL),
+	 (N'Relaxation Spa',NULL,NULL,NULL,NULL,60000,9999999,NULL,1,1,NULL,'2024-09-22 16:32:17.397','2024-09-22 16:32:17.397',NULL,1,NULL),
+	 (N'Dark Classic Hair Color (S)',NULL,NULL,NULL,NULL,150000,9999991,NULL,1,1,NULL,'2024-09-22 16:33:09.393','2024-10-02 20:14:26.377',NULL,1,NULL),
+	 (N'Dark Classic Hair Color (M)',NULL,NULL,NULL,NULL,250000,9999984,NULL,1,1,NULL,'2024-09-22 16:33:34.213','2024-09-29 21:23:16.79',NULL,1,NULL),
+	 (N'Premium Grooming 1',NULL,NULL,NULL,NULL,110000,9999990,NULL,1,1,NULL,'2024-09-22 16:34:04.3','2024-10-02 20:14:26.373',NULL,1,NULL),
+	 (N'Premium Grooming 2',NULL,NULL,NULL,NULL,90000,9999996,NULL,1,1,NULL,'2024-09-22 16:34:19.807','2024-09-29 20:48:02.463',NULL,1,NULL),
+	 (N'Fashion Grooming (S)',NULL,NULL,NULL,NULL,210000,9999999,NULL,1,1,NULL,'2024-09-22 16:34:43.007','2024-09-22 16:34:43.007',NULL,1,NULL),
+	 (N'Fashion Grooming (M)',NULL,NULL,NULL,NULL,310000,9999985,NULL,1,1,NULL,'2024-09-22 16:35:11.717','2024-10-24 20:24:05.237',NULL,1,NULL);
+INSERT INTO products (product_name,sku,description,picture_path,purchase_price,selling_price,quantity,unit_of_measurement,created_by,updated_by,deleted_by,created_at,updated_at,deleted_at,is_included_in_receipt,[type]) VALUES
+	 (N'Health Scalp & Grooming',NULL,NULL,NULL,NULL,210000,9999798,NULL,1,1,NULL,'2024-09-22 16:37:08.783','2024-10-24 20:26:31.243',NULL,1,N'Retail'),
+	 (N'Classic Groomin (S)',NULL,NULL,NULL,0,210000,9999999,NULL,1,1,NULL,'2024-09-22 16:37:08.783','2024-10-24 20:26:31.243',NULL,1,NULL);
