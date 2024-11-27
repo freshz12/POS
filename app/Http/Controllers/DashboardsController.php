@@ -27,7 +27,7 @@ class DashboardsController extends Controller
     {
         return view('pages.invoice.invoice.invoice', ['type_menu' => 'invoice']);
     }
-    
+
 
     public function mainIndexData(Request $request)
     {
@@ -256,11 +256,15 @@ class DashboardsController extends Controller
                         DB::raw('SUM(transactions.amount) as total_spent'),
                         DB::raw('CAST(transactions.created_at AS DATE) as transaction_date')
                     )
-                        ->whereDate('transactions.created_at', $startDate)
+                        ->whereBetween('transactions.created_at', [
+                            $startDate->setTimezone('Asia/Jakarta')->startOfDay(),
+                            $endDate->setTimezone('Asia/Jakarta')->endOfDay()
+                        ])
                         ->whereNull('transactions.deleted_at')
                         ->groupBy(DB::raw('CAST(transactions.created_at AS DATE)'))
                         ->orderBy('transaction_date')
                         ->get();
+
                 } elseif ($diff < 7) {
                     $transactions = Transactions::select(
                         DB::raw('SUM(transactions.amount) as total_spent'),
@@ -337,8 +341,8 @@ class DashboardsController extends Controller
                 $endDate = Carbon::now('Asia/Jakarta')->endOfYear();
                 break;
             case 'custom':
-                $startDate = Carbon::parse($request->input('start_date'));
-                $endDate = Carbon::parse($request->input('end_date'));
+                $startDate = Carbon::parse($request->input('start_date'))->setTimezone('Asia/Jakarta')->startOfDay();
+                $endDate = Carbon::parse($request->input('end_date'))->setTimezone('Asia/Jakarta')->endOfDay();
                 break;
             default:
                 return response()->json(['error' => 'Invalid range'], 400);
@@ -383,6 +387,32 @@ class DashboardsController extends Controller
             ->groupBy('capsters.full_name', 'transactions.capster_id')
             ->when($request->capster_name, function ($query) use ($request) {
                 $query->where('capsters.full_name', 'like', '%' . $request->capster_name . '%');
+            })
+            ->when($request->created_at_from || $request->created_at_to || $request->created_at, function ($query) use ($request) {
+                $timezone = 'Asia/Jakarta';
+                if (!$request->created_at_from && !$request->created_at_to) {
+                    if ($request->created_at === 'daily') {
+                        $query->whereBetween('transactions.created_at', [
+                            Carbon::now($timezone)->startOfDay(),
+                            Carbon::now($timezone)->endOfDay()
+                        ]);
+                    } elseif ($request->created_at === 'weekly') {
+                        $query->whereBetween('transactions.created_at', [
+                            Carbon::now($timezone)->startOfWeek(),
+                            Carbon::now($timezone)->endOfWeek()
+                        ]);
+                    } elseif ($request->created_at === 'monthly') {
+                        $query->whereBetween('transactions.created_at', [
+                            Carbon::now($timezone)->startOfMonth(),
+                            Carbon::now($timezone)->endOfMonth()
+                        ]);
+                    }
+                } else if ($request->created_at_from && $request->created_at_to) {
+                    $query->whereBetween('transactions.created_at', [
+                        Carbon::parse($request->created_at_from)->setTimezone($timezone)->startOfDay(),
+                        Carbon::parse($request->created_at_to)->setTimezone($timezone)->endOfDay()
+                    ]);
+                }
             })
             ->when($request->total_amount, function ($query) use ($request) {
                 $query->havingRaw('SUM(transactions.amount) LIKE ?', ['%' . $request->total_amount . '%']);

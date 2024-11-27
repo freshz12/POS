@@ -41,10 +41,10 @@ class DashboardsCapstersExport implements FromCollection, WithHeadings, WithMapp
     public function map($capster): array
     {
         return [
-            $capster->capster_id,
-            $capster->capster_name,
-            $capster->total_amount,
-            $capster->total_transactions,
+            $capster?->capster_id ?? 'N/A',
+            $capster?->capster_name ?? 'N/A',
+            $capster?->total_amount ?? 'N/A',
+            $capster?->total_transactions ?? 'N/A',
         ];
     }
 

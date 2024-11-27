@@ -99,25 +99,43 @@
                     "data": null
                 },
                 {
-                    "data": "name"
+                    "data": "name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "unique_code"
+                    "data": "unique_code",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "type"
+                    "data": "type",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "value"
                 },
                 {
-                    "data": "start_date"
+                    "data": "start_date",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "end_date"
+                    "data": "end_date",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "updated_at"
+                    "data": "updated_at",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "language": {

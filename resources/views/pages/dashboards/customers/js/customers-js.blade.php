@@ -33,13 +33,19 @@
                     "data": null
                 },
                 {
-                    "data": "customer_name"
+                    "data": "customer_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "total_spent"
                 },
                 {
-                    "data": "total_transactions"
+                    "data": "total_transactions",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "language": {

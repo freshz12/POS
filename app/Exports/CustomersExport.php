@@ -40,15 +40,15 @@ class CustomersExport implements FromCollection, WithHeadings, WithMapping, Shou
     public function map($customer): array
     {
         return [
-            $customer->id,
-            $customer->full_name,
-            $customer->email,
-            $customer->gender,
-            $customer->phone_number,
-            $customer->createdBy->name ?? 'N/A',
-            $customer->created_at,
-            $customer->updatedBy->name ?? 'N/A',
-            $customer->updated_at,
+            $customer?->id ?? 'N/A',
+            $customer?->full_name ?? 'N/A',
+            $customer?->email ?? 'N/A',
+            $customer?->gender ?? 'N/A',
+            $customer?->phone_number ?? 'N/A',
+            $customer?->createdBy?->name ?? 'N/A' ?? 'N/A',
+            $customer?->created_at ?? 'N/A',
+            $customer?->updatedBy?->name ?? 'N/A',
+            $customer?->updated_at ?? 'N/A',
         ];
     }
 

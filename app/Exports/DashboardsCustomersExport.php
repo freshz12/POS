@@ -41,9 +41,9 @@ class DashboardsCustomersExport implements FromCollection, WithHeadings, WithMap
     public function map($customer): array
     {
         return [
-            $customer->customer_name,
-            $customer->total_spent,
-            $customer->total_transactions,
+            $customer?->customer_name ?? 'N/A',
+            $customer?->total_spent ?? 'N/A',
+            $customer?->total_transactions ?? 'N/A',
         ];
     }
 

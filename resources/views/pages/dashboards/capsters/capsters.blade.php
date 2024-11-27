@@ -20,6 +20,11 @@
                                 <div class="d-flex flex-column">
                                     <div class="d-flex mb-3" style="flex-grow: 1; align-items: flex-end;">
                                         <div style="margin-left: auto; display: flex; align-items: flex-end;">
+                                            <select class="form-control" style="margin-right: 10px; width: 100px;" onchange="changeCreatedTypeFilter(this.value)" id="created_type">
+                                                <option selected value="daily">Daily</option>
+                                                <option value="weekly">Weekly</option>
+                                                <option value="monthly">Monthly</option>
+                                            </select>
                                             <button
                                                 style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
                                                 class="btn btn-info" data-toggle="modal" data-target="#filtercapster">
@@ -93,6 +98,20 @@
                             <label for="total_transactions_filter" class="form-label">Total Transactions</label>
                             <input class="form-control" type="text" id="total_transactions_filter"
                                 name="total_transactions_filter">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="created_from_filter" class="form-label">Transaction Date From</label>
+                            <input class="form-control" type="date" id="created_from_filter"
+                                name="created_from_filter">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="created_to_filter" class="form-label">Transaction Date To</label>
+                            <input class="form-control" type="date" id="created_to_filter"
+                                name="created_to_filter">
                         </div>
                     </div>
                 </div>

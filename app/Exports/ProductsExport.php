@@ -44,19 +44,19 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping, Shoul
     public function map($product): array
     {
         return [
-            $product->id,
-            $product->product_name,
-            $product->sku,
-            $product->description,
-            $product->purchase_price,
-            $product->selling_price,
-            $product->quantity,
-            $product->type,
-            $product->unit_of_measurement,
-            $product->createdBy->name ?? 'N/A',
-            $product->created_at,
-            $product->updatedBy->name ?? 'N/A',
-            $product->updated_at,
+            $product?->id ?? 'N/A',
+            $product?->product_name ?? 'N/A',
+            $product?->sku ?? 'N/A',
+            $product?->description ?? 'N/A',
+            $product?->purchase_price ?? 'N/A',
+            $product?->selling_price ?? 'N/A',
+            $product?->quantity ?? 'N/A',
+            $product?->type ?? 'N/A',
+            $product?->unit_of_measurement ?? 'N/A',
+            $product?->createdBy?->name ?? 'N/A',
+            $product?->created_at ?? 'N/A',
+            $product?->updatedBy?->name ?? 'N/A',
+            $product?->updated_at ?? 'N/A',
         ];
     }
 

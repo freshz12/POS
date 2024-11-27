@@ -33,7 +33,7 @@
 
                             return {
                                 id: event.id,
-                                title: event.customers.full_name,
+                                title: event.customers?.full_name ?? 'N/A',
                                 start: event.start_date,
                                 end: event.end_date,
                                 backgroundColor: backgroundColor,
@@ -55,7 +55,7 @@
                     'Start: ' + moment(event.start).format('YYYY-MM-DD HH:mm') + '<br>' +
                     'End: ' + (event.end ? moment(event.end).format('YYYY-MM-DD HH:mm') + '<br>' :
                         '') +
-                    'Capster: ' + event.capster.full_name + '<br>' +
+                    'Capster: ' + event.capster?.full_name ?? 'N/A' + '<br>' +
                     'Remarks: ' + event.remarks;
 
 
@@ -86,10 +86,10 @@
                 $customerSelect.val(event.customer_id).trigger('change');
 
                 var $capsterSelect = $('.select2#capster_edit');
-                var optionCapster = new Option(event.capster.full_name, event.capster_id, true,
+                var optionCapster = new Option(event.capster?.full_name ?? 'N/A', event?.capster_id ?? 0, true,
                     true);
                 $capsterSelect.append(optionCapster).trigger('change');
-                $capsterSelect.val(event.capster_id).trigger('change');
+                $capsterSelect.val(event.capster_id ?? 0).trigger('change');
 
                 $('#status_edit').val(event.status);
                 $('#start_edit').val(moment(event.start).format('YYYY-MM-DD HH:mm'));
@@ -97,7 +97,7 @@
                 $('#remarks_edit').val(event.remarks || '');
                 $('#eventId').val(event.id);
                 $('#customer_name').val(event.title);
-                $('#capster_name').val(event.capster.full_name);
+                $('#capster_name').val(event.capster?.full_name ?? 'N/A');
 
                 $('#editappointment').modal('show');
             },

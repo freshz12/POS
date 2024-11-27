@@ -42,17 +42,17 @@ class AttendancesExport implements FromCollection, WithHeadings, WithMapping, Sh
     public function map($attendance): array
     {
         return [
-            $attendance->id,
-            $attendance->users->name,
-            $attendance->clock_in,
-            $attendance->clock_out,
-            $attendance->status,
-            $attendance->request_reason,
-            $attendance->approved_or_rejected_reason,
-            $attendance->createdBy->name ?? 'N/A',
-            $attendance->created_at,
-            $attendance->updatedBy->name ?? 'N/A',
-            $attendance->updated_at,
+            $attendance?->id ?? 'N/A',
+            $attendance?->users?->name ?? 'N/A',
+            $attendance?->clock_in ?? 'N/A',
+            $attendance?->clock_out ?? 'N/A',
+            $attendance?->status ?? 'N/A',
+            $attendance?->request_reason ?? 'N/A',
+            $attendance?->approved_or_rejected_reason ?? 'N/A',
+            $attendance?->createdBy?->name ?? 'N/A',
+            $attendance?->created_at ?? 'N/A',
+            $attendance?->updatedBy?->name ?? 'N/A',
+            $attendance?->updated_at ?? 'N/A',
         ];
     }
 

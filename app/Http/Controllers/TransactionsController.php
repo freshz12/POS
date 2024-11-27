@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Promos;
+use App\Models\Products;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Exports\TransactionsExport;
-use App\Models\Products;
 use App\Models\TransactionProducts;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
@@ -49,7 +50,7 @@ class TransactionsController extends Controller
             return response()->json(['error' => 'Invalid cart items data'], 400);
         }
 
-        try {
+        // try {
             DB::beginTransaction();
 
             $runningNumberRecord = DB::table('running_numbers')->first();
@@ -93,6 +94,7 @@ class TransactionsController extends Controller
             }
 
             $change = intval($cash_paid) - intval($total_amount);
+            $discount = Promos::where('id', $request->promo_id)->first(['value', 'type']);
 
             DB::commit();
 
@@ -104,27 +106,25 @@ class TransactionsController extends Controller
 
             session()->flash('change_message', $successMessage);
 
-            $this->invoice($cartItems, $total_amount, $runningNumber, $tr);
+            $this->invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $request->payment_method);
+            sleep(4);
+            // $this->invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $request->payment_method);
 
             return redirect()->to('/transactions')->with('type_menu', 'transactions');
-        } catch (\Exception $e) {
-            DB::rollBack();
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
 
-            return back()->withErrors([
-                'error_message' => 'Something went wrong, please contact administrator',
-            ]);
-        }
+        //     return back()->withErrors([
+        //         'error_message' => 'Something went wrong, please contact administrator',
+        //     ]);
+        // }
     }
 
-    public function invoice($cartItems, $total_amount, $runningNumber, $tr)
+    public function invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $payment_method)
     {
         $mid = '123123456';
         $store_name = 'DENSETSU';
-        $store_address = 'De Entrance Arkadia. 
-        Jl. TB Simatupang No.Kav. 88
-        Kebagusan, Ps. Minggu
-        Daerah Khusus Ibukota 
-        Jakarta 12520';
+        $store_address = 'Ruko Jl Grand Wisata Bekasi No. 16 Blok AA-12 Lambangsari Kec. Tambun Selatan Kab. Bekasi Jawa Barat 17510';
         $store_phone = '1234567890';
         $store_email = 'yourmart@email.com';
         $store_website = 'densetsu.co.id';
@@ -174,10 +174,11 @@ class TransactionsController extends Controller
 
         // $printer->setTax($tax_percentage);
 
-        $printer->calculateSubTotal();
-        $printer->calculateGrandTotal();
+        $printer->calculateTotal($total_amount, $amount_before_discount);
+        $printer->calculateDiscount($discount);
 
         $printer->setTransactionID($transaction_id);
+        $printer->setPaymentMethod($payment_method);
 
         $printer->setLogo($image_path);
 

@@ -28,6 +28,11 @@ class ReceiptPrinter
     private $qr_code = [];
     private $transaction_id = '';
     private $createdat = '';
+    private $total_before_discount = 0;
+    private $discount = 0;
+    private $discount_type;
+    private $discount_percentage;
+    private $payment_method;
 
     function __construct()
     {
@@ -79,6 +84,11 @@ class ReceiptPrinter
         $this->logo = $logo;
     }
 
+    public function setPaymentMethod($payment_method)
+    {
+        $this->payment_method = $payment_method;
+    }
+
     public function setCreatedat($createdat)
     {
         $this->createdat = $createdat;
@@ -113,23 +123,23 @@ class ReceiptPrinter
         $this->tax = (int) $this->tax_percentage / 100 * (int) $this->subtotal;
     }
 
-    public function calculateSubtotal()
+    public function calculateTotal($total, $total_before_discount)
     {
-        $this->subtotal = 0;
-
-        foreach ($this->items as $item) {
-            $this->subtotal += (int) $item->getQty() * (int) $item->getPrice();
-        }
+        $this->subtotal = $total;
+        $this->total_before_discount = $total_before_discount;
     }
 
-    public function calculateGrandTotal()
-    {
-        if ($this->subtotal == 0) {
-            $this->calculateSubtotal();
-        }
 
-        $this->grandtotal = (int) $this->subtotal + (int) $this->tax;
+    public function calculateDiscount($discount)
+    {
+        $this->discount_percentage = $discount->value;
+        $this->discount = $discount->value;
+        $this->discount_type = $discount->type;
+        if($discount->type == 'Percentage'){
+            $this->discount = ($this->total_before_discount * $this->discount_percentage) / 100;
+        }
     }
+    
 
     public function setTransactionID($transaction_id)
     {
@@ -166,6 +176,18 @@ class ReceiptPrinter
     {
         $left_cols = $is_double_width ? 6 : 12;
         $right_cols = $is_double_width ? 10 : 19;
+
+        $formatted_value = $this->currency . number_format($value, 0, ',', '.');
+
+        return str_pad($label, $left_cols) . str_pad($formatted_value, $right_cols, ' ', STR_PAD_LEFT);
+    }
+
+    public function getPrintableDiscount($label, $value, $is_double_width = false)
+    {
+        $right = $this->discount_type == 'Percentage' ? 17 : 19;
+        $left_cols = $is_double_width ? 6 : 12;
+        $right_cols = $is_double_width ? 10 : $right;
+
 
         $formatted_value = $this->currency . number_format($value, 0, ',', '.');
 
@@ -214,16 +236,19 @@ class ReceiptPrinter
     public function printReceipt($with_items = true)
     {
         if ($this->printer) {
+            $discount_type = $this->discount_type == 'Percentage' ? " (" . $this->discount_percentage . "%)" : '';
             // Get total, subtotal, etc
-            $subtotal = $this->getPrintableSummary('Subtotal', $this->subtotal);
-            $tax = $this->getPrintableSummary('Tax', $this->tax);
-            $total = $this->getPrintableSummary('TOTAL', $this->grandtotal, true);
+            $subtotalbeforediscount = $this->getPrintableSummary('Subtotal', $this->total_before_discount);
+            $discount = $this->getPrintableDiscount('Discount' . $discount_type, $this->discount);
+            $subtotal = $this->getPrintableSummary('Total', $this->subtotal);
+            // $tax = $this->getPrintableSummary('Tax', $this->tax);
+            // $total = $this->getPrintableSummary('TOTAL', $this->grandtotal, true);
             // $header = $this->getPrintableHeader(
             //     'TID: ' . $this->transaction_id,
             //     'MID: ' . $this->store->getMID()
             // );
-            $header = "TID: {$this->transaction_id}\nOPERATOR: {$this->store->getOperator()}";
-            $footer = "Thank you for shopping!\n";
+            $header = "TID: {$this->transaction_id}\nOPERATOR: {$this->store->getOperator()}\nPayment Method: {$this->payment_method}";
+            $footer = "Thank you for coming!\n";
             // Init printer settings
             $this->printer->initialize();
             $this->printer->selectPrintMode();
@@ -239,15 +264,15 @@ class ReceiptPrinter
             $this->printer->selectPrintMode();
             // $this->printer->text("{$this->store->getAddress()}\n");
             $this->printer->setJustification(Printer::JUSTIFY_CENTER);
-            $this->printer->text("De Entrance Arkadia.");
+            // $this->printer->text("De Entrance Arkadia.");
+            // $this->printer->text("\n");
+            $this->printer->text("Ruko Jl Grand Wisata Bekasi");
             $this->printer->text("\n");
-            $this->printer->text("Jl.TB Simatupang No.Kav.88");
+            $this->printer->text("No. 16 Blok AA-12 Lambangsari");
             $this->printer->text("\n");
-            $this->printer->text("Kebagusan, Ps. Minggu");
+            $this->printer->text("Kec. Tambun Selatan Kab. Bekasi");
             $this->printer->text("\n");
-            $this->printer->text("Daerah Khusus Ibukota");
-            $this->printer->text("\n");
-            $this->printer->text("Jakarta 12520");
+            $this->printer->text("Jawa Barat 17510");
             $this->printer->text("\n");
             // $this->printer->setJustification(Printer::JUSTIFY_LEFT);
             // $this->printer->text($header . "\n");
@@ -263,10 +288,16 @@ class ReceiptPrinter
                 $this->printer->setJustification(Printer::JUSTIFY_LEFT);
                 foreach ($this->items as $item) {
                     $this->printer->text($item);
+                    $this->printer->text("\n");
                 }
                 $this->printer->feed();
             }
             // Print subtotal
+            $this->printer->setEmphasis(false);
+            $this->printer->text($subtotalbeforediscount);
+            $this->printer->text("\n");
+            $this->printer->text($discount);
+            $this->printer->text("\n");
             $this->printer->setEmphasis(true);
             $this->printer->text($subtotal);
             $this->printer->setEmphasis(false);
@@ -278,7 +309,11 @@ class ReceiptPrinter
             // $this->printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
             // $this->printer->text($total);
             $this->printer->setJustification(Printer::JUSTIFY_LEFT);
+            $this->printer->text("\n");
+            $this->printer->setEmphasis(false);
             $this->printer->text($header . "\n");
+            $this->printer->text("\n");
+            $this->printer->setEmphasis(false);
             $this->printer->feed();
             $this->printer->selectPrintMode();
             // Print qr code

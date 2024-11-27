@@ -37,12 +37,12 @@ class CapstersExport implements FromCollection, WithHeadings, WithMapping, Shoul
     public function map($capster): array
     {
         return [
-            $capster->id,
-            $capster->full_name,
-            $capster->createdBy->name ?? 'N/A',
-            $capster->created_at,
-            $capster->updatedBy->name ?? 'N/A',
-            $capster->updated_at,
+            $capster?->id ?? 'N/A',
+            $capster?->full_name ?? 'N/A',
+            $capster?->createdBy?->name ?? 'N/A',
+            $capster?->created_at ?? 'N/A',
+            $capster?->updatedBy?->name ?? 'N/A',
+            $capster?->updated_at ?? 'N/A',
         ];
     }
 

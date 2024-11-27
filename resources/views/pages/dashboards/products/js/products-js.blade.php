@@ -29,16 +29,28 @@
                     "data": null
                 },
                 {
-                    "data": "product_id"
+                    "data": "product_id",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "product_name"
+                    "data": "product_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "quantity_left"
+                    "data": "quantity_left",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "total_sold_quantity"
+                    "data": "total_sold_quantity",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "language": {

@@ -109,13 +109,19 @@
                     "data": null
                 },
                 {
-                    "data": "full_name"
+                    "data": "full_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "email"
                 },
                 {
-                    "data": "gender"
+                    "data": "gender",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "phone_number"
@@ -241,16 +247,28 @@
                     "data": null
                 },
                 {
-                    "data": "capster.full_name"
+                    "data": "capster.full_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "created_at"
+                    "data": "created_at",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "product"
+                    "data": "product",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "amount"
+                    "data": "amount",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "promo.value"

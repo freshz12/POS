@@ -118,7 +118,10 @@
                     "data": "picture_path"
                 },
                 {
-                    "data": "product_name"
+                    "data": "product_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "selling_price"
@@ -127,10 +130,16 @@
                     "data": "unit_of_measurement"
                 },
                 {
-                    "data": "type"
+                    "data": "type",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "quantity"
+                    "data": "quantity",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "updated_at"

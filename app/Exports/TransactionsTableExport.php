@@ -2,8 +2,10 @@
 
 namespace App\Exports;
 
-use App\Models\TransactionProducts;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\TransactionProducts;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -21,7 +23,7 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
     
     public function collection()
     {
-        return TransactionProducts::
+        $table = TransactionProducts::
         with('transaction')
         ->filterIndex($this->request)
         ->select(
@@ -36,47 +38,56 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
         )
         ->orderBy('transaction_id', 'desc')
         ->get();
+
+        foreach ($table as $transaction) {
+            $transaction->month = Carbon::parse($transaction?->transaction?->created_at)->setTimezone('Asia/Jakarta')->format('F');
+        }
+
+        return $table;
     }
 
     public function map($transaction): array
     {
         return [
-            $transaction->transaction->id,
-            $transaction->transaction->transaction_id,
-            $transaction->transaction->customers->full_name,
-            $transaction->product->product_name,
-            $transaction->quantity,
-            $transaction->transaction->amount,
-            $transaction->transaction->capster->full_name,
-            $transaction->createdBy->name ?? 'N/A',
-            $transaction->created_at,
-            $transaction->updatedBy->name ?? 'N/A',
-            $transaction->updated_at,
+            $transaction?->month ?? 'N/A',
+            $transaction?->transaction?->created_at ?? 'N/A',
+            $transaction?->transaction?->transaction_id ?? 'N/A',
+            $transaction?->transaction?->capster?->full_name ?? 'N/A',
+            $transaction?->transaction?->customers?->full_name ?? 'N/A',
+            $transaction?->product?->product_name ?? 'N/A',
+            $transaction?->quantity ?? 'N/A',
+            $transaction?->product?->selling_price ?? 'N/A',
+            $transaction?->transaction?->amount_before_discount ?? 'N/A',
+            $transaction?->transaction?->promo?->value ?? 'N/A',
+            // $transaction?->transaction?->promotion ?? 'N/A',
+            $transaction?->transaction?->amount ?? 'N/A',
+            $transaction?->transaction?->payment_method ?? 'N/A',
         ];
     }
 
     public function headings(): array
     {
         return [
-            'ID',
-            'Transaction ID',
-            'Customer Name',
-            'Product Name',
-            'Quantity',
-            'Amount',
-            'Capster Name',
-            'Created By',
-            'Created At',
-            'Updated By',
-            'Updated At',
+            'Bulan',
+            'Tanggal dan Jam Transaksi',
+            'Nomor Pesanan',
+            'Nama Capster',
+            'Nama Pelanggan',
+            'Nama Service / Produk',
+            'Unit Terjual',
+            'Harga per service / produk',
+            'Penjualan Kotor',
+            'Diskon',
+            // 'Promosi',
+            'Penjualan Bersih',
+            'Metode Pembayaran',
         ];
     }
 
     public function columnFormats(): array
     {
         return [
-            'I' => NumberFormat::FORMAT_DATE_YYYYMMDD,
-            'K' => NumberFormat::FORMAT_DATE_YYYYMMDD
+            'B' => NumberFormat::FORMAT_DATE_YYYYMMDD
         ];
     }
 }

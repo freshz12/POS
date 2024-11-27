@@ -1,5 +1,6 @@
 <script>
     $(document).ready(function() {
+        $('#payment_method_filter').val('');
         const userPermissions = {
             canDelete: @json(auth()->user()->can('transactions_delete')),
         };
@@ -18,6 +19,7 @@
                     d.customer_name = $('#customer_name_filter').val();
                     d.capster_name = $('#capster_name_filter').val();
                     d.transaction_id = $('#transaction_id_filter').val();
+                    d.payment_method = $('#payment_method_filter').val();
                     d.created_at_from = $('#created_at_filter_from').val();
                     d.created_at_to = $('#created_at_filter_to').val();
                 },
@@ -53,15 +55,14 @@
                         }
 
                         return `
-        <div class="btn-group" role="group" aria-label="Action buttons">
-            <button onclick="ajaxEdit(${row.id})" class="btn btn-primary mr-2 position-relative" data-toggle="modal" data-target="#edittransaction">
-                <i class="ion-eye" data-pack="default" data-tags="view, see, creeper"></i>
-            </button>
-            ${deleteButton}
-        </div>
-    `;
+                            <div class="btn-group" role="group" aria-label="Action buttons">
+                                <button onclick="ajaxEdit(${row.id})" class="btn btn-primary mr-2 position-relative" data-toggle="modal" data-target="#edittransaction">
+                                    <i class="ion-eye" data-pack="default" data-tags="view, see, creeper"></i>
+                                </button>
+                                ${deleteButton}
+                            </div>
+                        `;
                     },
-
                     "orderable": false,
                     "searchable": false
                 }, {
@@ -100,28 +101,52 @@
                     "data": null
                 },
                 {
-                    "data": "transaction_id"
+                    "data": "transaction_id",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "customers.full_name"
+                    "data": "customers.full_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "promo.type"
+                    "data": "promo.type",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "amount_before_discount"
                 },
                 {
-                    "data": "promo.value"
+                    "data": "promo.value",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "amount"
                 },
                 {
-                    "data": "capster.full_name"
+                    "data": "capster.full_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "created_at"
+                    "data": "payment_method",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
+                },
+                {
+                    "data": "created_at",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "language": {
@@ -201,6 +226,7 @@
         $('#capster_name_filter').val('');
         $('#transaction_id_filter').val('');
         $('#total_amount_filter').val('');
+        $('#payment_method_filter').val('');
         $('#created_at_filter_from').val('');
         $('#created_at_filter_to').val('');
 
@@ -216,6 +242,7 @@
             capster_name: $('#capster_name_filter').val(),
             transaction_id: $('#transaction_id_filter').val(),
             total_amount: $('#total_amount_filter').val(),
+            payment_method: $('#payment_method_filter').val(),
             created_at_from: $('#created_at_filter_from').val(),
             created_at_to: $('#created_at_filter_to').val()
         };
@@ -252,8 +279,8 @@
     function populateTransactionModal(data) {
         document.getElementById('id').value = data.id;
         document.querySelector('#transaction_id').innerText = `Transaction ID: ${data.transaction_id}`;
-        document.getElementById('customer_name').value = data.customers.full_name;
-        document.getElementById('capster_name').value = data.capster.full_name;
+        document.getElementById('customer_name').value = data.customers?.full_name ?? 'N/A';
+        document.getElementById('capster_name').value = data.capster?.full_name ?? 'N/A';
         document.getElementById('total_amount').value = 'Rp.' + formatNumberWithCommas(data.amount);
 
         const productTableBody = document.getElementById('productTableBody');
@@ -274,8 +301,8 @@
             productTableBody.insertAdjacentHTML('beforeend', row);
         });
 
-        if(data.promo){
-            if(data.promo.type == 'Package'){
+        if (data.promo) {
+            if (data.promo.type == 'Package') {
                 data.promo_products.forEach(promo_product => {
                     const row = `
                     <tr>
@@ -283,7 +310,7 @@
                         <td>Rp.${formatNumberWithCommas(promo_product.selling_price)}</td>
                     </tr>
                 `;
-                promoProductTableBody.insertAdjacentHTML('beforeend', row);
+                    promoProductTableBody.insertAdjacentHTML('beforeend', row);
                 });
             }
         }

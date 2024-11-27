@@ -1,5 +1,6 @@
 <script>
     $(document).ready(function() {
+        resetfilter();
         const userPermissions = {
             canEdit: @json(auth()->user()->can('users_edit')),
             canDelete: @json(auth()->user()->can('users_delete')),
@@ -78,7 +79,10 @@
                 },
                 {
                     "targets": 4,
-                    "searchable": false
+                    "searchable": false,
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "columns": [{
@@ -88,10 +92,16 @@
                     "data": null
                 },
                 {
-                    "data": "name"
+                    "data": "name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "username"
+                    "data": "username",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "updated_at"
@@ -157,7 +167,6 @@
                 $('.dataTables_filter').appendTo('#filter-container');
                 $('.dataTables_filter input').addClass('form-control');
                 $('.dataTables_length select').addClass('form-select');
-                resetfilter();
             }
         });
 

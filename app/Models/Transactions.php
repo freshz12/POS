@@ -53,6 +53,10 @@ class Transactions extends Model
             ->when($request->total_amount, function ($query) use ($request) {
                 $query->where('amount', 'LIKE', '%' . $request->total_amount . '%');
             })
+            
+            ->when($request->payment_method, function ($query) use ($request) {
+                $query->where('payment_method', 'LIKE', '%' . $request->payment_method . '%');
+            })
 
             ->when($request->created_at_from && $request->created_at_to, function ($query) use ($request) {
                 $date1 = Carbon::parse($request->created_at_from)->format('Y-m-d');

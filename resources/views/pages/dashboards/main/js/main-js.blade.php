@@ -9,6 +9,8 @@
     $(document).ready(function() {
         $('#start-range-selector').val(null);
         $('#end-range-selector').val(null);
+        $('#start-date').val(null);
+        $('#end-date').val(null);
         $('#range-selector').val('today');
 
         $.ajax({

@@ -39,10 +39,10 @@ class DashboardsProductsExport implements FromCollection, WithHeadings, WithMapp
     public function map($capster): array
     {
         return [
-            $capster->product_id,
-            $capster->product_name,
-            $capster->quantity_left,
-            $capster->total_sold_quantity,
+            $capster?->product_id ?? 'N/A',
+            $capster?->product_name ?? 'N/A',
+            $capster?->quantity_left ?? 'N/A',
+            $capster?->total_sold_quantity ?? 'N/A',
         ];
     }
 

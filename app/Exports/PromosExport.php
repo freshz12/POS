@@ -2,7 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\Customers;
+use App\Models\Promos;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -21,34 +22,53 @@ class PromosExport implements FromCollection, WithHeadings, WithMapping, ShouldA
     
     public function collection()
     {
-        return Customers::
+        return Promos::
         filterIndex($this->request)
         ->with(['updatedBy', 'createdBy'])
-        ->select('customers.id',
-        'customers.full_name',
-        'customers.email',
-        'customers.gender',
-        'customers.phone_number',
-        'customers.created_at',
-        'customers.created_by',
-        'customers.updated_at',
-        'customers.updated_by',
+        ->select('promos.id',
+        'promos.name',
+        'promos.unique_code',
+        'promos.type',
+        'promos.product_id',
+        'promos.package_quantity',
+        'promos.value',
+        'promos.start_date',
+        'promos.end_date',
+        'promos.created_at',
+        'promos.created_by',
+        'promos.updated_at',
+        'promos.updated_by',
         )
-        ->get();
+        ->get()
+        ->transform(function ($promo) {
+            $promo->product_name = 'N/A';
+            if($promo->product_id){
+                $products_id = json_decode($promo->product_id, true);
+
+                $products_name = implode(', ', Products::whereIn('id', $products_id)->pluck('product_name')->toArray());
+    
+                $promo->product_name = $products_name;
+            }
+            return $promo;
+        });
     }
 
-    public function map($customer): array
+    public function map($promos): array
     {
         return [
-            $customer->id,
-            $customer->full_name,
-            $customer->email,
-            $customer->gender,
-            $customer->phone_number,
-            $customer->createdBy->name ?? 'N/A',
-            $customer->created_at,
-            $customer->updatedBy->name ?? 'N/A',
-            $customer->updated_at,
+            $promos?->id ?? 'N/A',
+            $promos?->name ?? 'N/A',
+            $promos?->unique_code ?? 'N/A',
+            $promos?->type ?? 'N/A',
+            $promos?->product_name ?? 'N/A',
+            $promos?->package_quantity ?? 'N/A',
+            $promos?->value ?? 'N/A',
+            $promos?->start_date ?? 'N/A',
+            $promos?->end_date ?? 'N/A',
+            $promos?->createdBy?->name ?? 'N/A',
+            $promos?->created_at ?? 'N/A',
+            $promos?->updatedBy?->name ?? 'N/A',
+            $promos?->updated_at ?? 'N/A',
         ];
     }
 
@@ -56,10 +76,14 @@ class PromosExport implements FromCollection, WithHeadings, WithMapping, ShouldA
     {
         return [
             'ID',
-            'Full Name',
-            'Email',
-            'Gender',
-            'Phone Number',
+            'Promo Name',
+            'Unique Code',
+            'Type',
+            'Products Name',
+            'Package Quantity',
+            'Value',
+            'Start Date',
+            'End Date',
             'Created By',
             'Created At',
             'Updated By',
@@ -70,8 +94,10 @@ class PromosExport implements FromCollection, WithHeadings, WithMapping, ShouldA
     public function columnFormats(): array
     {
         return [
-            'G' => NumberFormat::FORMAT_DATE_YYYYMMDD,
-            'I' => NumberFormat::FORMAT_DATE_YYYYMMDD
+            'H' => NumberFormat::FORMAT_DATE_YYYYMMDD,
+            'I' => NumberFormat::FORMAT_DATE_YYYYMMDD,
+            'K' => NumberFormat::FORMAT_DATE_YYYYMMDD,
+            'M' => NumberFormat::FORMAT_DATE_YYYYMMDD
         ];
     }
 }

@@ -41,16 +41,16 @@ class AppointmentsExport implements FromCollection, WithHeadings, WithMapping, S
     public function map($appointment): array
     {
         return [
-            $appointment->id,
-            $appointment->customers->full_name,
-            $appointment->start_date,
-            $appointment->end_date,
-            $appointment->status,
-            $appointment->remarks,
-            $appointment->createdBy->name ?? 'N/A',
-            $appointment->created_at,
-            $appointment->updatedBy->name ?? 'N/A',
-            $appointment->updated_at,
+            $appointment?->id ?? 'N/A',
+            $appointment?->customers?->full_name ?? 'N/A',
+            $appointment?->start_date ?? 'N/A',
+            $appointment?->end_date ?? 'N/A',
+            $appointment?->status ?? 'N/A',
+            $appointment?->remarks ?? 'N/A',
+            $appointment?->createdBy?->name ?? 'N/A',
+            $appointment?->created_at ?? 'N/A',
+            $appointment?->updatedBy?->name ?? 'N/A',
+            $appointment?->updated_at ?? 'N/A',
         ];
     }
 

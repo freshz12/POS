@@ -67,16 +67,28 @@
                     "data": null
                 },
                 {
-                    "data": "users.name"
+                    "data": "users.name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "clock_in"
+                    "data": "clock_in",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "clock_out"
+                    "data": "clock_out",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "updated_at"
+                    "data": "updated_at",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "language": {

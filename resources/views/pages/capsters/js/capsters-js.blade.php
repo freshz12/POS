@@ -83,10 +83,16 @@
                     "data": null
                 },
                 {
-                    "data": "full_name"
+                    "data": "full_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "updated_at"
+                    "data": "updated_at",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "language": {

@@ -113,28 +113,46 @@
                     "data": null
                 },
                 {
-                    "data": "users.name"
+                    "data": "users.name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "photo_path_clock_in"
                 },
                 {
-                    "data": "clock_in"
+                    "data": "clock_in",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "photo_path_clock_out"
                 },
                 {
-                    "data": "clock_out"
+                    "data": "clock_out",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "status"
+                    "data": "status",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "approved_or_rejected_reason"
+                    "data": "approved_or_rejected_reason",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
-                    "data": "updated_at"
+                    "data": "updated_at",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "language": {

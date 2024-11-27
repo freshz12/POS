@@ -39,12 +39,12 @@ class RolesExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
     public function map($product): array
     {
         return [
-            $product->role->name,
-            $product->permissions->name,
-            $product->createdBy->name ?? 'N/A',
-            $product->created_at,
-            $product->updatedBy->name ?? 'N/A',
-            $product->updated_at,
+            $product?->role?->name ?? 'N/A',
+            $product?->permissions?->name ?? 'N/A',
+            $product?->createdBy?->name ?? 'N/A',
+            $product?->created_at ?? 'N/A',
+            $product?->updatedBy?->name ?? 'N/A',
+            $product?->updated_at ?? 'N/A',
         ];
     }
 

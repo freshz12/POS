@@ -57,6 +57,7 @@
                                                 <th scope="col">Discount Value</th>
                                                 <th scope="col">Final Total Amount</th>
                                                 <th scope="col">Capster Name</th>
+                                                <th scope="col">Payment Method</th>
                                                 <th scope="col">Transaction Date</th>
                                             </tr>
                                         </thead>
@@ -196,6 +197,16 @@
                         <div class="col-6">
                             <label for="created_at_filter_to" class="form-label">Transaction Date To</label>
                             <input class="form-control" type="date" id="created_at_filter_to">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="payment_method_filter" class="form-label">Payment Method</label>
+                            <select class="form-control" id="payment_method_filter">
+                                <option>Cash</option>
+                                <option>QRIS</option>
+                                <option>EDC</option>
+                            </select>
                         </div>
                     </div>
                 </div>

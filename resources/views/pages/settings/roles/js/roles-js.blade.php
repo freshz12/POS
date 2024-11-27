@@ -77,7 +77,10 @@
                 },
                 {
                     "targets": 3,
-                    "searchable": false
+                    "searchable": false,
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 }
             ],
             "columns": [{
@@ -87,7 +90,10 @@
                     "data": null
                 },
                 {
-                    "data": "name"
+                    "data": "name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
                 },
                 {
                     "data": "updated_at"

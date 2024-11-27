@@ -40,14 +40,14 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
     public function map($user): array
     {
         return [
-            $user->id,
-            $user->name,
-            $user->username,
-            $user->roles[0]->name ?? 'N/A',
-            $user->createdBy->name ?? 'N/A',
-            $user->created_at,
-            $user->updatedBy->name ?? 'N/A',
-            $user->updated_at,
+            $user?->id ?? 'N/A',
+            $user?->name ?? 'N/A',
+            $user?->username ?? 'N/A',
+            $user?->roles[0]?->name ?? 'N/A',
+            $user?->createdBy?->name ?? 'N/A',
+            $user?->created_at ?? 'N/A',
+            $user?->updatedBy?->name ?? 'N/A',
+            $user?->updated_at ?? 'N/A',
         ];
     }
 
