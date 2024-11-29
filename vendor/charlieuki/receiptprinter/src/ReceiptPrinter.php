@@ -30,8 +30,8 @@ class ReceiptPrinter
     private $createdat = '';
     private $total_before_discount = 0;
     private $discount = 0;
-    private $discount_type;
-    private $discount_percentage;
+    private $discount_type = null;
+    private $discount_percentage = null;
     private $payment_method;
 
     function __construct()
@@ -132,11 +132,13 @@ class ReceiptPrinter
 
     public function calculateDiscount($discount)
     {
-        $this->discount_percentage = $discount->value;
-        $this->discount = $discount->value;
-        $this->discount_type = $discount->type;
-        if($discount->type == 'Percentage'){
-            $this->discount = ($this->total_before_discount * $this->discount_percentage) / 100;
+        if($discount){
+            $this->discount_percentage = $discount->value;
+            $this->discount = $discount->value;
+            $this->discount_type = $discount->type;
+            if($discount->type == 'Percentage'){
+                $this->discount = ($this->total_before_discount * $this->discount_percentage) / 100;
+            }
         }
     }
     
@@ -296,7 +298,9 @@ class ReceiptPrinter
             $this->printer->setEmphasis(false);
             $this->printer->text($subtotalbeforediscount);
             $this->printer->text("\n");
-            $this->printer->text($discount);
+            if($this->discount_type !== null){
+                $this->printer->text($discount);
+            }
             $this->printer->text("\n");
             $this->printer->setEmphasis(true);
             $this->printer->text($subtotal);
