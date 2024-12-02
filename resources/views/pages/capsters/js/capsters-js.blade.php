@@ -49,13 +49,9 @@
 
                         if (userPermissions.canDelete) {
                             deleteButton = `
-                                <form action="{{ url('/capsters/delete') }}" method="POST" style="display:inline;" id="deleteCapster">
-                                    @csrf
-                                    <input type="hidden" name="id" value="${row.id}">
-                                    <button onclick="confirmDelete(event)" class="btn btn-danger" id="buttondelete">
-                                        <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
-                                    </button>
-                                </form>
+                                <button onclick="confirmDeleteAjax(event, ${row.id})" class="btn btn-danger">
+                                    <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
+                                </button>
                             `;
                         } else {
                             deleteButton = `
@@ -106,28 +102,37 @@
             },
             "drawCallback": function(settings) {
                 var api = this.api();
-                var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
+                var pagination = $(this).closest('.dataTables_wrapper').find(
+                    '.dataTables_paginate');
                 var pageInfo = api.page.info();
                 var pageList = '';
 
                 if (pageInfo.page === 0) {
-                    pageList += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>';
+                    pageList +=
+                        '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>';
                 } else {
-                    pageList += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pageInfo.page - 1) + '">Previous</a></li>';
+                    pageList += '<li class="page-item"><a class="page-link" href="#" data-page="' +
+                        (pageInfo.page - 1) + '">Previous</a></li>';
                 }
 
                 for (var i = 0; i < pageInfo.pages; i++) {
                     if (i === pageInfo.page) {
-                        pageList += '<li class="page-item active"><a class="page-link" href="#" data-page="' + i + '">' + (i + 1) + ' <span class="sr-only">(current)</span></a></li>';
+                        pageList +=
+                            '<li class="page-item active"><a class="page-link" href="#" data-page="' +
+                            i + '">' + (i + 1) + ' <span class="sr-only">(current)</span></a></li>';
                     } else {
-                        pageList += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + (i + 1) + '</a></li>';
+                        pageList +=
+                            '<li class="page-item"><a class="page-link" href="#" data-page="' + i +
+                            '">' + (i + 1) + '</a></li>';
                     }
                 }
 
                 if (pageInfo.page === pageInfo.pages - 1) {
-                    pageList += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
+                    pageList +=
+                        '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
                 } else {
-                    pageList += '<li class="page-item"><a class="page-link" href="#" data-page="' + (pageInfo.page + 1) + '">Next</a></li>';
+                    pageList += '<li class="page-item"><a class="page-link" href="#" data-page="' +
+                        (pageInfo.page + 1) + '">Next</a></li>';
                 }
 
                 pagination.html(
@@ -200,18 +205,32 @@
         });
     }
 
-    function confirmDelete(event) {
+    function confirmDeleteAjax(event, id) {
         event.preventDefault();
+
         swal({
-            title: 'Are you sure?',
-            icon: 'warning',
-            buttons: true,
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                $('#deleteCapster').submit();
-            }
-        });
+                title: 'Are you sure?',
+                icon: 'warning',
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: "{{ url('/capsters/delete') }}",
+                        type: 'POST',
+                        data: {
+                            id: id
+                        },
+                        success: function(response) {
+                            swal('Deleted!', 'Record has been deleted.', 'success');
+                            $('#datatable').DataTable().ajax.reload();
+                        },
+                        error: function(xhr) {
+                            swal('Error!', 'Failed to delete the Capster.', 'error');
+                        }
+                    });
+                }
+            });
     }
 </script>

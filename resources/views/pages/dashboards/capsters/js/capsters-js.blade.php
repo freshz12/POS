@@ -35,12 +35,12 @@
             "columns": [{
                     "data": null
                 },
-                {
-                    "data": "capster_id",
-                    "render": function(data, type, row) {
-                        return data ? data : 'N/A';
-                    }
-                },
+                // {
+                //     "data": "capster_id",
+                //     "render": function(data, type, row) {
+                //         return data ? data : 'N/A';
+                //     }
+                // },
                 {
                     "data": "capster_name",
                     "render": function(data, type, row) {
@@ -124,6 +124,10 @@
     });
 
     function applyfilter() {
+        if($('#created_from_filter').val() || $('#created_to_filter').val()){
+            $('#created_type').val(null);
+        }
+
         $('#datatable').DataTable().ajax.reload();
 
         $('#filtercapster').modal('hide');
@@ -142,6 +146,9 @@
     }
 
     function changeCreatedTypeFilter(created_type) {
+        $('#created_from_filter').val(null);
+        $('#created_to_filter').val(null);
+
         $('#created_type').val(created_type);
 
         $('#datatable').DataTable().ajax.reload();

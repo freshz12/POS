@@ -48,6 +48,17 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
 
     public function map($transaction): array
     {
+        if ($transaction?->transaction?->promo?->value) {
+            if ($transaction?->transaction?->promo?->type === 'Percentage') {
+                $amountBeforeDiscount = $transaction?->transaction?->amount_before_discount ?? 0;
+                $promoValue = ($amountBeforeDiscount * $transaction?->transaction?->promo?->value ?? 0) / 100;
+            }else{
+                $promoValue = $transaction?->transaction?->promo?->value ?? 0;
+            }
+        } else {
+            $promoValue = 'N/A';
+        }
+
         return [
             $transaction?->month ?? 'N/A',
             $transaction?->transaction?->created_at ?? 'N/A',
@@ -58,8 +69,9 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
             $transaction?->quantity ?? 'N/A',
             $transaction?->product?->selling_price ?? 'N/A',
             $transaction?->transaction?->amount_before_discount ?? 'N/A',
-            $transaction?->transaction?->promo?->value ?? 'N/A',
-            // $transaction?->transaction?->promotion ?? 'N/A',
+            // $transaction?->transaction?->promo?->value ?? 'N/A',
+            $promoValue,
+            $transaction?->transaction?->promo?->name ?? 'N/A',
             $transaction?->transaction?->amount ?? 'N/A',
             $transaction?->transaction?->payment_method ?? 'N/A',
         ];
@@ -78,7 +90,7 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
             'Harga per service / produk',
             'Penjualan Kotor',
             'Diskon',
-            // 'Promosi',
+            'Promosi',
             'Penjualan Bersih',
             'Metode Pembayaran',
         ];

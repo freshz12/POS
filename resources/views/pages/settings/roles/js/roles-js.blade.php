@@ -49,13 +49,9 @@
 
                         if (userPermissions.canDelete) {
                             deleteButton = `
-                                <form action="{{ url('/roles/delete') }}" method="POST" style="display:inline;" id="deleterole">
-                                    @csrf
-                                    <input type="hidden" name="id" value="${row.id}">
-                                    <button onclick="confirmDelete(event)" class="btn btn-danger" id="buttondelete">
-                                        <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
-                                    </button>
-                                </form>
+                                <button onclick="confirmDeleteAjax(event, ${row.id})" class="btn btn-danger">
+                                    <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
+                                </button>
                             `;
                         } else {
                             deleteButton = `
@@ -218,18 +214,31 @@
         });
     }
 
-    function confirmDelete(event) {
+    function confirmDeleteAjax(event, id) {
         event.preventDefault();
+
         swal({
                 title: 'Are you sure?',
-                // text: 'Once deleted, you will not be able to recover this imaginary file!',
                 icon: 'warning',
                 buttons: true,
                 dangerMode: true,
             })
             .then((willDelete) => {
                 if (willDelete) {
-                    $('#deleterole').submit();
+                    $.ajax({
+                        url: "{{ url('/roles/delete') }}",
+                        type: 'POST',
+                        data: {
+                            id: id
+                        },
+                        success: function(response) {
+                            swal('Deleted!', 'Record has been deleted.', 'success');
+                            $('#datatable').DataTable().ajax.reload();
+                        },
+                        error: function(xhr) {
+                            swal('Error!', 'Failed to delete the Role.', 'error');
+                        }
+                    });
                 }
             });
     }

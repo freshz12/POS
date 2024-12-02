@@ -34,18 +34,20 @@ class TransactionsTableController extends Controller
         $transactions = $query->skip($start)->take($length)->get();
 
         foreach ($transactions as $transaction) {
-            if ($transaction->promo_id && $transaction->promo->type === 'Package') {
-                $products_id = json_decode($transaction->promo->product_id);
-                $totalSellingPrice = 0;
-
-                foreach ($products_id as $product_id) {
-                    $product = Products::find($product_id);
-
-                    if ($product) {
-                        $totalSellingPrice += $product->selling_price;
+            if($transaction->promo){
+                if ($transaction->promo_id && $transaction->promo->type === 'Package') {
+                    $products_id = json_decode($transaction->promo->product_id);
+                    $totalSellingPrice = 0;
+    
+                    foreach ($products_id as $product_id) {
+                        $product = Products::find($product_id);
+    
+                        if ($product) {
+                            $totalSellingPrice += $product->selling_price;
+                        }
                     }
+                    $transaction->promo->value = $totalSellingPrice;
                 }
-                $transaction->promo->value = $totalSellingPrice;
             }
         }
 

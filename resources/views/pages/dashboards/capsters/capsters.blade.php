@@ -48,7 +48,7 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 1%">#</th>
-                                                <th scope="col">Capster ID</th>
+                                                {{-- <th scope="col">Capster ID</th> --}}
                                                 <th scope="col">Capster Name</th>
                                                 <th scope="col">Total Amount</th>
                                                 <th scope="col">Total Transactions</th>

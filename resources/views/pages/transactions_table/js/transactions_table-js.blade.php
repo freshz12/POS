@@ -38,14 +38,10 @@
                         let deleteButton = '';
                         if (userPermissions.canDelete) {
                             deleteButton = `
-                            <form action="{{ url('/transactions_table/delete') }}" method="POST" style="display:inline;" id="deletetransaction">
-                                @csrf
-                                <input class="form-control" type="hidden" name="id" value="${row.id}">
-                                <button onclick="confirmDelete(event)" class="btn btn-danger" id="buttondelete">
+                                <button onclick="confirmDeleteAjax(event, ${row.id})" class="btn btn-danger">
                                     <i class="ion-trash-a" data-pack="default" data-tags="delete, remove, dump"></i>
                                 </button>
-                            </form>
-                                        `;
+                            `;
                         } else {
                             deleteButton = `
                                             <button class="btn btn-danger" disabled>
@@ -316,18 +312,31 @@
         }
     }
 
-    function confirmDelete(event) {
+    function confirmDeleteAjax(event, id) {
         event.preventDefault();
+
         swal({
                 title: 'Are you sure?',
-                // text: 'Once deleted, you will not be able to recover this imaginary file!',
                 icon: 'warning',
                 buttons: true,
                 dangerMode: true,
             })
             .then((willDelete) => {
                 if (willDelete) {
-                    $('#deletetransaction').submit();
+                    $.ajax({
+                        url: "{{ url('/transactions_table/delete') }}",
+                        type: 'POST',
+                        data: {
+                            id: id
+                        },
+                        success: function(response) {
+                            swal('Deleted!', 'Record has been deleted.', 'success');
+                            $('#datatable').DataTable().ajax.reload();
+                        },
+                        error: function(xhr) {
+                            swal('Error!', 'Failed to delete the Transaction.', 'error');
+                        }
+                    });
                 }
             });
     }

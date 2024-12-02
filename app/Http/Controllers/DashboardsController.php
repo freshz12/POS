@@ -398,8 +398,8 @@ class DashboardsController extends Controller
                         ]);
                     } elseif ($request->created_at === 'weekly') {
                         $query->whereBetween('transactions.created_at', [
-                            Carbon::now($timezone)->startOfWeek(),
-                            Carbon::now($timezone)->endOfWeek()
+                            Carbon::now($timezone)->subDays(7)->startOfDay(),
+                            Carbon::now($timezone)->endOfDay()
                         ]);
                     } elseif ($request->created_at === 'monthly') {
                         $query->whereBetween('transactions.created_at', [
