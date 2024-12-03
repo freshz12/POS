@@ -36,7 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->middleware('can:products_view');
-        Route::get('/index_data', [ProductController::class, 'indexData'])->middleware('can:products_view');
+        Route::get('/index_data', [ProductController::class, 'indexData']);
         Route::post('/get-products', [ProductController::class, 'getProducts'])->middleware('can:products_view');
         Route::post('/store', [ProductController::class, 'store'])->middleware('can:products_create');
         Route::get('/show/{id}', [ProductController::class, 'show'])->middleware('can:products_edit');
@@ -62,7 +62,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::prefix('customers')->group(function () {
         Route::get('/', [CustomersController::class, 'index'])->middleware('can:customers_view');
-        Route::get('/index_data', [CustomersController::class, 'indexData'])->middleware('can:customers_view');
+        Route::get('/index_data', [CustomersController::class, 'indexData']);
         Route::post('/customers_data', [CustomersController::class, 'customersData']);
         Route::post('/store', [CustomersController::class, 'store'])->middleware('can:customers_create');
         Route::post('/store_ajax', [CustomersController::class, 'storeAjax'])->middleware('can:customers_create');
@@ -74,7 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::prefix('promos')->group(function () {
         Route::get('/', [PromosController::class, 'index'])->middleware('can:promos_view');
-        Route::get('/index_data', [PromosController::class, 'indexData'])->middleware('can:promos_view');
+        Route::get('/index_data', [PromosController::class, 'indexData']);
         Route::post('/store', [PromosController::class, 'store'])->middleware('can:promos_create');
         Route::get('/show/{id}', [PromosController::class, 'show'])->middleware('can:promos_edit');
         Route::post('/update', [PromosController::class, 'update'])->middleware('can:promos_edit');
@@ -132,7 +132,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::prefix('capsters')->group(function () {
         Route::get('/', [CapstersController::class, 'index'])->middleware('can:capsters_view');
-        Route::get('/index_data', [CapstersController::class, 'indexData'])->middleware('can:capsters_view');
+        Route::get('/index_data', [CapstersController::class, 'indexData']);
         Route::post('/store', [CapstersController::class, 'store'])->middleware('can:capsters_create');
         Route::get('/show/{id}', [CapstersController::class, 'show'])->middleware('can:capsters_edit');
         Route::post('/update', [CapstersController::class, 'update'])->middleware('can:capsters_edit');

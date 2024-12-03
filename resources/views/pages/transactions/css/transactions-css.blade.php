@@ -62,7 +62,7 @@
         /* Remove focus outline */
     }
 
-    .numpad-button-payment {
+    .numpad-button-payment, .numpad-button-custom-price {
         width: 100%;
         height: 60px;
         /* Adjust height */
@@ -75,12 +75,12 @@
         justify-content: center;
     }
 
-    .numpad-button-payment:focus {
+    .numpad-button-payment:focus, .numpad-button-custom-price:focus {
         box-shadow: none;
         /* Remove focus outline */
     }
 
-    .numpad-button-payment-ok {
+    .numpad-button-payment-ok, .numpad-button-custom-price-ok {
         width: 100%;
         height: 60px;
         /* Adjust height */
@@ -93,7 +93,7 @@
         justify-content: center;
     }
 
-    .numpad-button-payment-ok:focus {
+    .numpad-button-payment-ok:focus, .numpad-button-custom-price-ok:focus {
         box-shadow: none;
         /* Remove focus outline */
     }
@@ -162,7 +162,7 @@
         /* Space below the input */
     }
 
-    #amount {
+    #amount, #amountCustomPrice {
         text-align: center;
         /* Center text horizontally */
         font-size: 2rem;

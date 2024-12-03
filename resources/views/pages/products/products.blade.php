@@ -129,7 +129,7 @@
                             <div class="col-6">
                                 <label for="selling_price" class="form-label">Selling Price <span
                                         style="color: red">*</span></label>
-                                <input class="form-control" type="number" name="selling_price" required>
+                                <input class="form-control" type="number" name="selling_price" id="selling_price_add" required>
                             </div>
                         </div>
                         <div class="row">
@@ -165,8 +165,12 @@
                         </div>
                         <div class="row">
                             <div class="col-6">
-                                <label for="product_picture" class="form-label">Is Included in Receipt</label><br>
+                                <label for="is_included_in_receipt" class="form-label">Is Included in Receipt</label><br>
                                 <input type="checkbox" name="is_included_in_receipt" data-toggle="toggle">
+                            </div>
+                            <div class="col-6">
+                                <label for="is_custom_price" class="form-label">Is Custom Price</label><br>
+                                <input type="checkbox" onchange="disablePriceField(this, 'selling_price_add')" name="is_custom_price" data-toggle="toggle">
                             </div>
                         </div>
                     </div>
@@ -255,8 +259,13 @@
                         </div>
                         <div class="row">
                             <div class="col-6">
-                                <label for="product_picture" class="form-label">Is Included in Receipt</label><br>
+                                <label for="is_included_in_receipt" class="form-label">Is Included in Receipt</label><br>
                                 <input type="checkbox" id="is_included_in_receipt" name="is_included_in_receipt"
+                                    data-toggle="toggle">
+                            </div>
+                            <div class="col-6">
+                                <label for="is_custom_price" class="form-label">Is Custom Price</label><br>
+                                <input type="checkbox" onchange="disablePriceField(this, 'selling_price')" id="is_custom_price" name="is_custom_price"
                                     data-toggle="toggle">
                             </div>
                         </div>
@@ -323,6 +332,14 @@
                             <label for="is_included_in_receipt_filter" class="form-label">Is Included in
                                 Receipt</label><br>
                             <select class="form-control" name="is_included_in_receipt" id="is_included_in_receipt_filter"
+                                required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="is_custom_price_filter" class="form-label">Is Custom Price</label><br>
+                            <select class="form-control" name="is_custom_price" id="is_custom_price_filter"
                                 required>
                                 <option value="1">Yes</option>
                                 <option value="0">No</option>

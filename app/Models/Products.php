@@ -48,6 +48,10 @@ class Products extends Model
             $query->where('is_included_in_receipt', intval($request->is_included_in_receipt));
         })
 
+        ->when($request->is_custom_price !== null, function ($query) use ($request) {
+            $query->where('is_custom_price', intval($request->is_custom_price));
+        })
+
         ->when($request->quantity, function ($query) use ($request) {
             $query->where('quantity', 'LIKE', '%' . $request->quantity . '%');
         })

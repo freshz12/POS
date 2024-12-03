@@ -64,10 +64,18 @@ class TransactionsTableController extends Controller
     {
         $transaction = Transactions::with('transaction_products', 'customers', 'capster', 'promo')->find($id);
 
-        $transaction->transaction_products->map(function ($transactionProduct) {
+        $transaction->transaction_products->transform(function ($transactionProduct) {
             $product = Products::find($transactionProduct->product_id);
-            $transactionProduct->product_details = $product;
+            if ($product) {
+                $transactionProduct->product_details = $product;
+                $transactionProduct->product_details->selling_price = 
+                    $transactionProduct->is_new_data == 0 
+                        ? $transactionProduct->product_details->selling_price 
+                        : $transactionProduct->price;
+            }
+            return $transactionProduct;
         });
+
         $productList = [];
 
         if ($transaction->promo_id) {
@@ -171,12 +179,12 @@ class TransactionsTableController extends Controller
 
     public function export(Request $request)
     {
-        try {
+        // try {
             return Excel::download(new TransactionsTableExport($request), 'transactions.xlsx');
-        } catch (\Exception $e) {
-            return back()->withErrors([
-                'error_message' => 'Something went wrong, please contact administrator',
-            ]);
-        }
+        // } catch (\Exception $e) {
+        //     return back()->withErrors([
+        //         'error_message' => 'Something went wrong, please contact administrator',
+        //     ]);
+        // }
     }
 }

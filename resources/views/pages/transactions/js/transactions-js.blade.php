@@ -45,12 +45,14 @@
             var productName = productCard.data('name');
             var productPrice = productCard.data('price');
             var productQuantity = productCard.data('quantity');
+            var isCustomPrice = productCard.data('is-custom-price');
 
             if (productQuantity <= 0) {
                 swal('Out of Stock', 'This product is currently out of stock and cannot be added!',
                     'error');
-                return; // Prevent the modal from opening
+                return;
             }
+
 
             $('#productId').val(productId);
             $('#productName').val(productName);
@@ -58,9 +60,22 @@
             $('#availableQuantity').val(productQuantity);
             $('#quantityModalLabel').text('Enter Quantity for ' + productName);
             $('#quantity').val('');
+
+            console.log(@json(auth()->user()->can('custom_price')));
+
+            if (isCustomPrice && @json(auth()->user()->can('custom_price'))) {
+                $('#customPriceModal').modal('show');
+                return;
+            }
+
             $('#quantityModal').modal('show');
         });
 
+        $(document).on('click', '.numpad-button-custom-price-ok', function() {
+            $('#productPrice').val($('#amountCustomPrice').val().replace(/\./g, ''));
+            $('#customPriceModal').modal('hide');
+            $('#quantityModal').modal('show');
+        });
 
         $(document).on('click', '.numpad-button', function() {
             var currentValue = $('#quantity').val();
@@ -119,12 +134,41 @@
             $('#amount').val(formattedAmount);
         });
 
+        $(document).on('click', '.numpad-button-custom-price', function() {
+            var currentValue = $('#amountCustomPrice').val().replace(/\./g, '');
+            var buttonValue = $(this).text();
+            var newValue;
+
+            if ($(this).attr('id') === 'subtractButtonCustomPrice') {
+                currentValue = currentValue.slice(0, -1);
+                if (currentValue === '') {
+                    currentValue = '0';
+                }
+            } else {
+
+                if (currentValue === '0' && buttonValue !== '0') {
+                    newValue = buttonValue;
+                } else {
+                    newValue = currentValue + buttonValue;
+                }
+                currentValue = newValue;
+            }
+
+
+            let formattedAmount = formatNumberWithCommas(parseInt(currentValue,
+                10));
+            $('#amountCustomPrice').val(formattedAmount);
+        });
+
 
 
         $('#quantityModal').on('show.bs.modal', function() {
             $('#quantity').val('');
         });
 
+        $('#customPriceModal').on('show.bs.modal', function() {
+            $('#amountCustomPrice').val('');
+        });
 
         $('#quantityForm').submit(function(e) {
             e.preventDefault();
@@ -245,6 +289,7 @@
             } else {
                 $('#paymentMethodModal').modal('hide');
                 $('#amount').val('');
+                $('#amountCustomPrice').val('');
                 $('#amount').val($('#finalTotalAmount').text());
 
                 $('#paymentModal').modal('show');
@@ -341,7 +386,7 @@
 
             $('#productList').append(`
             <div class="col-6 col-md-4 col-lg-3 mb-3">
-                <div class="card product-item ${cardClass}" data-id="${product.id}" data-quantity="${product.quantity}" data-name="${product.product_name}" data-price="${product.selling_price}">
+                <div class="card product-item ${cardClass}" data-id="${product.id}" data-quantity="${product.quantity}" data-name="${product.product_name}" data-price="${product.selling_price}" data-is-custom-price="${product.is_custom_price}">
                     <img src="/storage/${product.picture_path || 'files/default/product.png'}" class="card-img-top ${overlayClass}" alt="${product.product_name}">
                     <div class="product-overlay ${overlayClass}">${product.product_name} (${product.quantity})</div>
                 </div>

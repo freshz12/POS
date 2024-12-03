@@ -259,8 +259,10 @@
                         @csrf
                         <input type="hidden" id="customerIdInput" name="customer_id" value="{{ $customer_id }}">
                         <input type="hidden" id="capsterIdInput" name="capster_id" value="{{ $capster_id }}">
-                        <input type="hidden" id="customerNameInput" name="customer_name" value="{{ $customer_name }}">
-                        <input type="hidden" id="capsterNameInput" name="capster_name" value="{{ $capster_name }}">
+                        <input type="hidden" id="customerNameInput" name="customer_name"
+                            value="{{ $customer_name }}">
+                        <input type="hidden" id="capsterNameInput" name="capster_name"
+                            value="{{ $capster_name }}">
                         <input type="hidden" id="totalAmountBeforeDiscount" name="amount_before_discount">
                         <input type="hidden" id="totalAmountInput" name="total_amount">
                         <input type="hidden" id="cartItemsInput" name="cart_items">
@@ -330,6 +332,81 @@
         </div>
     </div>
 
+    <!-- Custom Price Modal -->
+    <div class="modal fade" id="customPriceModal" tabindex="-1" role="dialog"
+        aria-labelledby="customPriceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customPriceModalLabel">Enter Custom Price</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="text" class="form-control" id="amountCustomPrice" name="amount" readonly>
+                    </div>
+                    <div class="numpad">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">7</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">8</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">9</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">4</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">5</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">6</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">1</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">2</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">3</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <button type="button" id="subtractButtonCustomPrice"
+                                            class="numpad-button-custom-price btn-danger">
+                                            -
+                                        </button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" class="numpad-button-custom-price">0</button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button type="button" id="payButtonModal"
+                                            class="numpad-button-custom-price-ok btn-success">OK</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Customer Capster Modal --}}
     <div class="modal fade" id="selectCustomerModal" role="dialog" aria-labelledby="selectCustomerModalLabel"
         aria-hidden="true">
@@ -372,7 +449,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="payment-buttons text-center">
-                            <button type="button" class="btn btn-primary btn-lg m-2 payment-btn" data-payment="Cash">
+                            <button type="button" class="btn btn-primary btn-lg m-2 payment-btn"
+                                data-payment="Cash">
                                 Cash
                             </button>
                             <button type="button" class="btn btn-success btn-lg m-2 payment-btn" data-payment="EDC">
@@ -383,7 +461,7 @@
                             </button>
                         </div>
                     </div>
-                </div>                                              
+                </div>
             </div>
         </div>
     </div>

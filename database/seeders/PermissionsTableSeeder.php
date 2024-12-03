@@ -59,6 +59,8 @@ class PermissionsTableSeeder extends Seeder
 
             'POS' => 'POS',
 
+            'custom_price' => 'POS',
+
             'transactions_view' => 'transactions',
             'transactions_create' => 'transactions',
             'transactions_edit' => 'transactions',
@@ -101,7 +103,7 @@ class PermissionsTableSeeder extends Seeder
         $adminRole->givePermissionTo($permissions);
 
         // Assign the Admin role to the user with ID 1
-        $user = User::find(1); // Find the user by ID
+        $user = User::where('name', 'Admin')->first(); // Find the user by ID
         if ($user) {
             $user->assignRole('Admin'); // Assign the Admin role to the user
         }

@@ -81,6 +81,8 @@ class TransactionsController extends Controller
                     'quantity' => $item['qty'],
                     'created_by' => auth()->user()->id,
                     'updated_by' => auth()->user()->id,
+                    'price' => str_replace('.', '', $item['price']),
+                    'is_new_data' => 1,
                 ]);
                 Products::where('id', $item['id'])
                     ->decrement('quantity', $item['qty']);

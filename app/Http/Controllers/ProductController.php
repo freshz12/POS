@@ -49,7 +49,7 @@ class ProductController extends Controller
             //     ]);
             // }
 
-            $filteredData = $request->except(['_token', 'file', 'is_included_in_receipt']);
+            $filteredData = $request->except(['_token', 'file', 'is_included_in_receipt', 'is_custom_price']);
 
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
@@ -63,6 +63,7 @@ class ProductController extends Controller
 
             $additionalData = [
                 'is_included_in_receipt' => $request->is_included_in_receipt == 'on' ? 1 : 0,
+                'is_custom_price' => $request->is_custom_price == 'on' ? 1 : 0,
                 'picture_path' => $filePath ?? null,
                 'created_by' => auth()->user()->id,
                 'updated_by' => auth()->user()->id,
@@ -114,10 +115,11 @@ class ProductController extends Controller
                 $filePath = 'files/products/' . $filename;
             }
 
-            $filteredData = $request->except(['_token', 'file', 'is_included_in_receipt']);
+            $filteredData = $request->except(['_token', 'file', 'is_included_in_receipt', 'is_custom_price']);
 
             $additionalData = [
                 'is_included_in_receipt' => $request->is_included_in_receipt == 'on' ? 1 : 0,
+                'is_custom_price' => $request->is_custom_price == 'on' ? 1 : 0,
                 'updated_by' => auth()->user()->id,
             ];
 

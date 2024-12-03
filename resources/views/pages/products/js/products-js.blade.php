@@ -20,6 +20,7 @@
                     d.unit_of_measurement = $('#unit_of_measurement_filter').val();
                     d.quantity = $('#quantity_filter').val();
                     d.is_included_in_receipt = $('#is_included_in_receipt_filter').val();
+                    d.is_custom_price = $('#is_custom_price_filter').val();
                     d.updated_at = $('#updated_at_filter').val();
                     d.type = $('#type_filter').val();
                 },
@@ -206,6 +207,14 @@
         });
     });
 
+    function disablePriceField(element, selling_price) {
+        if (element.checked) {
+            $('#'+selling_price).prop('disabled', true);
+        } else {
+            $('#'+selling_price).prop('disabled', false);
+        }
+    }
+
     function applyfilter() {
         $('#datatable').DataTable().ajax.reload();
 
@@ -218,6 +227,7 @@
         $('#unit_of_measurement_filter').val('');
         $('#quantity_filter').val('');
         $('#is_included_in_receipt_filter').val('');
+        $('#is_custom_price_filter').val('');
         $('#updated_at_filter').val('');
         $('#type_filter').val('');
 
@@ -234,6 +244,7 @@
             unit_of_measurement: $('#unit_of_measurement_filter').val(),
             quantity: $('#quantity_filter').val(),
             is_included_in_receipt: $('#is_included_in_receipt_filter').val(),
+            is_custom_price: $('#is_custom_price_filter').val(),
             updated_at: $('#updated_at_filter').val(),
             type: $('#type_filter').val()
         };
@@ -273,6 +284,13 @@
                     $('#is_included_in_receipt').bootstrapToggle('on');
                 } else {
                     $('#is_included_in_receipt').bootstrapToggle('off');
+                }
+
+                let isCustomPrice = response[0]['is_custom_price'];
+                if (parseInt(isCustomPrice) == 1) {
+                    $('#is_custom_price').bootstrapToggle('on');
+                } else {
+                    $('#is_custom_price').bootstrapToggle('off');
                 }
 
                 $('#id').val(response[0]['id']);

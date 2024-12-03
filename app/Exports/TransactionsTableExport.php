@@ -24,7 +24,7 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
     public function collection()
     {
         $table = TransactionProducts::
-        with('transaction')
+        with('transaction.promo')
         ->filterIndex($this->request)
         ->select(
         'id',
@@ -35,6 +35,8 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
         'created_by',
         'updated_at',
         'updated_by',
+        'is_new_data',
+        'price',
         )
         ->orderBy('transaction_id', 'desc')
         ->get();
@@ -47,7 +49,7 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
     }
 
     public function map($transaction): array
-    {
+    {   
         if ($transaction?->transaction?->promo?->value) {
             if ($transaction?->transaction?->promo?->type === 'Percentage') {
                 $amountBeforeDiscount = $transaction?->transaction?->amount_before_discount ?? 0;
@@ -59,6 +61,14 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
             $promoValue = 'N/A';
         }
 
+        if($transaction?->is_new_data == 0){
+            $selling_price = $transaction?->product?->selling_price ?? 0;
+        }else{
+            $selling_price = $transaction?->price ?? 0;
+        }
+
+        $gross_amount = $transaction?->quantity * $selling_price;
+
         return [
             $transaction?->month ?? 'N/A',
             $transaction?->transaction?->created_at ?? 'N/A',
@@ -67,8 +77,8 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
             $transaction?->transaction?->customers?->full_name ?? 'N/A',
             $transaction?->product?->product_name ?? 'N/A',
             $transaction?->quantity ?? 'N/A',
-            $transaction?->product?->selling_price ?? 'N/A',
-            $transaction?->transaction?->amount_before_discount ?? 'N/A',
+            $selling_price,
+            $gross_amount ?? 'N/A',
             // $transaction?->transaction?->promo?->value ?? 'N/A',
             $promoValue,
             $transaction?->transaction?->promo?->name ?? 'N/A',

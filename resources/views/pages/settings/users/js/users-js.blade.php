@@ -1,6 +1,6 @@
 <script>
     $(document).ready(function() {
-        resetfilter();
+        // resetfilter();
         const userPermissions = {
             canEdit: @json(auth()->user()->can('users_edit')),
             canDelete: @json(auth()->user()->can('users_delete')),
