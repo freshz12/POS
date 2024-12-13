@@ -131,9 +131,10 @@ class AttendancesController extends Controller
 
     public function indexData(Request $request)
     {
+        $is_can_view_all = auth()->user()->hasPermissionTo('attendances_view_all');
         $attendances = Attendances::with('users')
             ->filterIndex($request)
-            ->when(!auth()->user()->hasRole(['Admin', 'admin']), function ($query) {
+            ->when(!$is_can_view_all, function ($query) {
                 return $query->where('user_id', auth()->user()->id);
             })
             ->orderBy('id', 'desc')->get();

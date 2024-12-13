@@ -38,6 +38,7 @@ class PermissionsTableSeeder extends Seeder
             'customers_delete' => 'customers',
 
             'attendances_view' => 'attendances',
+            'attendances_view_all' => 'attendances',
             'attendances_create' => 'attendances',
             'attendances_edit' => 'attendances',
             'attendances_delete' => 'attendances',
@@ -90,22 +91,6 @@ class PermissionsTableSeeder extends Seeder
             );
         }
 
-        $adminRole = Role::firstOrCreate(
-            ['name' => 'Admin'],
-            [
-                'created_by' => 0, // Set created_by to 0
-                'updated_by' => 0, // Set updated_by to 0
-            ]
-        );
-
-        // Assign all permissions to the Admin role
-        $permissions = Permission::all(); // Get all permissions
-        $adminRole->givePermissionTo($permissions);
-
-        // Assign the Admin role to the user with ID 1
-        $user = User::where('name', 'Admin')->first(); // Find the user by ID
-        if ($user) {
-            $user->assignRole('Admin'); // Assign the Admin role to the user
-        }
+        
     }
 }
