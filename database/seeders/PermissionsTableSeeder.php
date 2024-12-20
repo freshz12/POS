@@ -77,6 +77,7 @@ class PermissionsTableSeeder extends Seeder
             'capsters_dashboards_views' => 'dashboards',
             'products_dashboards_views' => 'dashboards',
             'customers_dashboards_views' => 'dashboards',
+            'summary_payment_dashboards_views' => 'dashboards',
         ];
 
         // Create permissions

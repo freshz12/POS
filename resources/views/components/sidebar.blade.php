@@ -77,6 +77,11 @@
                                 <a class="nav-link" href="{{ url('transactions_table/') }}">Transactions</a>
                             </li>
                         @endcan
+                        @can('summary_payment_dashboards_views')
+                            <li class="{{ Request::is('summary_payment_dashboard') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ url('dashboards/summary_payment/') }}">Summary Payment</a>
+                            </li>
+                        @endcan
                     </ul>
                 </li>
             @endif

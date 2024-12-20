@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
 use Carbon\Carbon;
-use App\Models\Products;
-use Mike42\Escpos\Printer;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\DashboardsCapstersExport;
 use App\Exports\DashboardsProductsExport;
 use App\Exports\DashboardsCustomersExport;
+use App\Exports\DashboardsSummaryPaymentExport;
 
 class DashboardsController extends Controller
 {
@@ -264,7 +262,6 @@ class DashboardsController extends Controller
                         ->groupBy(DB::raw('CAST(transactions.created_at AS DATE)'))
                         ->orderBy('transaction_date')
                         ->get();
-
                 } elseif ($diff < 7) {
                     $transactions = Transactions::select(
                         DB::raw('SUM(transactions.amount) as total_spent'),
@@ -505,6 +502,86 @@ class DashboardsController extends Controller
     {
         try {
             return Excel::download(new DashboardsCustomersExport($request), 'dashboards_customers.xlsx');
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'error_message' => 'Something went wrong, please contact administrator',
+            ]);
+        }
+    }
+
+    public function summaryPayment()
+    {
+        return view('pages.dashboards.summary_payment.summary_payment', ['type_menu' => 'summary_payment_dashboard']);
+    }
+
+    public function summaryPaymentIndexData(Request $request)
+    {
+        $period = $request->input('created_type', 'today');
+        $startDate = Carbon::now('Asia/Jakarta');
+        $endDate = Carbon::now('Asia/Jakarta');
+
+        switch ($period) {
+            case 'today':
+                $startDate = Carbon::now('Asia/Jakarta')->startOfDay();
+                $endDate = Carbon::now('Asia/Jakarta')->endOfDay();
+                break;
+
+            case 'this_week':
+                $startDate = Carbon::now('Asia/Jakarta')->startOfWeek();
+                $endDate = Carbon::now('Asia/Jakarta')->endOfWeek();
+                break;
+
+            case 'this_month':
+                $startDate = Carbon::now('Asia/Jakarta')->startOfMonth();
+                $endDate = Carbon::now('Asia/Jakarta')->endOfMonth();
+                break;
+
+            case 'this_year':
+                $startDate = Carbon::now('Asia/Jakarta')->startOfYear();
+                $endDate = Carbon::now('Asia/Jakarta')->endOfYear();
+                break;
+
+            case 'custom':
+                if (!$request->input('created_from_filter') || !$request->input('created_to_filter')) {
+                    $startDate = Carbon::now('Asia/Jakarta')->startOfDay();
+                    $endDate = Carbon::now('Asia/Jakarta')->endOfDay();
+                } else {
+                    $startDate = $request->input('created_from_filter')
+                        ? Carbon::createFromFormat('Y-m-d', $request->input('created_from_filter'), 'Asia/Jakarta')->startOfDay()
+                        : Carbon::now('Asia/Jakarta')->startOfDay();
+                    $endDate = $request->input('created_to_filter')
+                        ? Carbon::createFromFormat('Y-m-d', $request->input('created_to_filter'), 'Asia/Jakarta')->endOfDay()
+                        : Carbon::now('Asia/Jakarta')->endOfDay();
+                }
+
+                break;
+
+            default:
+                return response()->json(['error' => 'Invalid period selected'], 400);
+        }
+
+        $periodeTransaksi = $startDate->isSameDay($endDate)
+            ? $startDate->translatedFormat('j F Y')
+            : $startDate->translatedFormat('j F Y') . ' to ' . $endDate->translatedFormat('j F Y'); // Date range
+
+        $summary_payment = Transactions::selectRaw('
+                ? AS transaction_period,
+                COUNT(id) AS total_customer,
+                SUM(amount) AS total_amount,
+                SUM(CASE WHEN payment_method = \'Cash\' THEN amount ELSE 0 END) AS total_cash,
+                SUM(CASE WHEN payment_method = \'EDC\' THEN amount ELSE 0 END) AS total_edc,
+                SUM(CASE WHEN payment_method = \'QRIS\' THEN amount ELSE 0 END) AS total_qris
+            ', [$periodeTransaksi])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->first();
+
+        return response()->json(['data' => [$summary_payment]]);
+    }
+
+    public function summaryPaymentExport(Request $request)
+    {
+        try {
+            return Excel::download(new DashboardsSummaryPaymentExport($request), 'dashboards_summary_payment.xlsx');
         } catch (\Exception $e) {
             return back()->withErrors([
                 'error_message' => 'Something went wrong, please contact administrator',

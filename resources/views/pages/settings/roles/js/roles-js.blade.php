@@ -286,7 +286,7 @@
                 class: 'row'
             });
             const typeCol = $('<div>', {
-                class: 'col-6'
+                class: 'col-5'
             });
             const formCheck = $('<div>', {
                 class: 'form-check'
@@ -314,7 +314,7 @@
             typeDiv.append(typeCol);
 
             const permissionsCol = $('<div>', {
-                class: 'col-6 role-management-checkbox'
+                class: 'col-7 role-management-checkbox'
             });
             typeDiv.append(permissionsCol);
 
@@ -421,7 +421,7 @@
                 class: 'row'
             });
             const typeCol = $('<div>', {
-                class: 'col-6'
+                class: 'col-5'
             });
             const formCheck = $('<div>', {
                 class: 'form-check'
@@ -452,7 +452,7 @@
             typeDiv.append(typeCol);
 
             const permissionsCol = $('<div>', {
-                class: 'col-6 role-management-checkbox'
+                class: 'col-7 role-management-checkbox'
             });
             typeDiv.append(permissionsCol);
 

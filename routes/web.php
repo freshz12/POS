@@ -148,16 +148,19 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/capsters', [DashboardsController::class, 'capsters'])->middleware('can:capsters_dashboards_views');
         Route::get('/products', [DashboardsController::class, 'products'])->middleware('can:products_dashboards_views');
         Route::get('/customers', [DashboardsController::class, 'customers'])->middleware('can:customers_dashboards_views');
+        Route::get('/summary_payment', [DashboardsController::class, 'summaryPayment'])->middleware('can:summary_payment_dashboards_views');
 
         Route::get('/main/index_data', [DashboardsController::class, 'mainIndexData'])->middleware('can:main_dashboards_views');
         Route::get('/transactions/index_data', [DashboardsController::class, 'transactionsIndexData'])->middleware('can:transactions_dashboards_views');
         Route::get('/capsters/index_data', [DashboardsController::class, 'capstersIndexData'])->middleware('can:capsters_dashboards_views');
         Route::get('/products/index_data', [DashboardsController::class, 'productsIndexData'])->middleware('can:products_dashboards_views');
         Route::get('/customers/index_data', [DashboardsController::class, 'customersIndexData'])->middleware('can:customers_dashboards_views');
+        Route::get('/summary_payment/index_data', [DashboardsController::class, 'summaryPaymentIndexData'])->middleware('can:summary_payment_dashboards_views');
 
         Route::get('/capsters/export', [DashboardsController::class, 'capstersExport'])->middleware('can:capsters_dashboards_views');
         Route::get('/products/export', [DashboardsController::class, 'productsExport'])->middleware('can:products_dashboards_views');
         Route::get('/customers/export', [DashboardsController::class, 'customersExport'])->middleware('can:customers_dashboards_views');
+        Route::get('/summary_payment/export', [DashboardsController::class, 'summaryPaymentExport'])->middleware('can:summary_payment_dashboards_views');
 
     });
     Route::get('/invoice', [DashboardsController::class, 'invoice']);
