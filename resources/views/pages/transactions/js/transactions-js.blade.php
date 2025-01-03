@@ -8,6 +8,51 @@
     });
 
     $(document).ready(function() {
+        $.ajax({
+            url: '/promos/index_data',
+            type: 'GET',
+            data: {
+                is_active: true,
+                is_without_package: true
+            },
+            dataType: 'json',
+            success: function(data) {
+                var results = [];
+                $.each(data.data, function(index, item) {
+                    results.push({
+                        id: item.id,
+                        text: `Promo Name : <strong>${item.name}</strong> <br>
+                       Type : ${item.type} <br> Unique Code : ${item.unique_code}`,
+                        unique_code: item.unique_code,
+                        value: item.value,
+                        type: item.type,
+                        product_id: item.product_id
+                    });
+                });
+
+                $(".select2#productCoupon").select2({
+                    data: results,
+                    escapeMarkup: function(markup) {
+                        return markup; // Let Select2 escape markup
+                    },
+                    templateResult: function(data) {
+                        if (data.loading) {
+                            return data.text;
+                        }
+                        return $(`<div>${data.text}</div>`);
+                    },
+                    templateSelection: function(data) {
+                        return data.text.split('<br>')[0].replace('Promo Name : ', '');
+                    }
+                });
+
+                $(".select2#productCoupon").val(null).trigger('change');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+
         $('#customer').val(null).trigger('change');
         $('#capster').val(null).trigger('change');
 
@@ -60,8 +105,6 @@
             $('#availableQuantity').val(productQuantity);
             $('#quantityModalLabel').text('Enter Quantity for ' + productName);
             $('#quantity').val('');
-
-            console.log(@json(auth()->user()->can('custom_price')));
 
             if (isCustomPrice && @json(auth()->user()->can('custom_price'))) {
                 $('#customPriceModal').modal('show');
@@ -190,8 +233,10 @@
                     .toString();
                 existingRow.find('.quantity-input').val(newQuantity);
             } else {
-                var newRow = `<tr data-id="${productId}">
+                let total = formatNumberWithCommas(productPrice * quantity);
+                var newRow = `<tr data-id="${productId}" data-coupon-id="">
                                 <td class="text-center">${productName}</td>
+                                <td class="text-right price-cell">${formattedPrice}</td>
                                 <td>
                                     <div class="quantity-container d-flex align-items-center">
                                         <button class="btn btn-primary btn-lg quantity-button quantity-button-minus" type="button">-</button>
@@ -199,9 +244,11 @@
                                         <button class="btn btn-primary btn-lg quantity-button quantity-button-plus" type="button">+</button>
                                     </div>
                                 </td>
-                                <td class="text-right price-cell">${formattedPrice}</td>
-                                <td class="text-right trash-container">
+                                <td class="text-center discount-cell">-</td>
+                                <td class="text-center total-cell">${total}</td>
+                                <td class="text-right trash-container" style="white-space: nowrap;">
                                     <button class="btn btn-danger btn-lg trash-button"><i class="fas fa-trash"></i></button>
+                                    <button class="btn btn-success btn-lg discount-product-button"><i style="font-size: 13px;" class="fa-solid fa-tag"></i></button>
                                 </td>
                             </tr>`;
                 $('table.table tbody').append(newRow);
@@ -210,26 +257,6 @@
             updateTotalAmount();
             $('#quantityModal').modal('hide');
         });
-
-
-        // function updateTotalAmount() {
-        //     var totalAmount = 0;
-        //     $('table.table tbody tr').each(function() {
-        //         var priceText = $(this).find('.price-cell').text();
-        //         var quantityText = $(this).find('.quantity-input').val();
-
-        //         var price = parseFloat(priceText.replace(/\./g, '').replace(/,/g, '.'));
-        //         var quantity = parseInt(quantityText, 10);
-
-        //         if (!isNaN(price) && !isNaN(quantity)) {
-        //             totalAmount += price * quantity;
-        //         }
-        //     });
-
-        //     let formattedAmount = formatNumberWithCommas(totalAmount);
-
-        //     $('#totalAmount').text(formattedAmount);
-        // }
 
         $(document).on('click', '.quantity-button-plus', function() {
             var quantityInput = $(this).siblings('.quantity-input');
@@ -251,6 +278,14 @@
         $(document).on('click', '.trash-button', function() {
             $(this).closest('tr').remove();
             updateTotalAmount();
+        });
+
+        $(document).on('click', '.discount-product-button', function() {
+            let productId = $(this).closest('tr').data('id');
+            let couponId = $(this).closest('tr').data('coupon-id');
+            $('.select2#productCoupon').val(couponId).trigger('change');
+            $('#currentDiscountProductId').val(productId);
+            $('#addCouponProductModal').modal('show');
         });
 
         $('#resetCartButton').on('click', function() {
@@ -343,6 +378,7 @@
 
             let product = {
                 id: $(this).data('id'),
+                coupon: $(this).data('coupon-id'),
                 name: $(this).find('td.text-center').first().text()
                     .trim(),
                 qty: $(this).find('.quantity-input').val().trim(),
@@ -386,8 +422,8 @@
 
             $('#productList').append(`
             <div class="col-6 col-md-4 col-lg-3 mb-3">
-                <div class="card product-item ${cardClass}" data-id="${product.id}" data-quantity="${product.quantity}" data-name="${product.product_name}" data-price="${product.selling_price}" data-is-custom-price="${product.is_custom_price}">
-                    <img src="/storage/${product.picture_path || 'files/default/product.png'}" class="card-img-top ${overlayClass}" alt="${product.product_name}">
+                <div class="card product-item ${cardClass}" data-id="${product.id}" data-quantity="${product.quantity}" data-name="${product.product_name}" data-price="${product.selling_price}" data-is-custom-price="${product.is_custom_price}" data-discount-product="0">
+                    <img style="height: auto; width: auto;" src="/storage/${product.picture_path || 'files/default/product.png'}" class="card-img-top ${overlayClass}" alt="${product.product_name}">
                     <div class="product-overlay ${overlayClass}">${product.product_name} (${product.quantity})</div>
                 </div>
             </div>
@@ -404,14 +440,22 @@
         var originalTotalAmount = 0;
 
         $('table.table tbody tr').each(function() {
+            let dicountAmount = 0;
             var priceText = $(this).find('.price-cell').text();
             var quantityText = $(this).find('.quantity-input').val();
+            var discountText = $(this).find('.discount-cell').text();
+
+            if (discountText !== '-') {
+                dicountAmount = parseFloat(discountText.replace(/\./g, '').replace(/,/g, '.'));
+            }
 
             var price = parseFloat(priceText.replace(/\./g, '').replace(/,/g, '.'));
             var quantity = parseInt(quantityText, 10);
 
+            $(this).find('.total-cell').text(formatNumberWithCommas((price * quantity) - dicountAmount))
+
             if (!isNaN(price) && !isNaN(quantity)) {
-                originalTotalAmount += price * quantity;
+                originalTotalAmount += (price * quantity) - dicountAmount;
             }
         });
 
@@ -428,7 +472,7 @@
             $('#Totaldiscount').text('Rp.' + formatNumberWithCommas(discountValue));
         } else if (couponType === 'Percentage' && couponValue) {
             discountValue = originalTotalAmount * (couponValue / 100);
-            totalAmount = Math.max(originalTotalAmount - discountValue, 0);
+            totalAmount = Math.floor(originalTotalAmount - discountValue);
             $('#Totaldiscount').text(couponValue + '%');
         } else if (couponType === 'Package') {
             let totalDiscountText = $('#Totaldiscount').text();
@@ -446,9 +490,31 @@
         $('#finalTotalAmount').text(formattedAmount);
     }
 
+    function addProductCoupon() {
+        let couponAmount;
+        let selectedCoupon = $('.select2#productCoupon').select2('data')[0];
+        let currProductId = $('#currentDiscountProductId').val();
+        let row = $(`tr[data-id="${currProductId}"]`);
+        let priceText = row.find('.price-cell').text().trim();
+        let price = parseFloat(priceText.replace(/\./g, ''), 10);
+        let quantityText = row.find('.quantity-input').val().trim();
+        let quantity = parseInt(quantityText.replace(/\./g, ''), 10);
+
+        
+        if (selectedCoupon.type.toLowerCase() == 'percentage') {
+            couponAmount = Math.floor(((price * quantity) * selectedCoupon.value) / 100);
+        } else if (selectedCoupon.type.toLowerCase() == 'nominal') {
+            couponAmount = selectedCoupon.value;
+        }
+
+        row.data('coupon-id', selectedCoupon.id);
+        row.find('.discount-cell').text(formatNumberWithCommas(couponAmount));
+        updateTotalAmount();
+        $('#addCouponProductModal').modal('hide');
+    }
+
     function addCoupon() {
-        $('#coupon').val();
-        var selectedCoupon = $('.select2.coupon').select2('data')[0];
+        var selectedCoupon = $('.select2.coupon#coupon').select2('data')[0];
         $('.select2.coupon').data('unique-code', selectedCoupon.unique_code);
         $('.select2.coupon').data('value', selectedCoupon.value);
         $('.select2.coupon').data('type', selectedCoupon.type);

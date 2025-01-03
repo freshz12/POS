@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Products;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Exports\TransactionsTableExport;
-use App\Models\Products;
 use App\Models\TransactionProducts;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
+use App\Exports\TransactionsTableExport;
+use App\Exports\TransactionsTableParentExport;
 
 class TransactionsTableController extends Controller
 {
@@ -34,14 +35,14 @@ class TransactionsTableController extends Controller
         $transactions = $query->skip($start)->take($length)->get();
 
         foreach ($transactions as $transaction) {
-            if($transaction->promo){
+            if ($transaction->promo) {
                 if ($transaction->promo_id && $transaction->promo->type === 'Package') {
                     $products_id = json_decode($transaction->promo->product_id);
                     $totalSellingPrice = 0;
-    
+
                     foreach ($products_id as $product_id) {
                         $product = Products::find($product_id);
-    
+
                         if ($product) {
                             $totalSellingPrice += $product->selling_price;
                         }
@@ -68,10 +69,21 @@ class TransactionsTableController extends Controller
             $product = Products::find($transactionProduct->product_id);
             if ($product) {
                 $transactionProduct->product_details = $product;
-                $transactionProduct->product_details->selling_price = 
-                    $transactionProduct->is_new_data == 0 
-                        ? $transactionProduct->product_details->selling_price 
-                        : $transactionProduct->price;
+                $transactionProduct->product_details->selling_price =
+                    $transactionProduct->is_new_data == 0
+                    ? $transactionProduct->product_details->selling_price
+                    : $transactionProduct->price;
+            }
+
+            if($transactionProduct->promo_id){
+                if ($transactionProduct->productDiscount->type == 'Percentage') {
+                    $discount_amount = floor(((floatval($transactionProduct->price) * intval($transactionProduct->quantity)) * floatval($transactionProduct->productDiscount->value)) / 100);
+                } else {
+                    $discount_amount = floatval($transactionProduct->productDiscount->value);
+                }
+                $transactionProduct->discount_amount = $discount_amount;
+            }else{
+                $transactionProduct->discount_amount = 0;
             }
             return $transactionProduct;
         });
@@ -79,9 +91,9 @@ class TransactionsTableController extends Controller
         $productList = [];
 
         if ($transaction->promo_id) {
-            if($transaction->promo->type == 'Package'){
+            if ($transaction->promo->type == 'Package') {
                 $products_id = json_decode($transaction->promo->product_id);
-    
+
                 foreach ($products_id as $product_id) {
                     $product = Products::find($product_id);
                     if ($product) {
@@ -129,9 +141,9 @@ class TransactionsTableController extends Controller
     public function showAllTransactionFromCustomer($id)
     {
         $transactions = Transactions::with('capster', 'promo')
-        ->where('customer_id', $id)
-        ->select('transactions.id','transactions.capster_id', 'transactions.promo_id', 'transactions.created_at', 'transactions.amount')
-        ->get();
+            ->where('customer_id', $id)
+            ->select('transactions.id', 'transactions.capster_id', 'transactions.promo_id', 'transactions.created_at', 'transactions.amount')
+            ->get();
 
         foreach ($transactions as $transaction) {
             $transaction->product = TransactionProducts::join('products', 'transaction_products.product_id', '=', 'products.id')
@@ -180,7 +192,18 @@ class TransactionsTableController extends Controller
     public function export(Request $request)
     {
         // try {
-            return Excel::download(new TransactionsTableExport($request), 'transactions.xlsx');
+        return Excel::download(new TransactionsTableExport($request), 'transaction_products.xlsx');
+        // } catch (\Exception $e) {
+        //     return back()->withErrors([
+        //         'error_message' => 'Something went wrong, please contact administrator',
+        //     ]);
+        // }
+    }
+
+    public function export_parent(Request $request)
+    {
+        // try {
+        return Excel::download(new TransactionsTableParentExport($request), 'transactions.xlsx');
         // } catch (\Exception $e) {
         //     return back()->withErrors([
         //         'error_message' => 'Something went wrong, please contact administrator',

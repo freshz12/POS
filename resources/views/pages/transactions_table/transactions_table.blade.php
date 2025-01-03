@@ -38,6 +38,12 @@
                                                 <i class="ion-ios-download" data-pack="ios" data-tags="save, export"
                                                     style="font-size: 21px;"></i>
                                             </button>
+                                            <button id="download_button_2" onclick="handleDownload2()"
+                                                style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
+                                                class="btn btn-primary">
+                                                <i class="ion-android-archive" data-pack="ios" data-tags="save, export"
+                                                    style="font-size: 21px;"></i>
+                                            </button>
                                             <div id="filter-container"
                                                 style="display: flex; align-items: center; max-height: 55px;"></div>
                                         </div>
@@ -106,6 +112,7 @@
                                     <th>Product Name</th>
                                     <th>Unit Price</th>
                                     <th>Quantity</th>
+                                    <th>Discount</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>

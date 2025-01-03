@@ -57,7 +57,7 @@
         </div> --}}
 
         <section class="row no-gutters vh-100">
-            <div class="col-md-6 col-lg-5 p-3">
+            <div class="col-md-6 col-lg-7 p-3">
                 <div class="card h-100">
                     <div class="card-body d-flex flex-column">
                         <div class="table-responsive flex-grow-1">
@@ -65,8 +65,10 @@
                                 <thead class="thead-fixed">
                                     <tr>
                                         <th class="text-center" style="width: 30%">Product</th>
-                                        <th class="text-center">Qty</th>
                                         <th class="text-center">Price</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Discount</th>
+                                        <th class="text-center">Total</th>
                                         <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
@@ -107,7 +109,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-7 p-3">
+            <div class="col-md-6 col-lg-5 p-3">
                 <div class="card h-100">
                     <div class="card-header" style="position: relative;">
                         <a href="/dashboards/main"
@@ -217,6 +219,7 @@
         </div>
     </div>
 
+    {{-- Discount Transaction Modal --}}
     <div class="modal fade" id="addCouponModal" role="dialog" aria-labelledby="addCouponModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -238,6 +241,33 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button class="btn btn-primary" type="button" onclick="addCoupon()">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Discount Product Modal --}}
+    <div class="modal fade" id="addCouponProductModal" role="dialog" aria-labelledby="addCouponProductModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCouponProductModalLabel">Enter Coupon Unique Code</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="currentDiscountProductId">
+                    <div class="row">
+                        <div class="col">
+                            <select class="form-control select2" id="productCoupon" name="productCoupon"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="button" onclick="addProductCoupon()">Add</button>
                 </div>
             </div>
         </div>

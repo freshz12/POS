@@ -247,6 +247,30 @@
 
         var tempLink = document.createElement('a');
         tempLink.href = downloadUrl;
+        tempLink.download = 'transactions_products.xlsx';
+
+        document.body.appendChild(tempLink);
+        tempLink.click();
+
+        document.body.removeChild(tempLink);
+    }
+
+    function handleDownload2() {
+        var baseUrl = "{{ url('/transactions_table/export_parent') }}";
+        var params = {
+            customer_name: $('#customer_name_filter').val(),
+            capster_name: $('#capster_name_filter').val(),
+            transaction_id: $('#transaction_id_filter').val(),
+            total_amount: $('#total_amount_filter').val(),
+            payment_method: $('#payment_method_filter').val(),
+            created_at_from: $('#created_at_filter_from').val(),
+            created_at_to: $('#created_at_filter_to').val()
+        };
+        var queryString = $.param(params);
+        var downloadUrl = baseUrl + '?' + queryString;
+
+        var tempLink = document.createElement('a');
+        tempLink.href = downloadUrl;
         tempLink.download = 'transactions.xlsx';
 
         document.body.appendChild(tempLink);
@@ -285,12 +309,14 @@
         promoProductTableBody.innerHTML = '';
 
         data.transaction_products.forEach(product => {
-            const total = product.product_details.selling_price * product.quantity;
+            const discountField = product.discount_amount !== 0 ? `Rp.${formatNumberWithCommas(product.discount_amount)}` : '-';
+            const total = (product.product_details.selling_price * product.quantity) - product.discount_amount;
             const row = `
             <tr>
                 <td>${product.product_details.product_name}</td>
                 <td>Rp.${formatNumberWithCommas(product.product_details.selling_price)}</td>
                 <td>${product.quantity}</td>
+                <td>${discountField}</td>
                 <td>Rp.${formatNumberWithCommas(total)}</td>
             </tr>
         `;

@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/update', [TransactionsTableController::class, 'update'])->middleware('can:transactions_edit');
         Route::post('/delete', [TransactionsTableController::class, 'destroy'])->middleware('can:transactions_delete');
         Route::get('/export', [TransactionsTableController::class, 'export'])->middleware('can:transactions_view');
+        Route::get('/export_parent', [TransactionsTableController::class, 'export_parent'])->middleware('can:transactions_view');
     });
 
     Route::prefix('transactions')->group(function () {

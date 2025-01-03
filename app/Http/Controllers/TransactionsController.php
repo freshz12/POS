@@ -73,10 +73,11 @@ class TransactionsController extends Controller
                 'capster_id' => $request->capster_id,
             ]);
 
-
+            
             foreach ($cartItems as $item) {
                 TransactionProducts::create([
                     'transaction_id' => $tr->id,
+                    'promo_id' => $item['coupon'] == '' ? null : $item['coupon'],
                     'product_id' => $item['id'],
                     'quantity' => $item['qty'],
                     'created_by' => auth()->user()->id,
@@ -108,8 +109,8 @@ class TransactionsController extends Controller
 
             session()->flash('change_message', $successMessage);
 
-            $this->invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $request->payment_method);
-            sleep(4);
+            // $this->invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $request->payment_method);
+            // sleep(4);
             // $this->invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $request->payment_method);
 
             return redirect()->to('/transactions')->with('type_menu', 'transactions');

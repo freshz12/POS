@@ -36,6 +36,10 @@ class Promos extends Model
                 $query->where('unique_code', 'LIKE', '%' . $request->unique_code . '%');
             })
 
+            ->when($request->is_without_package, function ($query) use ($request) {
+                $query->whereNot('type', 'Package');
+            })
+
             ->when($request->type, function ($query) use ($request) {
                 $query->where('type', 'LIKE', '%' . $request->type . '%');
             })

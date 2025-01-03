@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Promos;
 use App\Models\Products;
 use App\Models\Transactions;
 use Illuminate\Database\Eloquent\Model;
@@ -89,5 +90,10 @@ class TransactionProducts extends Model
     public function product()
     {
         return $this->belongsTo(Products::class, 'product_id');
+    }
+
+    public function productDiscount()
+    {
+        return $this->belongsTo(Promos::class, 'promo_id');
     }
 }
