@@ -198,11 +198,17 @@ class TransactionsController extends Controller
     public function generateInvoiceNumber()
     {
         $lastInvoice = DB::table('running_numbers')->orderBy('id', 'desc')->first();
-
+        $nextNumber = 0;
         if ($lastInvoice) {
             $lastNumber = (int) substr($lastInvoice->running_number, 2); // Remove the 'TR' prefix
             $nextNumber = $lastNumber + 1;
         } else {
+            DB::table('running_numbers')->insert([
+                'running_number' => 'TR0000001',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             $nextNumber = 1;
         }
 
