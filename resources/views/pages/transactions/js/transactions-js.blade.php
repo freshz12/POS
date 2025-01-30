@@ -422,7 +422,7 @@
                 </div>
 
                 <div style="text-align: left;">-------------------------</div>`;
-
+            let i = 0;
             cartItems.forEach(item => {
                 if (item.is_included_in_receipt == 1) {
                     receiptContent += `
@@ -430,7 +430,7 @@
                             <div>
                                 <span style="float: left;">${item.name}</span><br>
                                 <span style="float: left;">${item.price} x ${item.qty}</span>
-                                <span style="float: right;">${formatNumberWithCommas(item.price_per_product)}</span>
+                                <span style="float: right;">${formatNumberWithCommas(item.price_per_product)}</span><br>
                     `;
 
                     if (item.promo) {
@@ -441,7 +441,9 @@
                             value = item.promo.value + '%';
                         }
                         if (value) {
-                            receiptContent += `<br>`;
+                            if(i == 0){
+                                receiptContent += `<br>`;
+                            }
                             receiptContent += `
                                 <span style="float: left;">Discount</span>
                                 <span style="float: right;">${formatNumberWithCommas(value)}</span>
@@ -454,6 +456,7 @@
                         </div>
                         <br>
                     `;
+                    i++;
                 }
             });
 
@@ -511,7 +514,7 @@
             // Remove the iframe after printing
             iframe.remove();
 
-            await delay(1000);
+            await delay(500);
 
             iframe = document.createElement('iframe');
             iframe.style.position = 'absolute';
