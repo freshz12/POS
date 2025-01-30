@@ -74,7 +74,7 @@ class TransactionsController extends Controller
             ]);
 
             
-            foreach ($cartItems as $item) {
+            foreach ($cartItems as &$item) {
                 TransactionProducts::create([
                     'transaction_id' => $tr->id,
                     'promo_id' => $item['coupon'] == '' ? null : $item['coupon'],
@@ -85,10 +85,14 @@ class TransactionsController extends Controller
                     'price' => str_replace('.', '', $item['price']),
                     'is_new_data' => 1,
                 ]);
-                Products::where('id', $item['id'])
-                    ->decrement('quantity', $item['qty']);
+                $product = Products::where('id', $item['id']);
+                $item['is_included_in_receipt'] = $product->first()->value('is_included_in_receipt');
+                $item['price_per_product'] = $item['qty'] * str_replace('.', '', $item['price']);
+                if($item['coupon'] !== ''){
+                    $item['promo'] = Promos::where('id', $item['coupon'])->select('type', 'value')->first();
+                }
+                $product->decrement('quantity', $item['qty']);
             }
-
 
             if ($runningNumberRecord) {
                 DB::table('running_numbers')->where('id', $runningNumberRecord->id)->update([
@@ -107,13 +111,27 @@ class TransactionsController extends Controller
                 $successMessage = 'Your change is ' . $this->formatNumberWithCommas($change);
             }
 
-            session()->flash('change_message', $successMessage);
+            // session()->flash('change_message', $successMessage);
+
+            $data = [
+                'transaction' => $tr,
+                'cart_items' => $cartItems, 
+                'total_amount' => $total_amount, 
+                'running_number' => $runningNumber, 
+                'transaction_id' => $tr, 
+                'amount_before_discount' => $amount_before_discount, 
+                'discount' => $discount, 
+                'payment_method' => $request->payment_method,
+                'success_message' => $successMessage
+            ];
+            
 
             // $this->invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $request->payment_method);
             // sleep(4);
             // $this->invoice($cartItems, $total_amount, $runningNumber, $tr, $amount_before_discount, $discount, $request->payment_method);
 
-            return redirect()->to('/transactions')->with('type_menu', 'transactions');
+            // return redirect()->to('/transactions')->with('type_menu', 'transactions');
+            return $data;
         // } catch (\Exception $e) {
         //     DB::rollBack();
 

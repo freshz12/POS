@@ -7,7 +7,7 @@
         }
     });
 
-    $(document).ready(function() {
+    $(document).ready(async function() {
         $.ajax({
             url: '/promos/index_data',
             type: 'GET',
@@ -42,7 +42,8 @@
                         return $(`<div>${data.text}</div>`);
                     },
                     templateSelection: function(data) {
-                        return data.text.split('<br>')[0].replace('Promo Name : ', '');
+                        return data.text.split('<br>')[0].replace('Promo Name : ',
+                            '');
                     }
                 });
 
@@ -53,8 +54,7 @@
             }
         });
 
-        $('#customer').val(null).trigger('change');
-        $('#capster').val(null).trigger('change');
+        resetTransaction();
 
         var selectedCustomerId = $('#customerIdInput').val();
         var selectedCustomerName = $('#customerNameInput').val();
@@ -289,10 +289,7 @@
         });
 
         $('#resetCartButton').on('click', function() {
-            $('.select2.coupon').val(null).trigger('change');
-            $('.select2.coupon').removeData('unique-number').removeData('value').removeData('type');
-            $('table.table tbody').empty();
-            updateTotalAmount();
+            resetTransaction();
         });
 
         $('#payButton').on('click', function() {
@@ -342,6 +339,7 @@
             let cashPaidText = cashPaidisCash.trim();
             let customerId = $('#customer').val();
             let capsterId = $('#capster').val();
+            let capsterName = $('#capster option:selected').text();
             let promoIdInput = $('.select2.coupon').val();
             let cashPaid = parseFloat(cashPaidText.replace(/\./g, '').replace(/,/g, '.'));
 
@@ -361,9 +359,181 @@
             $('#capsterIdInput').val(capsterId);
             $('#promoIdInput').val(promoIdInput);
 
-            $('#paymentForm').submit();
+            let transactionID;
+
+            $.ajax({
+                url: '/transactions/store',
+                method: 'POST',
+                data: {
+                    customer_id: customerId,
+                    capster_id: capsterId,
+                    customer_name: $('#customerNameInput').val(),
+                    capster_name: $('#capsterNameInput').val(),
+                    amount_before_discount: totalAmountInput,
+                    total_amount: finalTotalAmount,
+                    cart_items: cartItems,
+                    promo_id: promoIdInput,
+                    payment_method: $('#paymentType').val(),
+                    amount: cashPaidText
+                },
+                success: function(response) {
+                    transactionID = response.running_number;
+                    hideLoading();
+                    printReceipt(response.cart_items, finalTotalAmount, cashPaidText,
+                        customerId,
+                        capsterName, transactionID, response.discount, response.transaction);
+                    $('#paymentMethodModal').modal('hide');
+                    resetTransaction();
+                    swal('Success', `${response.success_message}`, 'success');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching products:', error);
+                }
+            });
+
+            return;
+
+            // $('#paymentForm').submit();
         }
 
+        async function printReceipt(cartItems, totalAmount, cashPaidText, customerId, capsterName,
+            transactionID,
+            discount, transaction) {
+            let paymentType = $('#paymentType').val();
+
+            let receiptContent = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <title>Thermal Printer Receipt</title>
+            </head>
+            <body>
+            <div id="receipt" style="font-family: 'Courier New', monospace; font-size: 10pt; text-align: center; width:57mm">
+                
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <b>Densetsu</b><br>
+                    Ruko Jl Grand Wisata Bekasi No. 16 Blok AA-12 Lambangsari Kec. Tambun Selatan Kab. Bekasi Jawa Barat 17510
+                </div>
+                <br>
+                <div style="text-align: left; margin-bottom: 5px;">
+                    Transaction ID: ${transactionID}<br>
+                    Operator: ${capsterName}<br>
+                    Payment Method: ${paymentType}
+                </div>
+
+                <div style="text-align: left;">-------------------------</div>`;
+
+            cartItems.forEach(item => {
+                if (item.is_included_in_receipt == 1) {
+                    receiptContent += `
+                        <div style="text-align: left; margin: 5px 0;">
+                            <div>
+                                <span style="float: left;">${item.name}</span><br>
+                                <span style="float: left;">${item.price} x ${item.qty}</span>
+                                <span style="float: right;">${formatNumberWithCommas(item.price_per_product)}</span>
+                    `;
+
+                    if (item.promo) {
+                        let value;
+                        if (item.promo.type == 'Nominal') {
+                            value = formatNumberWithCommas(item.promo.value);
+                        } else if (item.promo.type == 'Percentage') {
+                            value = item.promo.value + '%';
+                        }
+                        if (value) {
+                            receiptContent += `
+                                <br>
+                                <span style="float: left;">Discount</span>
+                                <span style="float: right;">${formatNumberWithCommas(value)}</span>
+                            `;
+                        }
+                    }
+
+                    receiptContent += `
+                            </div><br>
+                        </div>
+                        <br>
+                    `;
+                }
+            });
+
+
+            receiptContent += `
+                <div style="text-align: left;">-------------------------</div>
+
+                <div style="text-align: left; margin: 5px 0;">`;
+
+            if (parseFloat(transaction.amount_before_discount - transaction.amount) !== 0) {
+                receiptContent += `<div>
+                            <span style="float: left;">Subtotal</span>
+                            <span style="float: right;">${formatNumberWithCommas(transaction.amount_before_discount)}</span>
+                        </div><br>
+                        <div>
+                            <span style="float: left;">Discount</span>
+                            <span style="float: right;">${formatNumberWithCommas(transaction.amount_before_discount - transaction.amount)}</span>
+                        </div><br>`;
+            }
+
+            receiptContent += `
+                    <div>
+                        <span style="float: left;">Total&nbsp;</span>
+                        <span style="float: right;">${formatNumberWithCommas(transaction.amount)}</span>
+                    </div>
+                </div>
+
+                <div style="text-align: left;">-------------------------</div>
+
+                <div style="margin-top: 10px; text-align: center; margin-bottom: 20px;">
+                    Thank you for coming!<br>
+                    ${new Date().toLocaleString()}<br><br><br><br><br>
+                    .
+                </div>
+            </div>
+            </body>
+            </html>
+            `;
+
+            var iframe = document.createElement('iframe');
+            iframe.style.position = 'absolute';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
+
+            var doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(receiptContent);
+            doc.close();
+
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+
+            // Remove the iframe after printing
+            iframe.remove();
+
+            await delay(1000);
+
+            iframe = document.createElement('iframe');
+            iframe.style.position = 'absolute';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = 'none';
+            document.body.appendChild(iframe);
+
+            doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(receiptContent);
+            doc.close();
+
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+
+            iframe.remove();
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
 
         $('#payButtonModal').on('click', function() {
             submitTransaction(true);
@@ -500,7 +670,7 @@
         let quantityText = row.find('.quantity-input').val().trim();
         let quantity = parseInt(quantityText.replace(/\./g, ''), 10);
 
-        
+
         if (selectedCoupon.type.toLowerCase() == 'percentage') {
             couponAmount = Math.floor(((price * quantity) * selectedCoupon.value) / 100);
         } else if (selectedCoupon.type.toLowerCase() == 'nominal') {
@@ -569,6 +739,17 @@
         }
 
         $('#addCouponModal').modal('hide');
+    }
+
+    function resetTransaction() {
+        $('.select2.coupon').val(null).trigger('change');
+        $('.select2.coupon').removeData('unique-number').removeData('value').removeData('type');
+        $('#customer').val(null).trigger('change');
+        $('#capster').val(null).trigger('change');
+        $('#customer').val(null).trigger('select2:clear');
+        $('#capster').val(null).trigger('select2:clear');
+        $('table.table tbody').empty();
+        updateTotalAmount();
     }
 
     function showLoading() {
