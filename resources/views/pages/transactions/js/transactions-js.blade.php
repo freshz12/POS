@@ -441,8 +441,8 @@
                             value = item.promo.value + '%';
                         }
                         if (value) {
+                            receiptContent += `<br>`;
                             receiptContent += `
-                                <br>
                                 <span style="float: left;">Discount</span>
                                 <span style="float: right;">${formatNumberWithCommas(value)}</span>
                             `;
