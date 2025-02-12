@@ -18,7 +18,10 @@
                     d.email = $('#email_filter').val();
                     d.gender = $('#gender_filter').val();
                     d.phone_number = $('#phone_number_filter').val();
-                    d.updated_at = $('#updated_at_filter').val();
+                    d.updated_at_from = $('#updated_at_filter_from').val();
+                    d.updated_at_to = $('#updated_at_filter_to').val();
+                    d.dob_from = $('#dob_filter_from').val();
+                    d.dob_to = $('#dob_filter_to').val();
                 },
             },
             "columnDefs": [{
@@ -95,6 +98,12 @@
                 },
                 {
                     "targets": 6,
+                    "render": function(data, type, row) {
+                        return row.date_of_birth ? row.date_of_birth : '-';
+                    }
+                },
+                {
+                    "targets": 7,
                     "searchable": false
                 }
             ],
@@ -121,6 +130,9 @@
                 },
                 {
                     "data": "phone_number"
+                },
+                {
+                    "data": "date_of_birth"
                 },
                 {
                     "data": "updated_at"
@@ -338,7 +350,10 @@
         $('#email_filter').val('');
         $('#gender_filter').val('');
         $('#phone_number_filter').val('');
-        $('#updated_at_filter').val('');
+        $('#updated_at_filter_from').val('');
+        $('#updated_at_filter_to').val('');
+        $('#dob_filter_from').val('');
+        $('#dob_filter_to').val('');
 
         $('#datatable').DataTable().ajax.reload();
 
@@ -352,7 +367,10 @@
             email: $('#email_filter').val(),
             gender: $('#gender_filter').val(),
             phone_number: $('#phone_number_filter').val(),
-            updated_at: $('#updated_at_filter').val()
+            updated_at_from: $('#updated_at_filter_from').val(),
+            updated_at_to: $('#updated_at_filter_to').val(),
+            dob_from: $('#dob_filter_from').val(),
+            dob_to: $('#dob_filter_to').val()
         };
         var queryString = $.param(params);
         var downloadUrl = baseUrl + '?' + queryString;
@@ -381,6 +399,7 @@
                 $('#gender').val(response[0]['gender']);
                 $('#phone_number').val(response[0]['phone_number']);
                 $('#id').val(response[0]['id']);
+                $('#dob').val(response[0]['date_of_birth']);
                 $('#notes').val(response[0]['notes']);
             },
             error: function(xhr) {

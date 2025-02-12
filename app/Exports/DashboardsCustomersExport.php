@@ -22,11 +22,16 @@ class DashboardsCustomersExport implements FromCollection, WithHeadings, WithMap
     {
         return Transactions::join('customers', 'transactions.customer_id', '=', 'customers.id')
             ->selectRaw('customers.full_name as customer_name, 
+             customers.phone_number as phone_number,
+             customers.id as id,
              SUM(transactions.amount) as total_spent, 
              COUNT(transactions.id) as total_transactions')
-            ->groupBy('customers.full_name')
+            ->groupBy('customers.phone_number', 'customers.id', 'customers.full_name')
             ->when($this->request->customer_name, function ($query) {
                 $query->where('customers.full_name', 'like', '%' . $this->request->customer_name . '%');
+            })
+            ->when($this->request->phone_number, function ($query) {
+                $query->where('customers.phone_number', 'like', '%' . $this->request->phone_number . '%');
             })
             ->when($this->request->total_spent, function ($query) {
                 $query->havingRaw('SUM(transactions.amount) LIKE ?', ['%' . $this->request->total_spent . '%']);
@@ -42,6 +47,7 @@ class DashboardsCustomersExport implements FromCollection, WithHeadings, WithMap
     {
         return [
             $customer?->customer_name ?? 'N/A',
+            $customer?->phone_number ?? 'N/A',
             $customer?->total_spent ?? 'N/A',
             $customer?->total_transactions ?? 'N/A',
         ];
@@ -51,6 +57,7 @@ class DashboardsCustomersExport implements FromCollection, WithHeadings, WithMap
     {
         return [
             'Customers Name',
+            'Customers Phone Number',
             'Total Spent',
             'Total Transactions',
         ];

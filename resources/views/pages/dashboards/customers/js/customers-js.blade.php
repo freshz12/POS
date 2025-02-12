@@ -12,6 +12,7 @@
                 "type": "GET",
                 "data": function(d) {
                     d.customer_name = $('#customer_name_filter').val();
+                    d.phone_number = $('#phone_number_filter').val();
                     d.total_spent = $('#total_spent_filter').val();
                     d.total_transactions = $('#total_transactions_filter').val();
                 },
@@ -34,6 +35,12 @@
                 },
                 {
                     "data": "customer_name",
+                    "render": function(data, type, row) {
+                        return data ? data : 'N/A';
+                    }
+                },
+                {
+                    "data": "phone_number",
                     "render": function(data, type, row) {
                         return data ? data : 'N/A';
                     }
@@ -122,6 +129,7 @@
 
     function resetfilter() {
         $('#customer_name_filter').val('');
+        $('#phone_number_filter').val('');
         $('#total_transactions_filter').val('');
         $('#total_spent_filter').val(null);
 
@@ -134,6 +142,7 @@
         var baseUrl = "{{ url('/dashboards/customers/export') }}";
         var params = {
             customer_name: $('#customer_name_filter').val(),
+            phone_number: $('#phone_number_filter').val(),
             total_transactions: $('#total_transactions_filter').val(),
             total_spent: $('#total_spent_filter').val()
         };

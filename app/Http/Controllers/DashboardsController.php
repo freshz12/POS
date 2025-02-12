@@ -480,11 +480,16 @@ class DashboardsController extends Controller
     {
         $customers = Transactions::join('customers', 'transactions.customer_id', '=', 'customers.id')
             ->selectRaw('customers.full_name as customer_name, 
+                 customers.phone_number as phone_number,
+                 customers.id as id,
                  SUM(transactions.amount) as total_spent, 
                  COUNT(transactions.id) as total_transactions')
-            ->groupBy('customers.full_name')
+            ->groupBy('customers.phone_number', 'customers.id', 'customers.full_name')
             ->when($request->customer_name, function ($query) use ($request) {
                 $query->where('customers.full_name', 'like', '%' . $request->customer_name . '%');
+            })
+            ->when($request->phone_number, function ($query) use ($request) {
+                $query->where('customers.phone_number', 'like', '%' . $request->phone_number . '%');
             })
             ->when($request->total_spent, function ($query) use ($request) {
                 $query->havingRaw('SUM(transactions.amount) LIKE ?', ['%' . $request->total_spent . '%']);

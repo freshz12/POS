@@ -64,6 +64,7 @@
                                                 <th scope="col">Email</th>
                                                 <th scope="col">Gender</th>
                                                 <th scope="col">Phone Number</th>
+                                                <th scope="col">Date of Birth</th>
                                                 <th scope="col">Last Updated Date</th>
                                             </tr>
                                         </thead>
@@ -159,6 +160,10 @@
                         </div>
                         <div class="row">
                             <div class="col">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input class="form-control" type="date" name="date_of_birth">
+                            </div>
+                            <div class="col">
                                 <label for="notes" class="form-label">Notes</label>
                                 <textarea class="form-control" type="number" name="notes"></textarea>
                             </div>
@@ -222,6 +227,10 @@
                         </div>
                         <div class="row">
                             <div class="col">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input class="form-control" type="date" name="date_of_birth" id="dob">
+                            </div>
+                            <div class="col">
                                 <label for="notes" class="form-label">Notes</label>
                                 <textarea class="form-control" type="number" name="notes" id="notes"></textarea>
                             </div>
@@ -277,9 +286,24 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col">
+                            <label for="dob_filter_from" class="form-label">Date of Birth From</label>
+                            <input class="form-control" type="date" id="dob_filter_from">
+                        </div>
+                        <div class="col">
+                            <label for="dob_filter_to" class="form-label">Date of Birth To</label>
+                            <input class="form-control" type="date" id="dob_filter_to">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
                         <div class="col-6">
-                            <label for="quantity" class="form-label">Last Updated Date</label>
-                            <input class="form-control" type="date" id="updated_at_filter">
+                            <label for="updated_at_filter_from" class="form-label">Last Updated Date From</label>
+                            <input class="form-control" type="date" id="updated_at_filter_from">
+                        </div>
+                        <div class="col-6">
+                            <label for="updated_at_filter_to" class="form-label">Last Updated Date To</label>
+                            <input class="form-control" type="date" id="updated_at_filter_to">
                         </div>
                     </div>
                 </div>

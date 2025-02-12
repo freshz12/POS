@@ -3,8 +3,9 @@
 namespace App\Exports;
 
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use App\Models\Transactions;
+use Illuminate\Http\Request;
+use App\Models\TransactionProducts;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -45,6 +46,17 @@ class TransactionsTableParentExport implements FromCollection, WithHeadings, Wit
 
         foreach ($table as $transaction) {
             $transaction->month = Carbon::parse($transaction?->transaction?->created_at)->setTimezone('Asia/Jakarta')->format('F');
+
+            $transaction->gross_amount = TransactionProducts::where('transaction_id', $transaction->id)->sum('price');
+
+            $transaction->total_discount = TransactionProducts::with([
+                'product',
+                'productDiscount',
+            ])->where('transaction_id', $transaction->id)->sum('price');
+
+
+            $transaction->total_discount = 0;
+            $transaction->clean_amount = $transaction->gross_amount - $transaction->total_discount;
         }
 
         return $table;
@@ -52,19 +64,15 @@ class TransactionsTableParentExport implements FromCollection, WithHeadings, Wit
 
     public function map($transaction): array
     {
-        $promoValue = $transaction->amount_before_discount - $transaction->amount;
-
-        $netAmount = $transaction?->amount_before_discount - $promoValue;
-
         return [
             $transaction?->month ?? 'N/A',
             $transaction?->created_at ?? 'N/A',
             $transaction?->transaction_id ?? 'N/A',
             $transaction?->capster?->full_name ?? 'N/A',
             $transaction?->customers?->full_name ?? 'N/A',
-            $transaction?->amount_before_discount ?? 'N/A',
-            $promoValue ?? 0,
-            $netAmount ?? 'N/A',
+            $gross_amount ?? 'N/A',
+            $total_discount ?? 0,
+            $clean_amount ?? 'N/A',
             $transaction?->payment_method ?? 'N/A',
         ];
     }

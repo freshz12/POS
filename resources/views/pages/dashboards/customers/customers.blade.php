@@ -44,6 +44,7 @@
                                             <tr>
                                                 <th style="width: 1%">#</th>
                                                 <th scope="col">Customer Name</th>
+                                                <th scope="col">Customer Phone Number</th>
                                                 <th scope="col">Total Spent</th>
                                                 <th scope="col">Total Transactions</th>
                                             </tr>
@@ -79,6 +80,13 @@
                             <label for="customer_name_filter" class="form-label">Customer Name</label>
                             <input class="form-control" type="text" id="customer_name_filter"
                                 name="customer_name_filter">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label for="phone_number_filter" class="form-label">Customer Phone Number</label>
+                            <input class="form-control" type="number" id="phone_number_filter"
+                                name="phone_number_filter">
                         </div>
                     </div>
                     <div class="row">

@@ -19,6 +19,7 @@ class Customers extends Model
 
     protected $casts = [
         'updated_at' => 'datetime:Y-m-d H:i:s',
+        'date_of_birth' => 'date:d/m/Y',
     ];
 
     public function getUpdatedAtAttribute($value)
@@ -48,12 +49,24 @@ class Customers extends Model
                 $query->where('phone_number', 'LIKE', '%' . $request->phone_number . '%');
             })
 
-            ->when($request->updated_at, function ($query) use ($request) {
-                $date = Carbon::parse($request->updated_at)->format('Y-m-d');
-                $startOfDay = Carbon::parse($date)->startOfDay()->toDateTimeString();
-                $endOfDay = Carbon::parse($date)->endOfDay()->toDateTimeString();
+            ->when($request->updated_at_from && $request->updated_at_to, function ($query) use ($request) {
+                $date1 = Carbon::parse($request->updated_at_from)->format('Y-m-d');
+                $startOfDay1 = Carbon::parse($date1)->startOfDay()->toDateTimeString();
 
-                $query->whereBetween('updated_at', [$startOfDay, $endOfDay]);
+                $date2 = Carbon::parse($request->updated_at_to)->format('Y-m-d');
+                $endOfDay2 = Carbon::parse($date2)->endOfDay()->toDateTimeString();
+
+                $query->whereBetween('updated_at', [$startOfDay1, $endOfDay2]);
+            })
+
+            ->when($request->dob_from && $request->dob_to, function ($query) use ($request) {
+                $date1 = Carbon::parse($request->dob_from)->format('Y-m-d');
+                $startOfDay1 = Carbon::parse($date1)->startOfDay()->toDateTimeString();
+
+                $date2 = Carbon::parse($request->dob_to)->format('Y-m-d');
+                $endOfDay2 = Carbon::parse($date2)->endOfDay()->toDateTimeString();
+
+                $query->whereBetween('date_of_birth', [$startOfDay1, $endOfDay2]);
             });
     }
 

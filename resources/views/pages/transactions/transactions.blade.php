@@ -95,10 +95,10 @@
                                     <button class="btn btn-danger btn-block" style="height: 50px"
                                         id="resetCartButton">Reset</button>
                                 </div>
-                                <div class="col">
+                                {{-- <div class="col">
                                     <button class="btn btn-info btn-block" style="height: 50px" id="addCoupon"
                                         data-toggle="modal" data-target="#addCouponModal">Coupon</button>
-                                </div>
+                                </div> --}}
                                 <div class="col">
                                     <button class="btn btn-success btn-block" style="height: 50px"
                                         id="payButton">Pay</button>

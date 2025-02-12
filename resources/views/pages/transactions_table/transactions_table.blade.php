@@ -26,24 +26,24 @@
                                             Add New Transaction
                                         </button> --}}
                                         <div style="margin-left: auto; display: flex; align-items: flex-end;">
-                                            <button
-                                                style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
-                                                class="btn btn-info" data-toggle="modal" data-target="#filtertransaction">
-                                                <i class="ion-funnel" data-pack="default" data-tags="sort"
-                                                    style="font-size: 15px;"></i>
-                                            </button>
                                             <button id="download_button" onclick="handleDownload()"
-                                                style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
-                                                class="btn btn-success">
-                                                <i class="ion-ios-download" data-pack="ios" data-tags="save, export"
-                                                    style="font-size: 21px;"></i>
-                                            </button>
-                                            <button id="download_button_2" onclick="handleDownload2()"
-                                                style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
-                                                class="btn btn-primary">
-                                                <i class="ion-android-archive" data-pack="ios" data-tags="save, export"
-                                                    style="font-size: 21px;"></i>
-                                            </button>
+                                            style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
+                                            class="btn btn-success">
+                                            <i class="ion-ios-download" data-pack="ios" data-tags="save, export"
+                                            style="font-size: 21px;"></i>&nbsp;Laporan Penjualan Detail
+                                        </button>
+                                        <button id="download_button_2" onclick="handleDownload2()"
+                                        style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
+                                        class="btn btn-primary">
+                                        <i class="ion-ios-download" data-pack="ios" data-tags="save, export"
+                                        style="font-size: 21px;"></i>&nbsp;Laporan Penjualan Summary
+                                    </button>
+                                    <button
+                                        style="margin-right: 10px; max-height: 40px; display: flex; align-items: center;"
+                                        class="btn btn-info" data-toggle="modal" data-target="#filtertransaction">
+                                        <i class="ion-funnel" data-pack="default" data-tags="sort"
+                                            style="font-size: 15px;"></i>
+                                    </button>
                                             <div id="filter-container"
                                                 style="display: flex; align-items: center; max-height: 55px;"></div>
                                         </div>
@@ -149,8 +149,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        {{-- <button type="submit" class="btn btn-primary">Update</button> --}}
                     </div>
                 </form>
             </div>
