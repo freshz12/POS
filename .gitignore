@@ -12,7 +12,7 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-/.env
+.env
 
 storage/app/public/files/attendance/*
 storage/app/public/files/products/*
