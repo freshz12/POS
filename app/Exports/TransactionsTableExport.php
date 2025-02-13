@@ -66,7 +66,7 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
         if ($transaction?->promo_id) {
             if ($transaction?->productDiscount?->type === 'Percentage') {
                 $amountBeforeDiscount = $transaction?->productDiscount?->amount_before_discount ?? 0;
-                $promoValue = ($amountBeforeDiscount * $transaction?->productDiscount?->value ?? 0) / 100;
+                // $promoValue = ($amountBeforeDiscount * $transaction?->productDiscount?->value ?? 0) / 100;
                 $promoValue = floor(((floatval($selling_price) * intval($transaction->quantity)) * floatval($transaction?->productDiscount?->value ?? 0)) / 100);
             } else {
                 $promoValue = $transaction?->productDiscount?->value ?? 0;

@@ -61,34 +61,36 @@
                     },
                     "orderable": false,
                     "searchable": false
-                }, {
-                    "targets": 4,
-                    "render": function(data, type, row, meta) {
-                        if (!row.promo) {
-                            return '-';
-                        }
+                }
+                // , {
+                //     "targets": 4,
+                //     "render": function(data, type, row, meta) {
+                //         if (!row.promo) {
+                //             return '-';
+                //         }
 
-                        return row.promo.type;
-                    },
-                    "orderable": false,
-                    "searchable": false
-                }, {
-                    "targets": 6,
-                    "render": function(data, type, row, meta) {
-                        if (!row.promo) {
-                            return '-';
-                        }
-                        type = row.promo.type;
-                        if (type == 'Package' || type == 'Nominal') {
-                            value = `${row.promo.value}`;
-                        } else if (type == 'Percentage') {
-                            value = `${row.promo.value}%`;
-                        }
-                        return value;
-                    },
-                    "orderable": false,
-                    "searchable": false
-                },
+                //         return row.promo.type;
+                //     },
+                //     "orderable": false,
+                //     "searchable": false
+                // }
+                // , {
+                //     "targets": 6,
+                //     "render": function(data, type, row, meta) {
+                //         if (!row.promo) {
+                //             return '-';
+                //         }
+                //         type = row.promo.type;
+                //         if (type == 'Package' || type == 'Nominal') {
+                //             value = `${row.promo.value}`;
+                //         } else if (type == 'Percentage') {
+                //             value = `${row.promo.value}%`;
+                //         }
+                //         return value;
+                //     },
+                //     "orderable": false,
+                //     "searchable": false
+                // },
             ],
             "columns": [{
                     "data": null
@@ -108,21 +110,21 @@
                         return data ? data : 'N/A';
                     }
                 },
-                {
-                    "data": "promo.type",
-                    "render": function(data, type, row) {
-                        return data ? data : 'N/A';
-                    }
-                },
+                // {
+                //     "data": "promo.type",
+                //     "render": function(data, type, row) {
+                //         return data ? data : 'N/A';
+                //     }
+                // },
                 {
                     "data": "amount_before_discount"
                 },
-                {
-                    "data": "promo.value",
-                    "render": function(data, type, row) {
-                        return data ? data : 'N/A';
-                    }
-                },
+                // {
+                //     "data": "promo.value",
+                //     "render": function(data, type, row) {
+                //         return data ? data : 'N/A';
+                //     }
+                // },
                 {
                     "data": "amount"
                 },

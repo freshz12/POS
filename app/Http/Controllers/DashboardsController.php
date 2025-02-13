@@ -101,11 +101,11 @@ class DashboardsController extends Controller
             case 'today':
                 $transactions = Transactions::select(
                     DB::raw('SUM(transactions.amount) as total_spent'),
-                    DB::raw('FLOOR(DATEPART(HOUR, transactions.created_at) / 2) * 2 as transaction_interval') // Grouping by 2-hour intervals
+                    DB::raw('FLOOR(HOUR(transactions.created_at) / 2) * 2 as transaction_interval')
                 )
                     ->whereDate('transactions.created_at', Carbon::now('Asia/Jakarta')->toDateString())
                     ->whereNull('transactions.deleted_at')
-                    ->groupBy(DB::raw('FLOOR(DATEPART(HOUR, transactions.created_at) / 2) * 2'))
+                    ->groupBy(DB::raw('FLOOR(HOUR(transactions.created_at) / 2) * 2'))
                     ->orderBy('transaction_interval')
                     ->get();
 
