@@ -45,7 +45,7 @@ class TransactionsTableExport implements FromCollection, WithHeadings, WithMappi
                 'promo_id',
                 'price',
             )
-            ->orderBy('transactions.transaction_id', 'desc')
+            ->orderBy('transaction_id', 'desc')
             ->get();
 
         foreach ($table as $transaction) {
