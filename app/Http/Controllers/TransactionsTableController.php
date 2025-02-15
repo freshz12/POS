@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Products;
 use App\Models\Transactions;
 use Illuminate\Http\Request;
@@ -35,22 +36,48 @@ class TransactionsTableController extends Controller
         $transactions = $query->skip($start)->take($length)->get();
 
         foreach ($transactions as $transaction) {
-            if ($transaction->promo) {
-                if ($transaction->promo_id && $transaction->promo->type === 'Package') {
-                    $products_id = json_decode($transaction->promo->product_id);
-                    $totalSellingPrice = 0;
+            $transaction->amount_before_discount = 0;
+            $transaction->total_discount = 0;
 
-                    foreach ($products_id as $product_id) {
-                        $product = Products::find($product_id);
+            $transaction_products = TransactionProducts::with(['productDiscount', 'product'])
+                ->where('transaction_id', $transaction->id)
+                ->get(['id', 'price', 'quantity', 'is_new_data', 'transaction_id', 'promo_id', 'product_id']);
 
-                        if ($product) {
-                            $totalSellingPrice += $product->selling_price;
-                        }
+            foreach ($transaction_products as $product) {
+                $selling_price = $product->is_new_data == 0 ? ($product->product?->selling_price ?? 0) : ($product->price ?? 0);
+                $transaction->amount_before_discount += $selling_price * $product->quantity;
+
+                if ($product->productDiscount) {
+                    if ($product->productDiscount->type == 'Percentage') {
+                        $transaction->total_discount += floor(
+                            ((floatval($selling_price) * intval($product->quantity)) * floatval($product->productDiscount->value ?? 0)) / 100
+                        );
+                    } elseif ($product->productDiscount->type == 'Nominal') {
+                        $transaction->total_discount += $product->productDiscount->value;
                     }
-                    $transaction->promo->value = $totalSellingPrice;
                 }
             }
+
+            $transaction->amount = $transaction->amount_before_discount - $transaction->total_discount;
         }
+
+        // foreach ($transactions as $transaction) {
+            // if ($transaction->promo) {
+            //     if ($transaction->promo_id && $transaction->promo->type === 'Package') {
+            //         $products_id = json_decode($transaction->promo->product_id);
+            //         $totalSellingPrice = 0;
+
+            //         foreach ($products_id as $product_id) {
+            //             $product = Products::find($product_id);
+
+            //             if ($product) {
+            //                 $totalSellingPrice += $product->selling_price;
+            //             }
+            //         }
+            //         $transaction->promo->value = $totalSellingPrice;
+            //     }
+            // }
+        // }
 
         return response()->json([
             'draw' => intval($request->input('draw')),

@@ -60,7 +60,7 @@
                                                 <th scope="col">Customer Name</th>
                                                 {{-- <th scope="col">Discount Type</th> --}}
                                                 <th scope="col">Total Amount Before Discount</th>
-                                                {{-- <th scope="col">Discount Value</th> --}}
+                                                <th scope="col">Total Discount</th>
                                                 <th scope="col">Final Total Amount</th>
                                                 <th scope="col">Capster Name</th>
                                                 <th scope="col">Payment Method</th>

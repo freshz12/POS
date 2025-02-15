@@ -101,9 +101,9 @@
                         return data ? data : 'N/A';
                     }
                 },
-                // {
-                //     "data": "promo.value"
-                // },
+                {
+                    "data": "total_discount"
+                },
                 {
                     "data": "amount",
                     "render": function(data, type, row) {

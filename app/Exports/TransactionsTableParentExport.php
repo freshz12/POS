@@ -38,7 +38,7 @@ class TransactionsTableParentExport implements FromCollection, WithHeadings, Wit
                 'payment_method',
                 'created_at'
             )
-            ->orderBy('transaction_id', 'asc')
+            ->orderBy('transactions.transaction_id', 'desc')
             ->get();
 
         foreach ($table as $transaction) {
@@ -51,9 +51,8 @@ class TransactionsTableParentExport implements FromCollection, WithHeadings, Wit
                 ->get(['id', 'price', 'quantity', 'is_new_data', 'transaction_id', 'promo_id', 'product_id']);
 
             foreach ($transaction_products as $product) {
-                $transaction->gross_amount += $product->price * $product->quantity;
-
                 $selling_price = $product->is_new_data == 0 ? ($product->product?->selling_price ?? 0) : ($product->price ?? 0);
+                $transaction->gross_amount += $selling_price * $product->quantity;
 
                 if ($product->productDiscount) {
                     if ($product->productDiscount->type == 'Percentage') {

@@ -119,12 +119,9 @@
                 {
                     "data": "amount_before_discount"
                 },
-                // {
-                //     "data": "promo.value",
-                //     "render": function(data, type, row) {
-                //         return data ? data : 'N/A';
-                //     }
-                // },
+                {
+                    "data": "total_discount"
+                },
                 {
                     "data": "amount"
                 },

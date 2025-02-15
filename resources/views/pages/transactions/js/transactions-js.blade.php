@@ -611,6 +611,8 @@
 
     function updateTotalAmount(packageNominal = null) {
         var originalTotalAmount = 0;
+        var discountValue = 0;
+        var totalAmount = 0;
 
         $('table.table tbody tr').each(function() {
             let dicountAmount = 0;
@@ -628,35 +630,40 @@
             $(this).find('.total-cell').text(formatNumberWithCommas((price * quantity) - dicountAmount))
 
             if (!isNaN(price) && !isNaN(quantity)) {
-                originalTotalAmount += (price * quantity) - dicountAmount;
+                originalTotalAmount += (price * quantity);
+                discountValue += dicountAmount;
             }
         });
 
-        var totalAmount = originalTotalAmount; // Set initial total amount
+        totalAmount = originalTotalAmount - discountValue;
 
-        var couponType = $('.select2.coupon').data('type');
-        var couponValue = $('.select2.coupon').data('value');
+        discountValue = discountValue == 0 ? 'No discount' : 'Rp ' + formatNumberWithCommas(discountValue);
 
-        var discountValue = 0;
+        // var couponType = $('.select2.coupon').data('type');
+        // var couponValue = $('.select2.coupon').data('value');
 
-        if (couponType === 'Nominal' && couponValue) {
-            discountValue = parseFloat(couponValue);
-            totalAmount = Math.max(originalTotalAmount - discountValue, 0);
-            $('#Totaldiscount').text('Rp.' + formatNumberWithCommas(discountValue));
-        } else if (couponType === 'Percentage' && couponValue) {
-            discountValue = originalTotalAmount * (couponValue / 100);
-            totalAmount = Math.floor(originalTotalAmount - discountValue);
-            $('#Totaldiscount').text(couponValue + '%');
-        } else if (couponType === 'Package') {
-            let totalDiscountText = $('#Totaldiscount').text();
-            let numericValue = parseInt(totalDiscountText.replace(/[^0-9]/g, ''), 10);
-            originalTotalAmount += numericValue;
-        } else {
-            $('#Totaldiscount').text('No discount');
-        }
+        // var discountValue = 0;
 
+        // if (couponType === 'Nominal' && couponValue) {
+        //     discountValue = parseFloat(couponValue);
+        //     totalAmount = Math.max(originalTotalAmount - discountValue, 0);
+        //     $('#Totaldiscount').text('Rp.' + formatNumberWithCommas(discountValue));
+        // } else if (couponType === 'Percentage' && couponValue) {
+        //     discountValue = originalTotalAmount * (couponValue / 100);
+        //     totalAmount = Math.floor(originalTotalAmount - discountValue);
+        //     $('#Totaldiscount').text(couponValue + '%');
+        // } else if (couponType === 'Package') {
+        //     let totalDiscountText = $('#Totaldiscount').text();
+        //     let numericValue = parseInt(totalDiscountText.replace(/[^0-9]/g, ''), 10);
+        //     originalTotalAmount += numericValue;
+        // } else {
+        //     $('#Totaldiscount').text('No discount');
+        // }
+        
         let formattedOriginalAmount = formatNumberWithCommas(originalTotalAmount);
         let formattedAmount = formatNumberWithCommas(totalAmount);
+        
+        $('#Totaldiscount').text(discountValue); /////////////////////////////
 
         $('#totalAmount').text(formattedOriginalAmount);
 
