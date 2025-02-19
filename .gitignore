@@ -14,10 +14,10 @@ yarn-error.log
 /.vscode
 .env
 
-# storage/app/public/files/attendance/*
-# storage/app/public/files/products/*
+storage/app/public/files/attendance/*
+storage/app/public/files/products/*
 
-# !storage/app/public/files/default/
+!storage/app/public/files/default/
 
 /public
 
