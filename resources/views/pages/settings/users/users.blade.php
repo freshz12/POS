@@ -166,6 +166,12 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="password" class="form-label">Change New Password</label>
+                                <input class="form-control" type="text" id="editpassword" name="password">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

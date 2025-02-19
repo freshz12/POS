@@ -88,9 +88,10 @@ class UsersController extends Controller
 
             $user->syncRoles([]);
 
-            $filteredData = $request->except(['_token']);
+            $filteredData = $request->except(['_token', 'password']);
 
             $additionalData = [
+                'password' => Hash::make($request->password),
                 'updated_by' => auth()->user()->id,
             ];
 
